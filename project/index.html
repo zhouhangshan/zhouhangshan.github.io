@@ -9,7 +9,11 @@
     <script src="https://cdn.jsdelivr.net/npm/pixi.js@7.2/dist/pixi.min.js"></script>
 </head>
  
-<body></body>
+<body>
+     <button class="btn" id="bu">↑</button>
+     <button class="btn" id="bd">↓</button>
+     <button class="btn" id="bl">R</button>
+</body>
  
 <script>
     const app = new PIXI.Application({ width: window.innerWidth, height: window.innerHeight, background: 'white', antialias: true });
@@ -69,7 +73,7 @@
  
     let score = 0
  
-    const text = new PIXI.Text('开始游戏', {
+    const text = new PIXI.Text('Begin', {
         fontSize: 30,
         align: 'center'
     })
@@ -81,7 +85,11 @@
     text.on('click', () => {
         playGame()
     })
-    const tip = new PIXI.Text('当前得分为' + score, {
+    const bl = document.getElementById("bl");
+    bl.addEventListener("click", (e) => {
+        playGame()
+    })
+    const tip = new PIXI.Text('Point: ' + score, {
         fontSize: 30,
         align: 'center'
     })
@@ -106,7 +114,7 @@
  
     function gameOver() {
         isPlayGame = false
-        tip.text = '游戏结束,得分为' + score + ',点击重新开始'
+        tip.text = 'Game over! Point: ' + score + ', Reopen?'
  
         tip.interactive = true
         tip.on('click', () => {
@@ -131,7 +139,7 @@
                     score += 1
                 }
             }
-            tip.text = '当前得分为' + score
+            tip.text = 'Point: ' + score
             if (score == 5) {
                 flyAnimation.visible = true
                 flyAnimation.play()
@@ -160,6 +168,20 @@
     })
  
     let y = runAnimation.y
+    const bu = document.getElementById("bu");
+    const bd = document.getElementById("bd");
+    const bl = document.getElementById("bl");
+    bu.addEventListener("click", (e) => {
+        e.preventDefault()
+        isJump = true
+        up = true
+    })
+    bd.addEventListener("click", (e) => {
+        e.preventDefault()
+        runAnimation.textures = squatTexture
+        runAnimation.y = y + 20
+        runAnimation.play()
+    })
     window.addEventListener('keydown', e => {
         if (e.code == 'Space') {
             e.preventDefault()
@@ -172,7 +194,13 @@
             runAnimation.play()
         }
     })
- 
+
+    bl.addEventListener("click", (e) => {
+        e.preventDefault()
+        runAnimation.textures = runTexture
+        runAnimation.y = y
+        runAnimation.play()
+    })
     window.addEventListener('keyup', e => {
         if (e.key == 'ArrowDown') {
             e.preventDefault()
