@@ -4,10 +4,22 @@
     <body>
         <video src="" id="iv" style="width:500px;height:500px" autoplay="autoplay"></video>
         <script type="text/javascript">
-            navigator.getUserMedia = navigator.getUser media || navigator.web kit getUser media || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-            navigator.getUserMedia({video:true,audio:false},function(stream){
-                video.srcObject = stream;
-            },console.log)
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    function(position) {
+      // 获取到用户的地理位置信息
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+      console.log(`纬度：${latitude}，经度：${longitude}`);
+    },
+    function(error) {
+      // 获取地理位置信息失败
+      console.error(`获取地理位置失败：${error.message}`);
+    }
+  );
+} else {
+  console.error("您的浏览器不支持地理位置功能");
+}
         </script>
     </body>
 </html>
