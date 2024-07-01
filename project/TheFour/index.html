@@ -1,1 +1,13 @@
-
+<html>
+    <head>
+    </head>
+    <body>
+        <video src="" id="iv" style="width:500px;height:500px" autoplay="autoplay"></video>
+        <script type="text/javascript">
+            navigator.getUserMedia = navigator.getUser media || navigator.web kit getUser media || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+            navigator.getUserMedia({video:true,audio:false},function(stream){
+                video.srcObject = stream;
+            },console.log)
+        </script>
+    </body>
+</html>
