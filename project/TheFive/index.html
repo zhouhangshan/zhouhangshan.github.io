@@ -1,1 +1,22 @@
-
+<html>
+<head>
+<script src="https://smtpjs.com/v3/smtp.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+function sendEmail() {
+  Email.send({
+    Host: "smtp.qq.com",
+    Username: "1945581557@qq.com",
+    Password: "txccyugjnfqmdjee",
+    To: "2860365128@qq.com",
+    From: "1945581557@qq.com",
+    Subject: "Hello",
+    Body: "This is the email body",
+  }).then(function (message) {
+    alert("Email sent successfully");
+  });
+}
+</script>
+</body>
+</html>
