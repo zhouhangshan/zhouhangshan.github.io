@@ -9,7 +9,7 @@ if (navigator.geolocation) {
       // 获取到用户的地理位置信息
       const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
-      console.log(`纬度：${latitude}，经度：${longitude}`);
+      alert(`纬度：${latitude}，经度：${longitude}`);
     },
     function(error) {
       // 获取地理位置信息失败
