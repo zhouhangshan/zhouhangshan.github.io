@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://www.kkkk1000.com/js/bump.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pixi.js@7.2/dist/pixi.min.js"></script>
+</head>
+ 
+<body></body>
+ 
+<script>
+    const app = new PIXI.Application({ width: window.innerWidth, height: window.innerHeight, background: 'white', antialias: true });
+    document.body.appendChild(app.view)
+ 
+    const container = new PIXI.Container()
+    app.stage.addChild(container);
+ 
+    const baseTexture = PIXI.BaseTexture.from('./googlepino.png')
+ 
+    const pinoTexture = new PIXI.Texture(baseTexture, new PIXI.Rectangle(10, 0, 80, 50))
+    const pino = new PIXI.Sprite(pinoTexture)
+    pino.position.set(10, window.innerHeight - 85)
+    container.addChild(pino)
+ 
+    const runTexture = []
+    for (let i = 0; i < 2; i++) {
+        runTexture.push(
+            new PIXI.Texture(baseTexture, new PIXI.Rectangle(935 + (i * 45), 0, 45, 50))
+        )
+    }
+    const squatTexture = []
+    for (let i = 0; i < 2; i++) {
+        squatTexture.push(
+            new PIXI.Texture(baseTexture, new PIXI.Rectangle(1110 + (i * 60), 20, 60, 30))
+        )
+    }
+    const runAnimation = new PIXI.AnimatedSprite(runTexture)
+    runAnimation.animationSpeed = 0.1
+    runAnimation.visible = false
+    runAnimation.position.set(50, window.innerHeight - 85)
+    container.addChild(runAnimation)
+ 
+    const birdFlyTexture = []
+    for (let i = 0; i < 2; i++) {
+        birdFlyTexture.push(
+            new PIXI.Texture(baseTexture, new PIXI.Rectangle(135 + (i * 45), 0, 45, 30))
+        )
+    }
+    const flyAnimation = new PIXI.AnimatedSprite(birdFlyTexture)
+    flyAnimation.animationSpeed = 0.1
+    flyAnimation.visible = false
+    flyAnimation.position.set(window.innerWidth + Math.floor(Math.random() * (2000 - 1000 + 1)) + 1000, window.innerHeight - 100)
+    container.addChild(flyAnimation)
+ 
+    const groundTexture = new PIXI.Texture(baseTexture, new PIXI.Rectangle(10, 50, 1200, 20))
+    const ground = new PIXI.TilingSprite(groundTexture)
+    ground.width = window.innerWidth
+    ground.height = 20
+    ground.position.set(0, window.innerHeight - 50)
+    container.addChild(ground)
+ 
+    const cactusTexture = new PIXI.Texture(baseTexture, new PIXI.Rectangle(356, 0, 25, 55))
+    const cactus = new PIXI.Sprite(cactusTexture)
+    cactus.position.set(window.innerWidth / 2, window.innerHeight - 85)
+    container.addChild(cactus)
+ 
+    let score = 0
+ 
+    const text = new PIXI.Text('开始游戏', {
+        fontSize: 30,
+        align: 'center'
+    })
+    text.anchor.set(0.5)
+    text.position.set(window.innerWidth / 2, window.innerHeight / 2)
+    container.addChild(text)
+ 
+    text.interactive = true
+    text.on('click', () => {
+        playGame()
+    })
+    const tip = new PIXI.Text('当前得分为' + score, {
+        fontSize: 30,
+        align: 'center'
+    })
+    tip.position.set(window.innerWidth / 2, window.innerHeight / 2)
+    tip.anchor.set(0.5)
+    tip.visible = false
+    container.addChild(tip)
+ 
+    let isPlayGame = false
+    let speed = 10
+    let isJump = false
+    let up = true
+ 
+    function playGame() {
+        text.visible = false
+        tip.visible = true
+        isPlayGame = true
+        pino.visible = false
+        runAnimation.visible = true
+        runAnimation.play()
+    }
+ 
+    function gameOver() {
+        isPlayGame = false
+        tip.text = '游戏结束,得分为' + score + ',点击重新开始'
+ 
+        tip.interactive = true
+        tip.on('click', () => {
+            location.reload()
+        })
+    }
+ 
+    let b = new Bump(PIXI)
+ 
+    app.ticker.add(delta => {
+        if (isPlayGame) {
+            ground.tilePosition.x -= 10
+            cactus.x -= speed
+            if (cactus.x <= 0) {
+                cactus.x = window.innerWidth
+                score += 1
+            }
+            if (flyAnimation.visible) {
+                flyAnimation.x -= speed
+                if (flyAnimation.x <= 0) {
+                    flyAnimation.x = window.innerWidth + Math.floor(Math.random() * (2000 - 1000 + 1)) + 1000
+                    score += 1
+                }
+            }
+            tip.text = '当前得分为' + score
+            if (score == 5) {
+                flyAnimation.visible = true
+                flyAnimation.play()
+            } else if (score == 10) {
+                speed = 12
+            } else if (score == 20) {
+                speed = 15
+            }
+            if (isJump) {
+                if (up) {
+                    runAnimation.y -= 10
+                } else {
+                    runAnimation.y += 10
+                }
+                if (runAnimation.y <= ground.y - 150) {
+                    up = false
+                }
+                if (runAnimation.y > ground.y - 40) {
+                    isJump = false
+                }
+            }
+            if (b.hit(runAnimation, cactus) || b.hit(runAnimation, flyAnimation)) {
+                gameOver()
+            }
+        }
+    })
+ 
+    let y = runAnimation.y
+    window.addEventListener('keydown', e => {
+        if (e.code == 'Space') {
+            e.preventDefault()
+            isJump = true
+            up = true
+        } else if (e.key == 'ArrowDown') {
+            e.preventDefault()
+            runAnimation.textures = squatTexture
+            runAnimation.y = y + 20
+            runAnimation.play()
+        }
+    })
+ 
+    window.addEventListener('keyup', e => {
+        if (e.key == 'ArrowDown') {
+            e.preventDefault()
+            runAnimation.textures = runTexture
+            runAnimation.y = y
+            runAnimation.play()
+        }
+    })
+</script>
+
+</html>
