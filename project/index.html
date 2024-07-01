@@ -7,14 +7,35 @@
     <title>Document</title>
     <script src="https://www.kkkk1000.com/js/bump.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/pixi.js@7.2/dist/pixi.min.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        #gameContainer {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
 </head>
  
 <body>
+    <div id="gameContainer"></div>
+    <script>
+        const app = new PIXI.Application({ 
+            width: window.innerWidth, 
+            height: window.innerHeight, 
+            backgroundColor: 0xffffff,  // 设置背景颜色
+            antialias: true 
+        });
+    </script>
      <button class="btn" id="bu">↑</button>
      <button class="btn" id="bd">↓</button>
      <button class="btn" id="bl">R</button>
-</body>
- 
 <script>
     const app = new PIXI.Application({ width: window.innerWidth, height: window.innerHeight, background: 'white', antialias: true });
     document.body.appendChild(app.view)
@@ -210,5 +231,6 @@
         }
     })
 </script>
+</body>
 
-</html>
+</html> 
