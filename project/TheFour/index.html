@@ -4,12 +4,12 @@
     </head>
     <body>
         <script type="text/javascript">
-
+alert('1')
 import { createClient } from '@supabase/supabase-js'
-
+alert('2')
 const supabase = createClient('https://awkxtlxeszvybwgkwpmw.supabase.co', 'eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3a3h0bHhlc3p2eWJ3Z2t3cG13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjA1OTE1MTMsImV4cCI6MjAzNjE2NzUxM30.1UBtC7OKgr_JC2JKDvmAukJHiF4LCMR73Kh3-JZWAWE')
 
-
+alert('3')
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(
     function(position) {
@@ -26,6 +26,7 @@ const { data, error } = await supabase
   ])
   .select()
     },
+alert('4')
     function(error) {
       // 获取地理位置信息失败
       console.error(`获取地理位置失败：${error.message}`);
