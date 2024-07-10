@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <title>Supabase Insert Example</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="http://code.jquery.com/jquery-3.5.1.min.js"></script>
+
 </head>
 <body>
   <script type="text/javascript">
@@ -11,34 +13,35 @@ import { createClient } from 'jsr:@supabase/supabase-js@2'
     // 创建 Supabase 客户端
     const supabaseUrl = 'https://awkxtlxeszvybwgkwpmw.supabase.co';
     const supabaseKey = 'eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3a3h0bHhlc3p2eWJ3Z2t3cG13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjA1OTE1MTMsImV4cCI6MjAzNjE2NzUxM30.1UBtC7OKgr_JC2JKDvmAukJHiF4LCMR73Kh3-JZWAWE';
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const _supabase = createClient(supabaseUrl, supabaseKey);
 
-    // 定义一个异步函数用于执行 Supabase 插入操作
-    async function insertData() {
-      try {
-        const { data, error } = await supabase
-          .from('test')
-          .insert([
-            { num: '测试ing' },
-          ])
-          .select();
+window.onload =async function(){
+  // 查询
+  const { data, error } = await _supabase
+  .from('test')
+  .select(`
+    id,
+    num
+  `)
+  console.log('data ', data)
 
-        if (error) {
-          console.error('Error inserting data:', error.message);
-        } else {
-          console.log('Data inserted successfully:', data);
-        }
-      } catch (error) {
-        console.error('Error executing insert operation:', error.message);
-      }
-    }
+  // realtime
+  const mySubscription = _supabase
+  .from('test')
+  .on('INSERT', payload => {
+    console.log('Change received!', payload)
+  })
+  .subscribe()
+}
 
-    // 调用异步函数执行插入操作
-    insertData().then(() => {
-      alert('Insert operation completed successfully!');
-    }).catch((error) => {
-      alert('Insert operation failed: ' + error.message);
-    });
+async function insertdata(){ 
+  //插入数据
+  const { data, error } = await _supabase
+  .from('test')
+  .insert({num:'测试ing'})
+  console.log('data', data)
+}
+
   </script>
 </body>
 </html>
