@@ -1,0 +1,18 @@
+<html>
+<head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<script type="text/javascript">
+import { createClient } from 'jsr:@supabase/supabase-js@2'
+const supabase = createClient('https://awkxtlxeszvybwgkwpmw.supabase.co', 'eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3a3h0bHhlc3p2eWJ3Z2t3cG13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjA1OTE1MTMsImV4cCI6MjAzNjE2NzUxM30.1UBtC7OKgr_JC2JKDvmAukJHiF4LCMR73Kh3-JZWAWE')
+const { data, error } = await supabase
+  .from('test')
+  .insert([
+    { num: '测试ing' },
+  ])
+  .select()
+alert('test')
+</script>
+</body>
+</html>
