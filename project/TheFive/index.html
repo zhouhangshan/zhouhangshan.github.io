@@ -1,23 +1,139 @@
-<html>
+
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<script src="https://smtpjs.com/v3/smtp.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>留言板</title>
+    <!-- 引入 Element UI 样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入 Vue -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <!-- 引入 Element UI -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <style>
+        /* 全局样式 */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+ 
+        #app {
+            max-width: 800px;
+            margin: 50px auto;
+        }
+ 
+        .box-card {
+            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+        }
+ 
+        .el-form-item {
+            margin-bottom: 20px;
+        }
+ 
+        .message-list {
+            margin-top: 20px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+        }
+ 
+        .message-item {
+            padding: 15px;
+            border-bottom: 1px solid #eaeaea;
+        }
+ 
+        .message-item:last-child {
+            border-bottom: none;
+        }
+ 
+        .message-item p {
+            margin: 5px 0;
+        }
+ 
+        .title {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+ 
+        .date {
+            color: #999;
+            font-size: 0.9em;
+        }
+ 
+        .download-link {
+            color: #409eff;
+            text-decoration: none;
+        }
+ 
+        .download-link:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-<script type="text/javascript">
-function sendEmail() {
-  Email.send({
-    Host: "smtp.qq.com",
-    Username: "1945581557@qq.com",
-    Password: "txccyugjnfqmdjee",
-    To: "zhs20081107@qq.com",
-    From: "1945581557@qq.com",
-    Subject: "Hello",
-    Body: "This is the email body",
-  }).then(function (message) {
-    alert("Email sent successfully");
-  });
-}
-sendEmail()
+<div id="app">
+    <el-card class="box-card">
+        <div slot="header">
+            <span>留言板</span>
+        </div>
+        <el-form ref="form" :model="form" label-width="80px">
+            <el-form-item label="姓名">
+                <el-input v-model="form.name"></el-input>
+            </el-form-item>
+            <el-form-item label="留言">
+                <el-input type="textarea" v-model="form.message"></el-input>
+                <el-form-item>
+                    <el-button type="primary" @click="submitForm">提交</el-button>
+                </el-form-item>
+        </el-form>
+    </el-card>
+ 
+    <el-card class="box-card" style="margin-top: 20px;">
+        <div slot="header">
+            <span>留言列表</span>
+        </div>
+        <div class="message-list">
+            <div v-for="(message, index) in messages" :key="index" class="message-item">
+                <p><strong>{{ message.name }}:</strong></p>
+                <p>{{ message.message }}</p>
+                <p class="date">{{ message.date }}</p>
+            </div>
+        </div>
+    </el-card>
+</div>
+ 
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                form: {
+                    name: '',
+                    message: ''
+                },
+                messages: []
+            };
+        },
+        methods: {
+            submitForm() {
+                if (this.form.name && this.form.message) {
+                    const now = new Date();
+                    const formattedDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+                    this.messages.push({ name: this.form.name, message: this.form.message, date: formattedDate });
+                    this.form.name = '';
+                    this.form.message = '';
+                } else {
+                    this.$message({
+                        message: '请填写完整的姓名和留言内容',
+                        type: 'warning'
+                    });
+                }
+            }
+        }
+    });
 </script>
 </body>
 </html>
