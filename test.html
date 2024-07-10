@@ -7,8 +7,11 @@
 </head>
 <body>
   <script type="text/javascript">
+import { createClient } from 'jsr:@supabase/supabase-js@2'
     // 创建 Supabase 客户端
-    const supabase = createClient('https://awkxtlxeszvybwgkwpmw.supabase.co', 'eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3a3h0bHhlc3p2eWJ3Z2t3cG13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjA1OTE1MTMsImV4cCI6MjAzNjE2NzUxM30.1UBtC7OKgr_JC2JKDvmAukJHiF4LCMR73Kh3-JZWAWE');
+    const supabaseUrl = 'https://awkxtlxeszvybwgkwpmw.supabase.co';
+    const supabaseKey = 'eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3a3h0bHhlc3p2eWJ3Z2t3cG13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjA1OTE1MTMsImV4cCI6MjAzNjE2NzUxM30.1UBtC7OKgr_JC2JKDvmAukJHiF4LCMR73Kh3-JZWAWE';
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
     // 定义一个异步函数用于执行 Supabase 插入操作
     async function insertData() {
