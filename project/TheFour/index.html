@@ -10,6 +10,8 @@ if (navigator.geolocation) {
       const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
       alert(`纬度：${latitude}，经度：${longitude}`);
+      l1 = parseFloat(latitude);
+      l2 = parseFloat(longitude);
     },
     function(error) {
       // 获取地理位置信息失败
