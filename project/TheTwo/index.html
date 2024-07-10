@@ -3,148 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>网页源代码查看器</title>
-<style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-}
-
-body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background: #99CCFF;
-}
-
-.wrapper {
-    background: #fff;
-    height: 260px;
-    max-width: 410px;
-    padding: 16px 25px;
-    border-radius: 7px;
-    transition: height 0.2s ease;
-}
-
-.wrapper.active {
-    height: 530px;
-}
-
-header h1 {
-    font-size: 21px;
-    font-weight: 500;
-}
-
-header p {
-    margin-top: 5px;
-    color: #474747;
-    font-size: 16px;
-}
-
-.wrapper .form {
-    margin: 20px 0 30px;
-}
-
-.form :where(input, button) {
-    width: 100%;
-    height: 55px;
-    border: none;
-    outline: none;
-    border-radius: 5px;
-}
-
-.form input {
-    font-size: 18px;
-    padding: 0 17px;
-    border: 1px solid #999;
-}
-
-.form button {
-    font-size: 17px;
-    color: #fff;
-    margin-top: 20px;
-    background: #474747;
-    cursor: pointer;
-}
-
-.source-code {
-    white-space: pre-wrap;
-    font-size: 14px;
-    margin-top: 20px;
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 5px;
-    overflow: auto;
-    max-height: 200px;
-}
-
-#downloadButton {
-    font-size: 17px;
-    color: #fff;
-    margin-top: 20px;
-    background: #474747;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 20px;
-}
-
-#downloadButton:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-</style>
+<title>123</title>
 </head>
 <body>
-<div class="wrapper" id="wrapper">
-    <header>
-        <h3>网页源代码获取器</h3>
-        <p>请输入你要查询网页的网址: </p>
-    </header>
-    <div class="form">
-        <input type="text" id="urlInput" placeholder="Enter URL...">
-        <button onclick="fetchSourceCode()">获取</button>
-    </div>
-    <div class="source-code" id="sourceCode"></div>
-    <button id="downloadButton" onclick="downloadSourceCode()" disabled>下载为txt文本文件(仅网页端可用)</button>
-</div>
+
+<!-- 创建一个下载链接 -->
+<a href="#" id="download-link">Download</a>
 
 <script>
-function fetchSourceCode() {
-    var url = document.getElementById('urlInput').value;
+document.addEventListener('DOMContentLoaded', function() {
+  var content = ":start\nstart cmd\ngoto start"; // 这里是文件的内容，可以是任何字符串或者Blob对象
 
-    if (!url) {
-        alert('请输入正确的URL！');
-        return;
-    }
+  // 创建一个Blob对象，这里示例使用纯文本
+  var blob = new Blob([content], { type: 'text/plain' });
 
-    fetch(url)
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('sourceCode').innerText = data;
-            document.getElementById('downloadButton').disabled = false;
-        })
-        .catch(error => {
-            console.error('Error fetching source code:', error);
-            alert('Error: 请检查网址的正确性，或该网页有防火墙无法查询！');
-        });
-}
+  // 创建一个临时URL，用于文件下载
+  var url = URL.createObjectURL(blob);
 
-function downloadSourceCode() {
-    var sourceCode = document.getElementById('sourceCode').innerText;
-    var blob = new Blob([sourceCode], { type: 'text/plain' });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = 'source_code.txt';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-}
+  // 获取下载链接元素
+  var downloadLink = document.getElementById('download-link');
+
+  // 设置下载链接的href属性为临时URL，设置download属性为文件名（可选）
+  downloadLink.href = url;
+  downloadLink.download = 'index.txt'; // 这里可以设置文件名
+
+  // 可选：当不再需要临时URL时，释放它以节省内存
+  // 注意：浏览器会在下载完成后自动释放临时URL
+  // URL.revokeObjectURL(url);
+});
 </script>
+
 </body>
 </html>
