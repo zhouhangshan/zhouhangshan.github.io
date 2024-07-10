@@ -1,72 +1,141 @@
-<html>
-<head lang="zh">
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
-    <title></title>
-    <link rel="stylesheet" type="text/css" href="css/reset.min.css" />
-    <link rel="stylesheet" type="text/css" href="css/test.css" />
-    <script src="js/avalon.min.js"></script>
-    <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
-    <script>
-        function print1()
-        {  alert("每点击一块拼板会使包括自己的四个方向的拼板翻转颜色，使拼板全部变成蓝色即可胜利并自动升一级！");}
-    </script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二维码生成工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        }
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: #99CCFF;
+        }
+        .wrapper {
+            background: #fff;
+            height: 260px;
+            max-width: 410px;
+            padding: 16px 25px;
+            border-radius: 7px;
+            transition: height 0.2s ease;
+        }
+        .wrapper.active {
+            height: 530px;
+        }
+        header h1 {
+            font-size: 21px;
+            font-weight: 500;
+        }
+        header p {
+            margin-top: 5px;
+            color: #474747;
+            font-size: 16px;
+        }
+        .wrapper .form {
+            margin: 20px 0 30px;
+        }
+        .form :where(input, button) {
+            width: 100%;
+            height: 55px;
+            border: none;
+            outline: none;
+            border-radius: 5px;
+        }
+        .form input {
+            font-size: 18px;
+            padding: 0 17px;
+            border: 1px solid #999;
+        }
+        .form button {
+            font-size: 17px;
+            color: #fff;
+            margin-top: 20px;
+            background: #474747;
+            cursor: pointer;
+        }
+        .wrapper .qr-code {
+            display: flex;
+            opacity: 0;
+            pointer-events: none;
+            padding: 33px 0;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .wrapper .qr-code img {
+            width: 200px;
+            height: auto;
+        }
+        .wrapper.active .qr-code {
+            opacity: 1;
+            pointer-events: auto;
+            transition: opacity 0.5s 0.5s ease;
+        }
+        .download-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #474747;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+    </style>
 </head>
-<body ms-controller="model">
-    <h3>翻转拼图游戏</h3>
-    <button onclick="print1()">玩法说明</button>
-    棋盘大小：{{sz}} x {{sz}}
-    <div id="board">
-        <div class="tile" ms-class="on:el==1" ms-class-1="clear:$index%sz==0"
-             ms-repeat="grid" ms-click="tile_click"></div>
+<body>
+    <div class="wrapper">
+        <header>
+            <h1>二维码生成工具</h1>
+            <p>请输入需要保存在二维码中的内容</p>
+        </header>
+        <div class="form">
+            <input type="text" placeholder="输入网址">
+            <button>生成二维码</button>
+        </div>
+        <div class="qr-code">
+            <img src="" alt="生成的二维码">
+        </div>
+        <a id="downloadLink" class="download-btn" download="qrcode.png">下载二维码</a>
     </div>
+
     <script>
-        var vm = avalon.define('model', function(vm) {
-            vm.sz = 0;//设置大小
-            vm.grid = [];//设定数组
-            vm.tile_click = function() {//设置点击函数
-                var col = $(this).index() % vm.sz;//知道第几列
-                var row = parseInt($(this).index() / vm.sz);//获取行
-                var dx = [0, 0, 1, 0, -1];//用于找上下左右格子
-                var dy = [0, 1, 0, -1, 0];//用于找上下左右格子
-                var buf;
-                var k=0;
-                for(var d = 0; d < 5; ++d) {
-                    col += dx[d]; row += dy[d];//五个位置都找一遍
-                    if(col >=0 && col < vm.sz && row >=0 && row < vm.sz) {
-                        //设置边界
-                        buf = 1 - vm.grid[row*vm.sz+col];
-                       // buf暂时存储数值
-                        vm.grid.splice(row*vm.sz+col, 1, buf);
-                        //替换进入
-                    }
-                    col -= dx[d]; row -= dy[d];//再回归到中间位置
-                }
-                for(var j=0; j < vm.sz*vm.sz;j++)
-                {
-                    if(vm.grid[j]==1)k++;
-                    if(k==(vm.sz*vm.sz))
-                    {alert("恭喜胜利"); vm.sz++;}
-                }
+        const wrapper = document.querySelector(".wrapper");
+        const qrInput = wrapper.querySelector(".form input");
+        const qrImg = wrapper.querySelector(".qr-code img");
+        const generateBtn = wrapper.querySelector(".form button");
+        const downloadBtn = document.getElementById("downloadLink");
+
+        generateBtn.addEventListener("click", () => {
+            let qrValue = qrInput.value.trim();
+            if (!qrValue) return;
+            generateBtn.innerText = "生成中...";
+            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=${encodeURIComponent(qrValue)}`;
+            qrImg.addEventListener("load", () => {
+                wrapper.classList.add("active");
+                generateBtn.innerText = "生成二维码";
+                downloadBtn.style.display = "block";
+                downloadBtn.href = qrImg.src;
+            });
+        });
+
+        qrInput.addEventListener("keyup", () => {
+            if (!qrInput.value.trim()) {
+                wrapper.classList.remove("active");
+                downloadBtn.style.display = "none";
             }
         });
-        vm.$watch('sz', function(val) {
-            var i, j, row;
-            val = parseInt(val) || 4;
-            vm.grid.clear();
-            for(i = 0; i < val * val; ++i) vm.grid.push(0);
-        });
-        vm.sz = 3;
-        function up(){
-            vm.sz++;
-            if(vm.sz>11){alert("已达到最高难度！");vm.sz=10;}
-        }
-        function down(){
-            vm.sz--;
-            if(vm.sz==1){alert("已达到最低难度！");vm.sz=2;}
-        }
-
     </script>
-    <button onclick="up()">提高难度</button>
-    <button onclick="down()">降低难度</button>
 </body>
 </html>
