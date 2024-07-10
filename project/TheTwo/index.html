@@ -1,156 +1,150 @@
-<!DOCTYPE html> <!-- 声明文档类型 -->
-<html lang="zh"> <!-- 设置页面语言为英文 -->
+<!DOCTYPE html>
+<html lang="zh">
 <head>
-<meta charset="UTF-8"> <!-- 设置字符编码为UTF-8 -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 设置视口宽度和缩放比例 -->
-<title>网页源代码查询器</title> <!-- 设置页面标题 -->
-<style> <!-- 开始CSS样式 -->
-    * { <!-- 通配符选择器，设置全局样式 -->
-        margin: 0; <!-- 设置外边距为0 -->
-        padding: 0; <!-- 设置内边距为0 -->
-        box-sizing: border-box; <!-- 设置盒模型为边框模型 -->
-        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; <!-- 设置字体 -->
-    }
-    body { <!-- 设置body样式 -->
-        display: flex; <!-- 使用弹性布局 -->
-        align-items: center; <!-- 垂直居中 */
-        justify-content: center; <!-- 水平居中 */
-        min-height: 100vh; <!-- 设置最小高度为视口高度 */
-        background: #99CCFF; <!-- 设置背景颜色 */
-    }
-    .wrapper { <!-- 设置类名为wrapper的元素样式 */
-        background: #fff; <!-- 设置背景颜色为白色 */
-        max-width: 410px; <!-- 设置最大宽度为410px */
-        padding: 16px 25px; <!-- 设置内边距 */
-        border-radius: 7px; <!-- 设置圆角半径 */
-        transition: height 0.2s ease; <!-- 设置高度变化过渡效果 */
-    }
-    header h1 { <!-- 设置header下h1的样式 */
-        font-size: 21px; <!-- 设置字体大小 */
-        font-weight: 500; <!-- 设置字体粗细 */
-    }
-    header p { <!-- 设置header下p的样式 -->
-        margin-top: 5px; <!-- 设置顶部外边距 */
-        color: #474747; <!-- 设置文字颜色 */
-        font-size: 16px; <!-- 设置字体大小 */
-    }
-    .form input, .form button { <!-- 设置form下input和button的样式 */
-        width: 100%; <!-- 设置宽度为100% */
-        height: 55px; <!-- 设置高度为55px */
-        border: none; <!-- 设置无边框 */
-        outline: none; <!-- 设置无外边框阴影 */
-        border-radius: 5px; <!-- 设置圆角半径 */
-    }
-    .form input { <!-- 设置form下input的样式 */
-        font-size: 18px; <!-- 设置字体大小 */
-        padding: 0 17px; <!-- 设置内边距 */
-        border: 1px solid #999; <!-- 设置边框样式 */
-    }
-    .form button { <!-- 设置form下button的样式 */
-        font-size: 17px; <!-- 设置字体大小 */
-        color: #fff; <!-- 设置文字颜色 */
-        margin-top: 20px; <!-- 设置顶部外边距 */
-        background: #474747; <!-- 设置背景颜色 */
-        cursor: pointer; <!-- 设置鼠标样式为指针 */
-    }
-    .qr-code { <!-- 设置类名为qr-code的元素样式 */
-        display: flex; <!-- 使用弹性布局 */
-        opacity: 0; <!-- 设置透明度为0 */
-        pointer-events: none; <!-- 禁止指针事件响应 */
-        padding: 33px 0; <!-- 设置内边距 */
-        align-items: center; <!-- 垂直居中 */
-        justify-content: center; <!-- 水平居中 */
-        border: 1px solid #ccc; <!-- 设置边框样式 */
-        border-radius: 5px; <!-- 设置圆角半径 */
-    }
-    .qr-code img { <!-- 设置qr-code下img的样式 */
-        width: 200px; <!-- 设置宽度为200px */
-        height: auto; <!-- 设置高度自适应 */
-    }
-    .wrapper.active { <!-- 设置类名为active的wrapper元素的样式 */
-        height: 530px; <!-- 设置高度为530px */
-    }
-    .wrapper.active .qr-code { <!-- 设置active状态下qr-code的样式 */
-        opacity: 1; <!-- 设置透明度为1 */
-        pointer-events: auto; <!-- 启用指针事件响应 */
-        transition: opacity 0.5s 0.5s ease; <!-- 设置过渡效果 */
-    }
-</style> <!-- 结束CSS样式 -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>网页源代码查看器</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: #99CCFF;
+}
+
+.wrapper {
+    background: #fff;
+    height: 260px;
+    max-width: 410px;
+    padding: 16px 25px;
+    border-radius: 7px;
+    transition: height 0.2s ease;
+}
+
+.wrapper.active {
+    height: 530px;
+}
+
+header h1 {
+    font-size: 21px;
+    font-weight: 500;
+}
+
+header p {
+    margin-top: 5px;
+    color: #474747;
+    font-size: 16px;
+}
+
+.wrapper .form {
+    margin: 20px 0 30px;
+}
+
+.form :where(input, button) {
+    width: 100%;
+    height: 55px;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+}
+
+.form input {
+    font-size: 18px;
+    padding: 0 17px;
+    border: 1px solid #999;
+}
+
+.form button {
+    font-size: 17px;
+    color: #fff;
+    margin-top: 20px;
+    background: #474747;
+    cursor: pointer;
+}
+
+.source-code {
+    white-space: pre-wrap;
+    font-size: 14px;
+    margin-top: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    overflow: auto;
+    max-height: 200px;
+}
+
+#downloadButton {
+    font-size: 17px;
+    color: #fff;
+    margin-top: 20px;
+    background: #474747;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+}
+
+#downloadButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+</style>
 </head>
-<body> <!-- 主体内容开始 -->
-<div class="wrapper"> <!-- 创建类名为wrapper的div元素 -->
-    <header> <!-- 头部内容开始 -->
-        <h1>网页源代码查询器</h1> <!-- h1标题 -->
-        <p>输入网址以查看源代码</p> <!-- 段落内容 -->
-    </header> <!-- 头部内容结束 -->
-    <div class="form"> <!-- 表单内容开始 -->
-        <input type="text" id="urlInput" placeholder="输入网址"> <!-- 输入框 -->
-        <button onclick="fetchSourceCode()">查询源代码</button> <!-- 查询按钮 -->
-    </div> <!-- 表单内容结束 -->
-    <div class="qr-code"> <!-- qr-code内容开始 -->
-        <img id="qrImage" src="" alt="QR Code"> <!-- 显示二维码图片 -->
-    </div> <!-- qr-code内容结束 -->
-    <button onclick="downloadTxt()">下载txt文件</button> <!-- 下载按钮 -->
-    <button onclick="copyToClipboard()">复制</button> <!-- 复制按钮 -->
-</div> <!-- wrapper结束 -->
+<body>
+<div class="wrapper" id="wrapper">
+    <header>
+        <h3>网页源代码获取器</h3>
+        <p>请输入你要查询网页的网址: </p>
+    </header>
+    <div class="form">
+        <input type="text" id="urlInput" placeholder="Enter URL...">
+        <button onclick="fetchSourceCode()">获取</button>
+    </div>
+    <div class="source-code" id="sourceCode"></div>
+    <button id="downloadButton" onclick="downloadSourceCode()" disabled>下载为txt文本文件(仅网页端可用)</button>
+</div>
 
-<script> <!-- JavaScript脚本开始 -->
-    function fetchSourceCode() { <!-- 定义获取源代码函数 -->
-        var url = document.getElementById('urlInput').value; <!-- 获取输入框中的网址 */
-        if (url.trim() === '') { <!-- 检查是否为空 */
-            alert('请输入有效的网址！'); <!-- 提示用户输入有效网址 */
-            return; <!-- 返回 */
-        }
-        
-        // 使用fetch API获取网页源代码
-        fetch(url)
-            .then(response => response.text()) <!-- 转换为文本格式 -->
-            .then(data => {
-                // 将获取的源代码显示在页面上或者进行其他处理
-                console.log(data); <!-- 控制台打印源代码 */
-            })
-            .catch(error => {
-                console.error('获取源代码时出现错误:', error); <!-- 错误处理 */
-            });
+<script>
+function fetchSourceCode() {
+    var url = document.getElementById('urlInput').value;
+
+    if (!url) {
+        alert('请输入正确的URL！');
+        return;
     }
 
-    function downloadTxt() { <!-- 定义下载txt文件函数 */
-        var url = document.getElementById('urlInput').value; <!-- 获取输入框中的网址 */
-        if (url.trim() === '') { <!-- 检查是否为空 */
-            alert('请输入有效的网址！'); <!-- 提示用户输入有效网址 */
-            return; <!-- 返回 */
-        }
+    fetch(url)
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('sourceCode').innerText = data;
+            document.getElementById('downloadButton').disabled = false;
+        })
+        .catch(error => {
+            console.error('Error fetching source code:', error);
+            alert('Error: 请检查网址的正确性，或该网页有防火墙无法查询！');
+        });
+}
 
-        // 模拟生成txt文件内容
-        var txtContent = `网页 ${url} 的源代码将在这里显示`;
-
-        // 创建一个Blob对象
-        var blob = new Blob([txtContent], { type: 'text/plain' });
-
-        // 创建一个a标签，模拟点击下载
-        var a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'source_code.txt';
-        a.click();
-    }
-
-    function copyToClipboard() { <!-- 定义复制到剪贴板函数 */
-        var url = document.getElementById('urlInput').value; <!-- 获取输入框中的网址 */
-        if (url.trim() === '') { <!-- 检查是否为空 */
-            alert('请输入有效的网址！'); <!-- 提示用户输入有效网址 */
-            return; <!-- 返回 */
-        }
-
-        // 复制文本到剪贴板
-        navigator.clipboard.writeText(url)
-            .then(() => {
-                alert('已复制网址到剪贴板：' + url); <!-- 提示用户成功复制 */
-            })
-            .catch(err => {
-                console.error('复制操作失败:', err); <!-- 错误处理 */
-            });
-    }
-</script> <!-- JavaScript脚本结束 -->
-
-</body> <!-- 主体内容结束 -->
-</html> <!-- HTML结尾 -->
+function downloadSourceCode() {
+    var sourceCode = document.getElementById('sourceCode').innerText;
+    var blob = new Blob([sourceCode], { type: 'text/plain' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'source_code.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
