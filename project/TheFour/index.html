@@ -1,39 +1,46 @@
-<html>
-    <head>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    </head>
-    <body>
-        <script type="text/javascript">
-  import { createClient } from 'jsr:@supabase/supabase-js@2'
-alert('2')
-const supabase = createClient('https://awkxtlxeszvybwgkwpmw.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3a3h0bHhlc3p2eWJ3Z2t3cG13Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcyMDU5MTUxMywiZXhwIjoyMDM2MTY3NTEzfQ.RdttRVrK9P5xOX4k_WvZw0M1bbdlpsfENFqwlEzGEv8')
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>gps坐标获取</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <script type="text/javascript">
+    const supabase = createClient('https://awkxtlxeszvybwgkwpmw.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3a3h0bHhlc3p2eWJ3Z2t3cG13Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcyMDU5MTUxMywiZXhwIjoyMDM2MTY3NTEzfQ.RdttRVrK9P5xOX4k_WvZw0M1bbdlpsfENFqwlEzGEv8');
 
-alert('3')
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(
-    function(position) {
-      // 获取到用户的地理位置信息
-      const latitude = position.coords.latitude;
-      const longitude = position.coords.longitude;
-      alert(`纬度：${latitude}，经度：${longitude}`);
-      l1 = parseFloat(latitude);
-      l2 = parseFloat(longitude);
-const { data, error } = await supabase
-  .from('gpstest1')
-  .insert([
-    { x: l1, y: 'l2' },
-  ])
-  .select()
-    },
-alert('4')
-    function(error) {
-      // 获取地理位置信息失败
-      console.error(`获取地理位置失败：${error.message}`);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async function(position) {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+          const l1 = parseFloat(latitude);
+          const l2 = parseFloat(longitude);
+
+          try {
+            const { data, error } = await supabase
+              .from('gpstest1')
+              .insert([
+                { x: l1, y: l2 },
+              ])
+              .select();
+
+            if (error) {
+              alert('插入数据时出错：' + error.message);
+            } else {
+              alert('数据插入成功：' + JSON.stringify(data));
+            }
+          } catch (error) {
+            alert('执行插入操作时出错：' + error.message);
+          }
+        },
+        function(error) {
+          alert('获取地理位置失败：' + error.message);
+        }
+      );
+    } else {
+      alert('您的浏览器不支持地理位置功能');
     }
-  );
-} else {
-  console.error("您的浏览器不支持地理位置功能");
-}
-        </script>
-    </body>
+  </script>
+</body>
 </html>
