@@ -4,6 +4,12 @@
     </head>
     <body>
         <script type="text/javascript">
+
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient('https://awkxtlxeszvybwgkwpmw.supabase.co', 'eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3a3h0bHhlc3p2eWJ3Z2t3cG13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjA1OTE1MTMsImV4cCI6MjAzNjE2NzUxM30.1UBtC7OKgr_JC2JKDvmAukJHiF4LCMR73Kh3-JZWAWE')
+
+
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(
     function(position) {
@@ -13,6 +19,12 @@ if (navigator.geolocation) {
       alert(`纬度：${latitude}，经度：${longitude}`);
       l1 = parseFloat(latitude);
       l2 = parseFloat(longitude);
+const { data, error } = await supabase
+  .from('gpstest1')
+  .insert([
+    { x: l1, y: 'l2' },
+  ])
+  .select()
     },
     function(error) {
       // 获取地理位置信息失败
