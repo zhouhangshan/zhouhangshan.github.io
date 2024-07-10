@@ -8,40 +8,9 @@
 
 </head>
 <body>
+<h1>6</h1>
   <script type="text/javascript">
-import { createClient } from 'jsr:@supabase/supabase-js@2'
-    // 创建 Supabase 客户端
-    const supabaseUrl = 'https://awkxtlxeszvybwgkwpmw.supabase.co';
-    const supabaseKey = process.env.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3a3h0bHhlc3p2eWJ3Z2t3cG13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjA1OTE1MTMsImV4cCI6MjAzNjE2NzUxM30.1UBtC7OKgr_JC2JKDvmAukJHiF4LCMR73Kh3-JZWAWE;
-    const _supabase = createClient(supabaseUrl, supabaseKey);
-
-window.onload =async function(){
-  // 查询
-  const { data, error } = await _supabase
-  .from('test')
-  .select(`
-    id,
-    num
-  `)
-  console.log('data ', data)
-
-  // realtime
-  const mySubscription = _supabase
-  .from('test')
-  .on('INSERT', payload => {
-    console.log('Change received!', payload)
-  })
-  .subscribe()
-}
-
-async function insertdata(){ 
-  //插入数据
-  const { data, error } = await _supabase
-  .from('test')
-  .insert({num:'测试ing'})
-  console.log('data', data)
-}
-
+alert('into')
   </script>
 </body>
 </html>
