@@ -1,18 +1,41 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta charset="UTF-8">
+  <title>Supabase Insert Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-<script type="text/javascript">
-import { createClient } from 'jsr:@supabase/supabase-js@2'
-const supabase = createClient('https://awkxtlxeszvybwgkwpmw.supabase.co', 'eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3a3h0bHhlc3p2eWJ3Z2t3cG13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjA1OTE1MTMsImV4cCI6MjAzNjE2NzUxM30.1UBtC7OKgr_JC2JKDvmAukJHiF4LCMR73Kh3-JZWAWE')
-await supabase
-  .from('test')
-  .insert([
-    { num: '测试ing' },
-  ])
-  .select()
-alert('test')
-</script>
+  <script type="text/javascript">
+    // 创建 Supabase 客户端
+    const supabase = createClient('https://awkxtlxeszvybwgkwpmw.supabase.co', 'eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3a3h0bHhlc3p2eWJ3Z2t3cG13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjA1OTE1MTMsImV4cCI6MjAzNjE2NzUxM30.1UBtC7OKgr_JC2JKDvmAukJHiF4LCMR73Kh3-JZWAWE');
+
+    // 定义一个异步函数用于执行 Supabase 插入操作
+    async function insertData() {
+      try {
+        const { data, error } = await supabase
+          .from('test')
+          .insert([
+            { num: '测试ing' },
+          ])
+          .select();
+
+        if (error) {
+          console.error('Error inserting data:', error.message);
+        } else {
+          console.log('Data inserted successfully:', data);
+        }
+      } catch (error) {
+        console.error('Error executing insert operation:', error.message);
+      }
+    }
+
+    // 调用异步函数执行插入操作
+    insertData().then(() => {
+      alert('Insert operation completed successfully!');
+    }).catch((error) => {
+      alert('Insert operation failed: ' + error.message);
+    });
+  </script>
 </body>
 </html>
