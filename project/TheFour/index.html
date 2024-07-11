@@ -1,24 +1,65 @@
+<!DOCTYPE html>
 <html>
-    <head>
-    </head>
-    <body>
-        <script type="text/javascript">
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(
-    function(position) {
-      // 获取到用户的地理位置信息
-      const latitude = position.coords.latitude;
-      const longitude = position.coords.longitude;
-      alert(`${longitude},${latitude}`);
-    },
-    function(error) {
-      // 获取地理位置信息失败
-      alert(`获取地理位置失败：${error.message}`);
-    }
-  );
-} else {
-  alert("您的浏览器不支持地理位置功能");
-}
-        </script>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <title>获取地理位置并复制</title>
+    <style>
+        body {
+            background-color: #99CCFF;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 50px;
+        }
+        #copyButton {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        #copyButton:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div id="locationInfo"></div>
+    <button id="copyButton">复制</button>
+
+    <script type="text/javascript">
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    // 获取到用户的地理位置信息
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    const locationInfo = document.getElementById('locationInfo');
+                    locationInfo.textContent = `${longitude},${latitude}`;
+
+                    // 复制功能
+                    const copyButton = document.getElementById('copyButton');
+                    copyButton.addEventListener('click', function() {
+                        const textToCopy = `${longitude},${latitude}`;
+                        navigator.clipboard.writeText(textToCopy)
+                            .then(function() {
+                                alert('已复制：' + textToCopy);
+                            })
+                            .catch(function(err) {
+                                console.error('复制失败: ', err);
+                            });
+                    });
+                },
+                function(error) {
+                    // 获取地理位置信息失败
+                    const locationInfo = document.getElementById('locationInfo');
+                    locationInfo.textContent = `获取地理位置失败：${error.message}`;
+                }
+            );
+        } else {
+            alert("您的浏览器不支持地理位置功能");
+        }
+    </script>
+</body>
 </html>
