@@ -4,12 +4,6 @@
     <meta charset="UTF-8">
     <title>The Four</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-        }
         body {
             display: flex;
             align-items: center;
@@ -23,64 +17,33 @@
             max-width: 410px;
             padding: 16px 25px;
             border-radius: 7px;
-            transition: height 0.2s ease;
-        }
-        .wrapper.active {
-            height: 530px;
-        }
-        header h1 {
-            font-size: 21px;
-            font-weight: 500;
-        }
-        header p {
-            margin-top: 5px;
-            color: #474747;
-            font-size: 16px;
-        }
-        .wrapper .form {
-            margin: 20px 0 30px;
-        }
-        .form input,
-        .form button {
-            width: 100%;
-            height: 55px;
-            border: none;
-            outline: none;
-            border-radius: 5px;
-            font-size: 17px;
-            padding: 0 17px;
-        }
-        .form input {
-            border: 1px solid #999;
-        }
-        .form button {
-            color: #fff;
             margin-top: 20px;
-            background: #474747;
-            cursor: pointer;
-            transition: background 0.3s ease;
+            text-align: center;
         }
-        .form button:hover {
-            background: #333;
-        }
-        .wrapper .qr-code {
+        .qr-code {
             display: flex;
-            opacity: 0;
-            pointer-events: none;
-            padding: 33px 0;
+            opacity: 1;
             align-items: center;
             justify-content: center;
             border: 1px solid #ccc;
             border-radius: 5px;
+            margin-top: 10px;
         }
-        .wrapper .qr-code img {
+        .qr-code img {
             width: 200px;
             height: auto;
         }
-        .wrapper.active .qr-code {
-            opacity: 1;
-            pointer-events: auto;
-            transition: opacity 0.5s 0.5s ease;
+        #refreshButton {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        #refreshButton:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
@@ -88,7 +51,7 @@
     <div class="wrapper">
         <div id="locationInfo"></div>
         <div class="qr-code">
-            <img id="qrCodeImg" src="" alt="Loading...">
+            <img id="qrCodeImg" src="" alt="生成的二维码">
         </div>
         <p id="errorText" style="display: none;">请开启位置信息</p>
         <button id="refreshButton" onclick="window.location.reload()">重新获取</button>
