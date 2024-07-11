@@ -1,16 +1,39 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>获取地理位置并复制</title>
+    <title>获取地理位置并生成二维码</title>
     <style>
         body {
-            background-color: #99CCFF;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding-top: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: #99CCFF;
         }
-        #copyButton {
+        .wrapper {
+            background: #fff;
+            height: 260px;
+            max-width: 410px;
+            padding: 16px 25px;
+            border-radius: 7px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .qr-code {
+            display: flex;
+            opacity: 1;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .qr-code img {
+            width: 200px;
+            height: auto;
+        }
+        #refreshButton {
             padding: 10px 20px;
             background-color: #4CAF50;
             color: white;
@@ -19,42 +42,36 @@
             font-size: 16px;
             margin-top: 20px;
         }
-        #copyButton:hover {
+        #refreshButton:hover {
             background-color: #45a049;
         }
     </style>
 </head>
 <body>
-    <div id="locationInfo"></div>
-    <button id="copyButton">复制</button>
+    <div class="wrapper">
+        <div id="locationInfo"></div>
+        <div class="qr-code">
+            <img id="qrCodeImg" src="" alt="生成的二维码">
+        </div>
+        <p id="errorText" style="display: none;">请开启位置信息</p>
+        <button id="refreshButton" onclick="window.location.reload()">重新获取</button>
+    </div>
 
-    <script type="text/javascript">
+    <script>
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 function(position) {
-                    // 获取到用户的地理位置信息
                     const latitude = position.coords.latitude;
                     const longitude = position.coords.longitude;
                     const locationInfo = document.getElementById('locationInfo');
                     locationInfo.textContent = `${longitude},${latitude}`;
 
-                    // 复制功能
-                    const copyButton = document.getElementById('copyButton');
-                    copyButton.addEventListener('click', function() {
-                        const textToCopy = `${longitude},${latitude}`;
-                        navigator.clipboard.writeText(textToCopy)
-                            .then(function() {
-                                alert('已复制：' + textToCopy);
-                            })
-                            .catch(function(err) {
-                                console.error('复制失败: ', err);
-                            });
-                    });
+                    const qrCodeImg = document.getElementById('qrCodeImg');
+                    qrCodeImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=${encodeURIComponent(`${longitude},${latitude}`)}`;
                 },
                 function(error) {
-                    // 获取地理位置信息失败
-                    const locationInfo = document.getElementById('locationInfo');
-                    locationInfo.textContent = `获取地理位置失败：${error.message}`;
+                    document.getElementById('errorText').style.display = 'block';
+                    document.getElementById('refreshButton').style.display = 'block';
                 }
             );
         } else {
