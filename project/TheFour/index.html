@@ -1,48 +1,24 @@
-<!DOCTYPE html>
-<html lang="zh">
-<head>
-  <meta charset="UTF-8">
-  <title>gps坐标获取</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body>
-  <script type="text/javascript">
-alert('?????')
-import { createClient } from 'jsr:@supabase/supabase-js@2';
-    const supabase = createClient('https://awkxtlxeszvybwgkwpmw.supabase.co', 'eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3a3h0bHhlc3p2eWJ3Z2t3cG13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjA1OTE1MTMsImV4cCI6MjAzNjE2NzUxM30.1UBtC7OKgr_JC2JKDvmAukJHiF4LCMR73Kh3-JZWAWE');
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        async function(position) {
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
-          const l1 = parseFloat(latitude);
-          const l2 = parseFloat(longitude);
-
-          try {
-            const { data, error } = await supabase
-              .from('gpstest1')
-              .insert([
-                { x: l1, y: l2 },
-              ])
-              .select();
-
-            if (error) {
-              alert('插入数据时出错：' + error.message);
-            } else {
-              alert('数据插入成功：' + JSON.stringify(data));
-            }
-          } catch (error) {
-            alert('执行插入操作时出错：' + error.message);
-          }
-        },
-        function(error) {
-          alert('获取地理位置失败：' + error.message);
-        }
-      );
-    } else {
-      alert('您的浏览器不支持地理位置功能');
+<html>
+    <head>
+    </head>
+    <body>
+        <script type="text/javascript">
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    function(position) {
+      // 获取到用户的地理位置信息
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+      alert(`${longitude},${latitude}`);
+    },
+    function(error) {
+      // 获取地理位置信息失败
+      console.error(`获取地理位置失败：${error.message}`);
     }
-  </script>
-</body>
+  );
+} else {
+  console.error("您的浏览器不支持地理位置功能");
+}
+        </script>
+    </body>
 </html>
