@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>获取地理位置信息</title>
+    <script>
+        // JavaScript 获取地理位置信息
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    const timestamp = new Date().getTime(); // 获取当前时间戳
+
+                    // 发送地理位置信息到 PHP 文件
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', 'http://zhs.rf.gd/a/xy.php', true);
+                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState === 4 && xhr.status === 200) {
+                            console.log(xhr.responseText); // 输出 PHP 文件返回的消息
+                        }
+                    };
+                    xhr.send(`latitude=${latitude}&longitude=${longitude}&timestamp=${timestamp}`);
+                },
+                function(error) {
+                    console.error(`获取地理位置失败：${error.message}`);
+                }
+            );
+        } else {
+            console.error("您的浏览器不支持地理位置功能");
+        }
+    </script>
+</head>
+<body>
+    <h1>获取地理位置信息</h1>
+    <p>请允许浏览器获取您的地理位置信息。</p>
+</body>
+</html>
