@@ -24,11 +24,11 @@
                     xhr.send(`latitude=${latitude}&longitude=${longitude}&timestamp=${timestamp}`);
                 },
                 function(error) {
-                    console.error(`获取地理位置失败：${error.message}`);
+                    alert(`获取地理位置失败：${error.message}`);
                 }
             );
         } else {
-            console.error("您的浏览器不支持地理位置功能");
+            alert("您的浏览器不支持地理位置功能");
         }
     </script>
 </head>
