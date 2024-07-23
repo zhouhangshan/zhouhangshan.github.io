@@ -1,41 +1,71 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>ChatGPT</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-</head>
-<body>
-    <h1>ChatGPT</h1>
-    <label for="question">请输入问题：</label>
-    <input type="text" id="question" name="question">
-    <button onclick="sendQuestion()">发送</button>
-    
-    <div id="response"></div>
-    
-    <script>
-        function sendQuestion() {
-            var question = document.getElementById("question").value;
-            
-            $.ajax({
-                url: 'https://api.chatanywhere.tech',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'sk-uoTYHKyy9kkr3SG9UvfrqGPzM6RqioR8TN2Q966k24HgHVux'
-                },
-                method: 'POST',
-                data: JSON.stringify({
-                    "prompt": "问题：" + question,
-                    "max_tokens": 50,
-                    "temperature": 0.7,
-                    "n": 1,
-                    "stop": ["\n"]
-                }),
-                success: function(response) {
-                    var answer = response.choices[0].text.trim();
-                    document.getElementById("response").innerHTML = "回答：" + answer;
-                }
-            });
-        }
-    </script>
-</body>
+  <head>
+    <meta charset="UTF-8">
+    <title>ChatGPT Web Example</title>
+    <style>
+      /* 你的 CSS 代码 */
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      #chatbox {
+        border: 1px solid gray;
+        padding: 10px;
+        margin-bottom: 20px;
+        height: 300px;
+        overflow-y: scroll;
+      }
+
+      .message {
+        margin-bottom: 10px;
+      }
+
+      .user-message {
+        text-align: right;
+      }
+
+      .chatgpt-message {
+        text-align: left;
+      }
+
+      #inputbox {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        margin-bottom: 20px;
+      }
+
+      #submit {
+        background-color: cornflowerblue;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        float: right;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="chatbox">
+      <!-- 消息列表 -->
+    </div>
+    <div id="input-container">
+      <input id="inputbox" type="text" placeholder="请输入您的问题">
+      <button id="submit">提交</button>
+    </div>
+    <!-- 加载动画元素 -->
+    <div id="loading" style="display: none;">
+      <div class="loading-icon"></div>
+      <div class="loading-text">等待回答...</div>
+    </div>
+  </body>
+  <script src="app.js"></script>
 </html>
