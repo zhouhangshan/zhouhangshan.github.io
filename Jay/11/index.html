@@ -1,71 +1,51 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
-    <title>ChatGPT Web Example</title>
-    <style>
-      /* 你的 CSS 代码 */
-      body {
-        font-family: Arial, sans-serif;
-        padding: 20px;
-      }
-
-      h1 {
-        text-align: center;
-        margin-bottom: 20px;
-      }
-
-      #chatbox {
-        border: 1px solid gray;
-        padding: 10px;
-        margin-bottom: 20px;
-        height: 300px;
-        overflow-y: scroll;
-      }
-
-      .message {
-        margin-bottom: 10px;
-      }
-
-      .user-message {
-        text-align: right;
-      }
-
-      .chatgpt-message {
-        text-align: left;
-      }
-
-      #inputbox {
-        width: 100%;
-        padding: 10px;
-        font-size: 16px;
-        margin-bottom: 20px;
-      }
-
-      #submit {
-        background-color: cornflowerblue;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        float: right;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="chatbox">
-      <!-- 消息列表 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-3.5 Demo</title>
+</head>
+<body>
+    <div>
+        <h1>GPT-3.5 Demo</h1>
+        <textarea id="input-text" rows="5" cols="50"></textarea><br>
+        <button onclick="generateResponse()">Generate Response</button><br>
+        <div id="output-text"></div>
     </div>
-    <div id="input-container">
-      <input id="inputbox" type="text" placeholder="请输入您的问题">
-      <button id="submit">提交</button>
-    </div>
-    <!-- 加载动画元素 -->
-    <div id="loading" style="display: none;">
-      <div class="loading-icon"></div>
-      <div class="loading-text">等待回答...</div>
-    </div>
-  </body>
-  <script src="app.js"></script>
+
+    <script>
+        // Replace 'YOUR_ACCESS_TOKEN' with your actual OpenAI API access token
+        const accessToken = 'sk-uoTYHKyy9kkr3SG9UvfrqGPzM6RqioR8TN2Q966k24HgHVux';
+
+        async function generateResponse() {
+            const inputText = document.getElementById('input-text').value;
+            const response = await callOpenAIModel(inputText);
+            document.getElementById('output-text').innerText = response.choices[0].text.trim();
+        }
+
+        async function callOpenAIModel(prompt) {
+            const apiUrl = 'https://api.chatanywhere.tech';
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`
+            };
+            const body = JSON.stringify({
+                prompt: prompt,
+                max_tokens: 3000
+            });
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: headers,
+                body: body
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            return await response.json();
+        }
+    </script>
+</body>
 </html>
