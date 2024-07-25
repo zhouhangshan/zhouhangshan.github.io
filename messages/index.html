@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>留言板</title>
+        <!-- 引入 Vue.js 和 Element UI 的样式文件 -->
+        <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+        <!-- 引入 Vue.js -->
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    </head>
+    
+    <body>
+        <div id="app">
+            <el-container>
+                <el-header>
+                    <h1>留言板</h1>
+                    <el-main>
+                    <el-form ref="messageForm" :model="messageForm" label-position="top" label-width="100px">
+                        <el-form-item label="昵称">
+                            <el-input v-model="messageForm.name"></el-input>
+                        </el-form-item>
+                        <el-form-item label="留言内容">
+                            <el-input type="textarea" v-model="messageForm.message"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="submitForm">提交留言</el-button>
+                            <a href="https://zhouhangshan.github.io">
+                                <el-button type="primary" @click="returnToHomePage">返回主页</el-button></a>
+                        </el-form-item>
+                    </el-form>
+                    <el-divider></el-divider>
+                    <el-card v-for="(message, index) in messages" :key="index" class="message-card">
+                        <p>
+                            <strong>{{ message.name }}</strong>于 {{ message.timestamp }} 发表：</p>
+                        <p>{{ message.message }}</p>
+                    </el-card>
+                </el-main>
+            </el-container>
+        </div>
+        <!-- 引入 Element UI JavaScript 文件 -->
+        <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+        <!-- 引入自定义的 Vue 组件脚本 -->
+        <script src="http://zhs.rf.gd/msg/app.js"></script>
+    </body>
+
+</html>
