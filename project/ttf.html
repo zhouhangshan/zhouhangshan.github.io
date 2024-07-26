@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>实时显示汉仪文黑85w heavy字体</title>
+<style>
+  body {
+    font-family: Arial, sans-serif; /* Fallback font */
+  }
+
+  .container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  #textDisplay {
+    margin-top: 10px;
+    font-family: '汉仪文黑85w heavy', Arial, sans-serif; /* 使用汉仪文黑85w heavy字体 */
+    font-size: 24px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <label for="textInput">输入文字:</label>
+  <input type="text" id="textInput" oninput="updateText()" autofocus>
+  <div id="textDisplay"></div>
+</div>
+
+<script>
+  function updateText() {
+    var inputText = document.getElementById('textInput').value;
+    var textDisplay = document.getElementById('textDisplay');
+    textDisplay.textContent = inputText;
+  }
+</script>
+</body>
+</html>
