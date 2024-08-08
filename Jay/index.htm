@@ -1,40 +1,166 @@
-<html>
-  <head>
-    <title>最伟大的作品</title>
-    <script>
-      var _hmt = _hmt || [];
-      (function() {
-        var hm = document.createElement("script");
-        hm.src = "https://hm.baidu.com/hm.js?a15699370c6d7afd47e213b162d8bc58";
-        var s = document.getElementsByTagName("script")[0]; 
-        s.parentNode.insertBefore(hm, s);
-      })();
-    </script>
-    <link rel="shortcut icon" href="https://zhouhangshan.github.io/image/bggif.gif" type="image/x-icon">
-  </head>
-<style> 
-        @font-face{
-          font-family: Font1;
-          src: url('https://hellofonts.oss-cn-beijing.aliyuncs.com/%E6%B1%89%E4%BB%AA%E6%96%87%E9%BB%91/9.00.00/HYWenHei-85W.ttf');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>张三的小工具</title>
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        overflow: hidden; /* 隐藏滚动条 */
+    }
+    #canvas {
+        background-color: #99CCFF;
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1; /* 粒子效果层级 */
+    }
+    .content {
+        position: absolute;
+        top: 50%; /* 居中显示文本 */
+        left: 50%; /* 居中显示文本 */
+        transform: translate(-50%, -50%);
+        z-index: 2; /* 文本内容层级，比粒子效果高 */
+        color: #333; /* 文本颜色 */
+        font-size: 15px; /* 文本字体大小 */
+        font-family: Arial, sans-serif; /* 字体 */
+    }
+</style>
+</head>
+<body>
+<div class="content">
+    <h5>张三's 小工具</h4> 
+    <h6>持续更新中…</h6>
+    <a href="https://zhouhangshan.github.io/Jay/1/999.exe"><h6>Win九宫格移动小游戏（验证码框架）</h6></a>
+    <a href="https://zhouhangshan.github.io/Jay/2/Snake.exe"><h6>Win贪吃蛇小游戏</h6></a>
+    <a href="https://zhouhangshan.github.io/Jay/3"><h6>二维码在线生成工具</h6></a>
+    <a href="https://zhouhangshan.github.io/Jay/4"><h6>文字转语音API跳转入口(损坏，抢修中)</h6></a>
+    <a href="https://zhouhangshan.github.io/Jay/5"><h6>轮盘密码工具</h6></a>
+    <a href="https://zhouhangshan.github.io/Jay/6"><h6>进制转换在线工具</h6></a>
+    <a href="https://zhouhangshan.github.io/Jay/7"><h6>走迷宫小游戏(陀螺仪/键盘/滑动屏幕)</h6></a>
+    <a href="https://zhouhangshan.github.io/Jay/8"><h6>RGB调色板</h6></a>
+    <a href="https://zhouhangshan.github.io/Jay/9"><h6>生命游戏</h6></a>
+    <a href="https://wwp.lanzoup.com/iPS4D1n5pj7g"><h6>PDF2Word(访问密码：1107)</h6></a>
+    <a href="https://zhouhangshan.github.io/Jay/10"><h6>复活牢大</h6></a>
+    <a href="https://wwp.lanzoup.com/iGOFY25ab3da"><h6>免费ChatGPT(电脑软件,访问密码：1107)</h6></a>
+    <a href="https://zhouhangshan.github.io/Jay/12"><h6>爱心LOVE表白</h6></a>
+</div>
+<canvas id="canvas"></canvas>
+
+<script>
+// 粒子池类
+function ParticlePool() {
+    var particles = []; // 粒子数组
+
+    // 添加一个粒子到池中
+    this.add = function(shape, x, y, size, color, speedX, speedY) {
+        particles.push({ shape: shape, x: x, y: y, size: size, color: color, speedX: speedX, speedY: speedY });
+    };
+
+    // 绘制所有粒子
+    this.draw = function(ctx) {
+        for (var i = 0; i < particles.length; i++) {
+            var particle = particles[i];
+            ctx.fillStyle = particle.color;
+            if (particle.shape === 'triangle') {
+                drawTriangle(ctx, particle.x, particle.y, particle.size);
+            } else if (particle.shape === 'square') {
+                drawSquare(ctx, particle.x, particle.y, particle.size);
+            } else if (particle.shape === 'pentagon') {
+                drawPolygon(ctx, particle.x, particle.y, particle.size, 5);
+            } else if (particle.shape === 'hexagon') {
+                drawPolygon(ctx, particle.x, particle.y, particle.size, 6);
+            }
         }
-          body{font-family: Font1;text-align:center}  
-        </style> 
-  <body bgcolor="#99CCFF">
-    <h1>张三's 小工具</h1> 
-    <h5>持续更新中…</h5>
-    <a href="https://zhouhangshan.github.io/Jay/1/999.exe"><h3>Win九宫格移动小游戏（验证码框架）</h3></a>
-    <a href="https://zhouhangshan.github.io/Jay/2/Snake.exe"><h3>Win贪吃蛇小游戏</h3></a>
-    <a href="https://zhouhangshan.github.io/Jay/3"><h3>二维码在线生成工具</h3></a>
-    <a href="https://zhouhangshan.github.io/Jay/4"><h3>文字转语音API跳转入口(损坏，抢修中)</h3></a>
-    <a href="https://zhouhangshan.github.io/Jay/5"><h3>轮盘密码工具</h3></a>
-    <a href="https://zhouhangshan.github.io/Jay/6"><h3>进制转换在线工具</h3></a>
-    <a href="https://zhouhangshan.github.io/Jay/7"><h3>走迷宫小游戏(陀螺仪/键盘/滑动屏幕)</h3></a>
-    <a href="https://zhouhangshan.github.io/Jay/8"><h3>RGB调色板</h3></a>
-    <a href="https://zhouhangshan.github.io/Jay/9"><h3>生命游戏</h3></a>
-    <a href="https://wwp.lanzoup.com/iPS4D1n5pj7g"><h3>PDF2Word(访问密码：1107)</h3></a>
-    <a href="https://zhouhangshan.github.io/Jay/10"><h3>复活牢大</h3></a>
-    <a href="https://wwp.lanzoup.com/iGOFY25ab3da"><h3>免费ChatGPT(电脑软件,访问密码：1107)</h3></a>
-    <a href="https://zhouhangshan.github.io/Jay/12"><h3>爱心LOVE表白</h3></a>
-    <a href="https://zhouhangshan.github.io"><img src="https://zhouhangshan.github.io/image/webside-1.png" width="250" height="250"></img></a>
-  </body>
+    };
+
+    // 更新所有粒子状态
+    this.update = function() {
+        for (var i = particles.length - 1; i >= 0; i--) {
+            var particle = particles[i];
+            particle.x += particle.speedX;
+            particle.y += particle.speedY;
+
+            // 移除超出画布的粒子
+            if (particle.y < -particle.size || particle.x < -particle.size || particle.x > canvas.width + particle.size || particle.y > canvas.height + particle.size) {
+                particles.splice(i, 1);
+            }
+        }
+    };
+}
+
+// 绘制正多边形的函数
+function drawPolygon(ctx, x, y, size, sides) {
+    ctx.beginPath();
+    ctx.moveTo(x + size * Math.cos(0), y + size * Math.sin(0));
+    for (var i = 1; i <= sides; i++) {
+        ctx.lineTo(x + size * Math.cos(i * 2 * Math.PI / sides), y + size * Math.sin(i * 2 * Math.PI / sides));
+    }
+    ctx.closePath();
+    ctx.fill();
+}
+
+// 绘制正三角形
+function drawTriangle(ctx, x, y, size) {
+    drawPolygon(ctx, x, y, size, 3);
+}
+
+// 绘制正方形
+function drawSquare(ctx, x, y, size) {
+    ctx.fillRect(x - size / 2, y - size / 2, size, size);
+}
+
+// 初始化函数
+function init() {
+    var canvas = document.getElementById('canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    var ctx = canvas.getContext('2d');
+    var particlePool = new ParticlePool();
+
+    setInterval(function() {
+        var shape = randomShape(); // 随机选择一个形状
+        var x = canvas.width / 2; // 从画布中心出现
+        var y = canvas.height / 2; // 从画布中心出现
+        var size = 5; // 固定大小为5
+        var color = randomColor(); // 随机颜色
+
+        // 随机角度和速度
+        var angle = Math.random() * Math.PI * 2; // 随机角度
+        var speed = Math.random() * 3 + 1; // 随机速度
+
+        var speedX = Math.cos(angle) * speed; // X方向速度
+        var speedY = Math.sin(angle) * speed; // Y方向速度
+
+        particlePool.add(shape, x, y, size, color, speedX, speedY);
+    }, 100); // 每秒10个粒子
+
+    // 定时更新和绘制粒子
+    setInterval(function() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particlePool.update();
+        particlePool.draw(ctx);
+    }, 30); // 每30毫秒更新一次
+}
+
+// 随机选择一个形状
+function randomShape() {
+    var shapes = ['triangle', 'square', 'pentagon', 'hexagon'];
+    return shapes[Math.floor(Math.random() * shapes.length)];
+}
+
+// 随机生成颜色
+function randomColor() {
+    return '#' + Math.floor(Math.random()*16777215).toString(16); // 随机生成一个十六进制颜色值
+}
+
+// 在DOM加载完成后执行初始化
+document.addEventListener('DOMContentLoaded', function() {
+    init();
+});
+</script>
+</body>
 </html>
