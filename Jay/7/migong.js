@@ -444,6 +444,7 @@ function updateEmo(lr) {
     if (thingie.offsetLeft > mazeWidth) {
       emo.innerHTML = "";
       home.innerHTML = "🥳";
+      alert('你过关！')
     }
     prevl = thingie.offsetLeft;
   } else {
