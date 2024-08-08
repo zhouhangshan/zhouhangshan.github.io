@@ -1,55 +1,16 @@
-const chatboxEl = document.getElementById('chatbox');
-const inputEl = document.getElementById('inputbox');
-const submitEl = document.getElementById('submit');
-const loadingEl = document.getElementById('loading');
 
-submitEl.addEventListener('click', async () => {
-  const input = inputEl.value;
-  addMessage(input, 'user');
-  inputEl.value = '';
-
-  // 显示加载动画
-  loadingEl.style.display = 'block';
-
-  // 使用 OpenAI API 获取 ChatGPT 的回答
-  const response = await getResponseFromAPI(input);
-
-  // 隐藏加载动画
-  loadingEl.style.display = 'none';
-
-  addMessage(response, 'chatgpt');
-});
-
-function addMessage(text, sender) {
-  const messageEl = document.createElement('div');
-  messageEl.classList.add('message');
-  messageEl.classList.add(`${sender}-message`);
-  messageEl.innerHTML = text;
-  chatboxEl.appendChild(messageEl);
-  chatboxEl.scrollTop = chatboxEl.scrollHeight;
-}
-
-async function getResponseFromAPI(input) {
-    const endpoint = 'https://api.chatanywhere.tech';
-    const apiKey = 'sk-uoTYHKyy9kkr3SG9UvfrqGPzM6RqioR8TN2Q966k24HgHVux'; //换成自己的API Key
-    const prompt = input;
-
-    const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`
-        },
-
-        body: JSON.stringify({
-            model: "text-davinci-003",
-            prompt,
-            max_tokens: 100,
-            n: 1,
-            stop: null,
-            temperature: 0.5,
-        }),
-    });
-    const result = await response.json();
-    return result.choices[0].text;
-}
+    <h5>张三's 小工具</h4> 
+    <h6>持续更新中…</h6>
+    <a href="https://zhouhangshan.github.io/Jay/1/999.exe"><h6>Win九宫格移动小游戏（验证码框架）</h6></a>
+    <a href="https://zhouhangshan.github.io/Jay/2/Snake.exe"><h6>Win贪吃蛇小游戏</h6></a>
+    <a href="https://zhouhangshan.github.io/Jay/3"><h6>二维码在线生成工具</h6></a>
+    <a href="https://zhouhangshan.github.io/Jay/4"><h6>文字转语音API跳转入口(损坏，抢修中)</h6></a>
+    <a href="https://zhouhangshan.github.io/Jay/5"><h6>轮盘密码工具</h6></a>
+    <a href="https://zhouhangshan.github.io/Jay/6"><h6>进制转换在线工具</h6></a>
+    <a href="https://zhouhangshan.github.io/Jay/7"><h6>走迷宫小游戏(陀螺仪/键盘/滑动屏幕)</h6></a>
+    <a href="https://zhouhangshan.github.io/Jay/8"><h6>RGB调色板</h6></a>
+    <a href="https://zhouhangshan.github.io/Jay/9"><h6>生命游戏</h6></a>
+    <a href="https://wwp.lanzoup.com/iPS4D1n5pj7g"><h6>PDF2Word(访问密码：1107)</h6></a>
+    <a href="https://zhouhangshan.github.io/Jay/10"><h6>复活牢大</h6></a>
+    <a href="https://wwp.lanzoup.com/iGOFY25ab3da"><h6>免费ChatGPT(电脑软件,访问密码：1107)</h6></a>
+    <a href="https://zhouhangshan.github.io/Jay/12"><h6>爱心LOVE表白</h6></a>
