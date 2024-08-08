@@ -10,14 +10,31 @@
         padding: 0;
         overflow: hidden; /* 隐藏滚动条 */
     }
-    canvas {
+    #canvas {
         background-color: #99CCFF;
         display: block;
-        margin: auto;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1; /* 粒子效果层级 */
+    }
+    .content {
+        position: absolute;
+        top: 50%; /* 居中显示文本 */
+        left: 50%; /* 居中显示文本 */
+        transform: translate(-50%, -50%);
+        z-index: 2; /* 文本内容层级，比粒子效果高 */
+        color: #333; /* 文本颜色 */
+        font-size: 24px; /* 文本字体大小 */
+        font-family: Arial, sans-serif; /* 字体 */
     }
 </style>
 </head>
 <body>
+<div class="content">
+    <h1>Welcome to Particle Playground!</h1>
+    <p>Here is some normal HTML content that will overlay the particle system.</p>
+</div>
 <canvas id="canvas"></canvas>
 
 <script>
