@@ -11,7 +11,7 @@
         overflow: hidden; /* 隐藏滚动条 */
     }
     canvas {
-        background-color: black;
+        background-color: #99CCFF;
         display: block;
         margin: auto;
     }
@@ -95,7 +95,7 @@ function init() {
         var shape = randomShape(); // 随机选择一个形状
         var x = canvas.width / 2; // 从画布中心出现
         var y = canvas.height / 2; // 从画布中心出现
-        var size = Math.random() * 3 + 2; // 随机大小，调整为2到5之间
+        var size = 5; // 固定大小为5
         var color = randomColor(); // 随机颜色
 
         // 随机角度和速度
