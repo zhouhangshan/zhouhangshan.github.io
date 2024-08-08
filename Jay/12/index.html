@@ -127,84 +127,11 @@
 		</audio>
 	</div>
 
-	<!-- S  密码框 by@wht -->
-	<div class="modal"
-		id="commitModal">
-		<div class="modal-dialog">
-			<div class="modal-body">
-				<p class="modalTxt"
-					id="modalTxt"></p>
-				<div class="pswWrap">
-					<input class="pswInput"
-						id="pswInput"
-						type="text"
-						placeholder="请输入密码">
-					<span class="sureBtn"
-						id="sureBtn">确定</span>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- E  密码框 -->
 </body>
 
 <script src="http://sas.wazf.top/3681768/page/love/static/js/jquery-2.0.3.min.js"></script>
 <script src="http://sas.wazf.top/3681768/asset/js/modal.js"></script>
 <script src="http://sas.wazf.top/3681768/asset/js/totast.js"></script>
-<script>
-
-	//const BASE_URL = 'https://x.888dly.vip/page/';
-	const BASE_URL = './';
-	const frameDom = document.getElementById('myframe');
-	var num = location.pathname.replace(/\//g, '');
-	//num = 8201;
-	frameDom.style.height = window.innerHeight - 10 + 'px';
-	$.ajax({
-		// url:
-		// 'https://love.layzz.cn/qrcode/getContentById?source=' +
-		// source +
-		// '&id=' +
-		// num,
-		url: 'https://love.layzz.cn/qrcode/getV2ContentById?source=301&contentId=' + num,
-		async: false,
-		success: function (res) {
-			console.log(res);
-			tempRes = res;
-			localStorage.setItem('templateDate', JSON.stringify(res));
-			//by@wht
-			let returnPwd = res.data.password
-			//拦截是否有密码，有密码弹出模态框，输入密码校验
-			if (res.data.password != null && res.data.password != '') {
-				$("#modalTxt").html(res.data.question)
-				$("#commitModal").show();
-			}
-
-			//点击确定密码按钮
-			$("#sureBtn").click(function () {
-				let userPwd = $.trim($("#pswInput").val());
-				if (userPwd == null || userPwd == '') {
-					errorSnackbar('请输入密码')
-					return;
-				}
-				if (userPwd !== returnPwd) {
-					errorSnackbar('密码错误')
-					return;
-				} else {
-					$("#commitModal").hide();
-				}
-			})
-
-			document.title = res.data.title;
-			if(res.data.type == 1) {
-			    $('#morte-bt').hide();
-			}else {
-			    if(null != res.data.moreLink && '' != res.data.moreLink) {
-			        $('#moreLink').attr('href', res.data.moreLink);
-			    }else {
-			        $('#morte-bt').hide();
-			    }
-			}
-			//$('#moreLink').attr('href', res.data.link);
 
 			document.addEventListener('DOMContentLoaded', function () {
 				function audioAutoPlay() {
