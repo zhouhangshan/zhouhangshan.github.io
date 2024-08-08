@@ -31,8 +31,8 @@ function ParticlePool() {
     var particles = []; // 粒子数组
 
     // 添加一个粒子到池中
-    this.add = function(shape, x, y, size, color) {
-        particles.push({ shape: shape, x: x, y: y, size: size, color: color });
+    this.add = function(shape, x, y, size, color, speedX, speedY) {
+        particles.push({ shape: shape, x: x, y: y, size: size, color: color, speedX: speedX, speedY: speedY });
     };
 
     // 绘制所有粒子
@@ -55,10 +55,12 @@ function ParticlePool() {
     // 更新所有粒子状态
     this.update = function() {
         for (var i = particles.length - 1; i >= 0; i--) {
-            // 简单模拟粒子的移动
-            particles[i].y -= 1;
+            var particle = particles[i];
+            particle.x += particle.speedX;
+            particle.y += particle.speedY;
+
             // 移除超出画布的粒子
-            if (particles[i].y < -particles[i].size) {
+            if (particle.y < -particle.size || particle.x < -particle.size || particle.x > canvas.width + particle.size) {
                 particles.splice(i, 1);
             }
         }
@@ -94,11 +96,19 @@ function init() {
 
     setInterval(function() {
         var shape = randomShape(); // 随机选择一个形状
-        var x = Math.random() * canvas.width; // 随机x坐标
-        var y = canvas.height; // 从画布底部开始出现
-        var size = Math.random() * 10 + 5; // 随机大小，调整为更小的尺寸
+        var x = canvas.width / 2; // 从画布中心出现
+        var y = canvas.height / 2; // 从画布中心出现
+        var size = Math.random() * 3 + 2; // 随机大小，调整为2到5之间
         var color = randomColor(); // 随机颜色
-        particlePool.add(shape, x, y, size, color);
+
+        // 随机角度和速度
+        var angle = Math.random() * Math.PI * 2; // 随机角度
+        var speed = Math.random() * 3 + 1; // 随机速度
+
+        var speedX = Math.cos(angle) * speed; // X方向速度
+        var speedY = Math.sin(angle) * speed; // Y方向速度
+
+        particlePool.add(shape, x, y, size, color, speedX, speedY);
     }, 100); // 每秒10个粒子
 
     // 定时更新和绘制粒子
