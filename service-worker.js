@@ -5,9 +5,8 @@ self.addEventListener('install', (event) => {
       return cache.addAll([
         '/',
         '/index.html',
-        '/styles.css',
         '/main.js',
-        '/ico.ico
+        '/ico.ico'
       ]);
     })
   );
