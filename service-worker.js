@@ -1,3 +1,28 @@
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open('周航山的网站').then((cache) => {
+      return cache.addAll([
+        '/',
+        '/index.html',
+        '/styles.css',
+        '/main.js',
+        '/ico.ico
+      ]);
+    })
+  );
+});
+
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      return cachedResponse || fetch(event.request);
+    })
+  );
+});
+
+
+
 self.addEventListener('install', (event) => {
   console.log('Service Worker installed');
 });
