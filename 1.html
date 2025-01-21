@@ -1,5 +1,900 @@
-<body bgcolor="black">
-<iframe src="https://ip.skk.moe/simple" style="width: 100%; border: 0"></iframe>
-<!-- 暗色模式 -->
-<iframe src="https://ip.skk.moe/simple-dark" style="width: 100%; border: 0"></iframe>
+<!doctype html>
+<html>
+ 
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<meta name="renderer" content="webkit">
+	<!-- 引入jquey -->
+	<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+ 
+ 
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+			box-sizing: border-box;
+		}
+ 
+		.container {
+ 
+			width: 100%;
+			height: 380px;
+			margin: 10px auto;
+		}
+ 
+		.box {
+			left: 10%;
+			top: 110px;
+			width: 320px;
+			perspective: 500px;
+			position: relative;
+			margin: 0 auto;
+		}
+ 
+		.boxmin {
+			left: 25%;
+			top: -40%;
+			width: 320px;
+			perspective: 500px;
+			position: relative;
+			margin: 0 auto;
+			zoom: 51%;
+		}
+ 
+ 
+		.content {
+			width: 180px;
+			height: 180px;
+			transform-style: preserve-3d;
+			animation: run 10s infinite;
+		}
+ 
+		.face {
+			width: 180px;
+			height: 180px;
+			position: absolute;
+			text-align: center;
+			line-height: 180px;
+ 
+		}
+ 
+		.minibox {
+			width: 54px;
+			height: 54px;
+			border-radius: 4px;
+			float: left;
+			border: 3px solid #000;
+		}
+ 
+		.divbuttons {
+			height: 60px;
+			margin: 10px auto;
+			text-align: center;
+		}
+ 
+		.button {
+			font-size: xx-large;
+			width: 100px;
+			padding: 3px;
+			margin: 3px;
+		}
+	</style>
+	<script type="text/javascript">
+		var colors = ["green", "yellow", "red", "blue", "white", "pink"];
+		var sidenames = ["aside", "bside", "cside", "dside", "eside", "fside"];
+		var colordata = [];
+ 
+		//把数据对应到格子上
+		function fillcolor2box() {
+			console.log('开始给魔方着色');
+			sidenames.map(function (v) {
+				var k = sidenames.indexOf(v);
+				for (var i = 0; i < 9; i++) {
+					// 填充大魔方
+					$(".box ." + v + " div").eq(i).css("background", colordata[k][i]);
+ 
+					// 填充小魔方，便于观察
+					if ("aside,bside,fside".split(",").indexOf(v) >= 0) {
+						// 小魔方正面透明
+						$(".boxmin ." + v + " div").eq(i).css("background", "fixed");
+						$(".boxmin .minibox").css("border", "1px solid rgb(138, 135, 135)");
+					} else {
+						// 背面涂色
+						$(".boxmin ." + v + " div").eq(i).css("background", colordata[k][i]);
+					}
+				}
+			});
+		}
+ 
+		function roteall(rotefaces, rotepos, movefave, bno) {
+			// 	var rotefaces=['fside','cside','eside','bside','fside']; //本次操作的4个相关面，一个顶面 
+			// var rotepos=[[8,7,6],[6,3,0],[0,1,2],[2,5,8],[8,7,6]]; //本次操作的块
+			// var movefave = "aside";  //本次操作的4个相关面，一个顶面		
+			// var bno = "36785210"; //01258763 36785210 
+ 
+			//为复制先存一个a面的顶上3个块颜色
+			var tmpcolordata = [];
+			for (var i = 0; i < colordata.length; i++) {
+				tmpcolordata.push(colordata[i].concat()); //保存第一个数据
+			}
+ 
+			for (var i = 0; i < rotefaces.length; i++) {  //4个面轮流复制，最后一个面的时候使用保存的数据
+				for (var j = 0; j < rotepos[i].length; j++) {
+					if (i < 4) {
+						colordata[sidenames.indexOf(rotefaces[i + 1])][rotepos[i + 1][j]] =
+							tmpcolordata[sidenames.indexOf(rotefaces[i])][rotepos[i][j]];
+					}
+				}
+			}
+			tmpcolordata = [];
+ 
+			//顶面旋转
+			for (var k = 0; k < movefave.length; k++) {
+				var ci = sidenames.indexOf(movefave[k]);
+				var bn = bno[k].split("");// 顶面的操作是这8个格子依次右进3次 "01258763"顺时针
+				for (var i = 0; i < 2; i++) {
+					var tmp = colordata[ci][bn[0]]; //保存第一个数据
+					for (var j = 0; j < bn.length; j++) {
+						if (j >= bn.length - 1) {
+							colordata[ci][bn[j]] = tmp;
+						} else {
+							colordata[ci][bn[j]] = colordata[ci][bn[j + 1]];
+						}
+					}
+				}
+			}
+ 
+		}
+ 
+		// 顶逆
+		function U1() {
+			var rotefaces = ['aside', 'cside', 'dside', 'bside', 'aside']; //本次操作的4个相关面，一个顶面 
+			var rotepos = [[0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2]]; //本次操作的块
+			var movefave = ["fside"];  //本次操作的4个相关面，一个顶面		
+			var bno = ["01258763"]; //01258763 36785210
+			roteall(rotefaces, rotepos, movefave, bno);
+ 
+		}
+		function U() {
+			var rotefaces = ['aside', 'bside', 'dside', 'cside', 'aside']; //本次操作的4个相关面，一个顶面 
+			var rotepos = [[0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2]]; //本次操作的块
+			var movefave = ["fside"];  //本次操作的4个相关面，一个顶面		
+			var bno = ["36785210"];
+			roteall(rotefaces, rotepos, movefave, bno);
+ 
+		}
+ 
+		// 前逆
+		function F1() {
+			var rotefaces = ['aside', 'fside', 'dside', 'eside', 'aside']; //本次操作的4个相关面，一个顶面 
+			var rotepos = [[6, 3, 0], [6, 3, 0], [2, 5, 8], [6, 3, 0], [6, 3, 0]]; //本次操作的块
+			var movefave = ["bside"];  //本次操作的4个相关面，一个顶面		
+			var bno = ["01258763"]; //01258763 36785210
+			roteall(rotefaces, rotepos, movefave, bno);
+ 
+		}
+		function F() {
+			var rotefaces = ['aside', 'eside', 'dside', 'fside', 'aside']; //本次操作的4个相关面，一个顶面 
+			var rotepos = [[6, 3, 0], [6, 3, 0], [2, 5, 8], [6, 3, 0], [6, 3, 0]]; //本次操作的块
+			var movefave = ["bside"];  //本次操作的4个相关面，一个顶面		
+			var bno = ["36785210"]; //01258763 36785210
+			roteall(rotefaces, rotepos, movefave, bno);
+ 
+		}
+ 
+		//右逆
+		function R1() {
+			var rotefaces = ['fside', 'bside', 'eside', 'cside', 'fside']; //本次操作的4个相关面，一个顶面 
+			var rotepos = [[8, 7, 6], [2, 5, 8], [0, 1, 2], [6, 3, 0], [8, 7, 6]]; //本次操作的块
+			var movefave = ["aside"];  //本次操作的4个相关面，一个顶面		
+			var bno = ["01258763"]; //01258763 36785210
+			roteall(rotefaces, rotepos, movefave, bno);
+ 
+		}
+		function R() {
+			var rotefaces = ['fside', 'cside', 'eside', 'bside', 'fside']; //本次操作的4个相关面，一个顶面 
+			var rotepos = [[8, 7, 6], [6, 3, 0], [0, 1, 2], [2, 5, 8], [8, 7, 6]]; //本次操作的块
+			var movefave = ["aside"];  //本次操作的4个相关面，一个顶面		
+			var bno = ["36785210"]; //01258763 36785210
+			roteall(rotefaces, rotepos, movefave, bno);
+ 
+		}
+		// 后逆
+		function B1() {
+			var rotefaces = ['aside', 'fside', 'dside', 'eside', 'aside']; //本次操作的4个相关面，一个顶面 
+			var rotepos = [[2, 5, 8], [2, 5, 8], [6, 3, 0], [2, 5, 8], [2, 5, 8]]; //本次操作的块
+			var movefave = ["cside"];  //本次操作的4个相关面，一个顶面		
+			var bno = ["36785210"]; //01258763 36785210
+			roteall(rotefaces, rotepos, movefave, bno);
+ 
+		}
+		function B() {
+			var rotefaces = ['aside', 'eside', 'dside', 'fside', 'aside']; //本次操作的4个相关面，一个顶面 
+			var rotepos = [[2, 5, 8], [2, 5, 8], [6, 3, 0], [2, 5, 8], [2, 5, 8]]; //本次操作的块
+			var movefave = ["cside"];  //本次操作的4个相关面，一个顶面		
+			var bno = ["01258763"]; //01258763 36785210
+			roteall(rotefaces, rotepos, movefave, bno);
+ 
+		}
+ 
+		// 整体顶逆
+		function U1all() {
+			var rotefaces = ['aside', 'cside', 'dside', 'bside', 'aside']; //本次操作的4个相关面，一个顶面 
+			var rotepos = [[0, 1, 2, 3, 4, 5, 6, 7, 8], [0, 1, 2, 3, 4, 5, 6, 7, 8], [0, 1, 2, 3, 4, 5, 6, 7, 8], [0, 1, 2, 3, 4, 5, 6, 7, 8], [0, 1, 2, 3, 4, 5, 6, 7, 8]]; //本次操作的块
+			var movefave = ['eside', 'fside'];  //本次操作的4个相关面，一个顶面		
+			var bno = ['36785210', '01258763']; //01258763 36785210
+			roteall(rotefaces, rotepos, movefave, bno);
+ 
+ 
+ 
+		}
+		// 整体顶顺
+		function Uall() {
+			var rotefaces = ['aside', 'bside', 'dside', 'cside', 'aside']; //本次操作的4个相关面，一个顶面 
+			var rotepos = [[0, 1, 2, 3, 4, 5, 6, 7, 8], [0, 1, 2, 3, 4, 5, 6, 7, 8], [0, 1, 2, 3, 4, 5, 6, 7, 8], [0, 1, 2, 3, 4, 5, 6, 7, 8], [0, 1, 2, 3, 4, 5, 6, 7, 8]]; //本次操作的块
+			var movefave = ['eside', 'fside'];  //本次操作的4个相关面，一个顶面		
+			var bno = ['01258763', '36785210']; //01258763 36785210
+			roteall(rotefaces, rotepos, movefave, bno);
+ 
+		}
+ 
+ 
+		$(function (argument) {
+ 
+ 
+ 
+			for (var i = 0; i < colors.length; i++) {
+				// 面
+				var tmp = [];
+				for (var j = 0; j < 9; j++) {
+					// 一面9块
+					tmp.push(colors[i]);
+				}
+				// 往魔方上贴一面的颜色
+				colordata.push(tmp);
+			}
+			console.log('初始化魔方数据', colordata);
+ 
+			fillcolor2box(colordata, sidenames);
+ 
+			//整体有个旋转角度可以让我们看到3面    
+			$(".box .content").css("transform", "rotateX(-35deg) rotateY(54deg) rotateZ(9deg)");
+			$(".boxmin .content").css("transform", "rotateX(-35deg) rotateY(67deg) rotateZ(14deg)");
+			// 各面旋转拼凑正方体
+			$(".bside").css("transform", "rotateY(-90deg) translateX(-71px) translateZ(90px)");
+			$(".cside").css("transform", "rotateY(90deg) translateX(90px) translateZ(71px)");
+			$(".dside").css("transform", "rotateY(180deg) translateX(17px)   translateZ(161px)");
+			$(".eside").css("transform", "rotateX(269deg)  translateY(90px) translateZ(71px) ");
+			$(".fside").css("transform", "rotateX(90deg) translateY(-71px) translateZ(90px)");
+ 
+			console.log('正在打乱魔方数据...');
+			setTimeout(() => { Rndx(); }, 3000);
+ 
+ 
+ 
+		});
+ 
+		// 打乱---随机旋转100次
+		function Rndx() {
+			console.log('打乱魔方', colordata);
+			for (var i = 0; i < 1000; i++) {
+				var rand = Math.floor(Math.random() * 4 + 1);
+				if (rand == 1) { R(); }
+				if (rand == 2) { U(); }
+				if (rand == 3) { F(); }
+				if (rand == 4) { Uall(); }
+			}
+			fillcolor2box(colordata);
+		}
+ 
+ 
+ 
+		function F_End() { F(); fillcolor2box(colordata); }
+		function F1_End() { F1(); fillcolor2box(colordata); }
+		function R_End() { R(); fillcolor2box(colordata); }
+		function R1_End() { R1(); fillcolor2box(colordata); }
+		function B_End() { B(); fillcolor2box(colordata); }
+		function B1_End() { B1(); fillcolor2box(colordata); }
+		function U_End() { U(); fillcolor2box(colordata); }
+		function U1_End() { U1(); fillcolor2box(colordata); }
+		function Uall_End() { Uall(); fillcolor2box(colordata); }
+		function U1all_End() { U1all(); fillcolor2box(colordata); }
+ 
+ 
+ 
+		// 1 底层小白
+		function s1_xiaobai() {
+			for (var i = 0; i < 100; i++) {
+				step1();
+				if (checkokstep1()) { break; }
+			}
+			fillcolor2box(colordata);
+			
+			console.log('1底层十字完成');
+		}
+ 
+		function s2_dicheng() {
+			for (var i = 0; i < 100; i++) {
+				step2();
+				if (checkokstep2()) { break; }
+			}
+			fillcolor2box(colordata);
+			
+			console.log('2底层完成');
+		}
+ 
+		function step1(step1_times) {
+			// 找到底层白色做成底层十字，俗称小白花
+			// 分析：白色共8个动快 0123 5678 
+ 
+			var w_index = "";
+			var w_len_index = "";
+			var w_len_indexa = "";
+			var w_len_indexacolor = "";
+			var checkeeee = "";
+			var faces = "abcdef".split("");
+			var lenwei = "1357"; //棱位 
+			var jiaowei = "0268"; //角位
+			var colorseq = ["green", "red", "blue", "yellow"];
+			var map_lenwei = ["a1", "a3", "a5", "a7", "b1", "b3", "b5", "b7", "c1", "c3", "c5", "c7", "d1", "d3", "d5", "d7", "e1", "e3", "e5", "e7", "f1", "f3", "f5", "f7"];
+			var map_lenweia = ["f7", "b5", "c3", "e1", "f3", "d5", "a3", "e3", "f5", "a5", "d3", "e5", "f1", "c5", "b3", "e7", "a7", "b7", "c7", "d7", "d1", "b1", "c1", "a1"];
+			for (var i = 0; i < colordata.length; i++) {
+				for (var j = 0; j < colordata[i].length; j++) {
+					if ('white' == colordata[i][j]) {
+						w_index += "," + faces[i] + "" + j;
+						if (lenwei.indexOf(j) >= 0) {  //var lenwei="1357"; //棱位 
+							checkeeee += faces[i];
+							var this_w_len_index = "" + faces[i] + "" + j
+							w_len_index += "," + this_w_len_index;
+							var this_w_len_indexa = map_lenweia[map_lenwei.indexOf(this_w_len_index)]
+							w_len_indexa += "," + this_w_len_indexa;
+							var ff = this_w_len_indexa.split("")[0];
+							var ffi = this_w_len_indexa.split("")[1];
+							w_len_indexacolor += "," + colordata[faces.indexOf(ff)][ffi];
+						}
+					}
+				}
+			}
+ 
+			var hasa = (checkeeee.indexOf("a") >= 0)
+			// console.log("白色9块分布于："+w_index);		
+			// console.log("白色棱位："+w_len_index);	 //a3,a5,e5,e7
+			// console.log("白色棱位对位置："+w_len_indexa);	 //a3,a5,e5,e7
+			// console.log("白色棱位对颜色："+w_len_indexacolor);	 //a3,a5,e5,e7
+			// console.log("A面的颜色是："+ colordata[0][4]);
+			// 	console.log("B面的颜色是："+ colordata[1][4]);
+			// 	console.log("C面的颜色是："+ colordata[2][4]);
+			// 	console.log("D面的颜色是："+ colordata[3][4]);
+			// 	console.log("E面的颜色是："+ colordata[4][4]);
+			// 	console.log("F面的颜色是："+ colordata[5][4]);
+			// 	console.log("checkeeee是："+ checkeeee+",其中是否有a:" + hasa);
+ 
+			var needmove = false;
+ 
+			if (1 <= 100) {
+				if (checkeeee.indexOf("a") < 0) {
+					if (checkeeee.indexOf("b") >= 0) {
+						U1all();
+						step1();
+					} else if (checkeeee.indexOf("c") >= 0) {
+						Uall();
+						step1();
+					} else if (checkeeee.indexOf("d") >= 0) {
+						Uall(); Uall();
+						step1();
+					} else if (checkeeee.indexOf("f") >= 0) {
+						var fn = w_len_index.substr(w_len_index.indexOf("f") + 1, 1);
+						var aindex = (w_len_index.indexOf("f" + fn) - 1) / 3;
+						var ducolor = w_len_indexacolor.split(",")[aindex + 1];
+						var bcolor = colordata[1][4];
+						var N = 4 + colorseq.indexOf(bcolor) - colorseq.indexOf(ducolor);
+						if (fn == 1) { U1(); }
+						if (fn == 3) { }
+						if (fn == 5) { U(); U(); }
+						if (fn == 7) { U(); }
+ 
+						for (var i = 0; i < N; i++) {
+							U1all(); U();
+						}
+						F(); F();
+						step1();
+					} else {
+						//这里已经是eeee.如果颜色不对是需要拧上去的。
+						var fn = w_len_index.substr(w_len_index.indexOf("e") + 1, 1);
+						var aindex = (w_len_index.indexOf("e" + fn) - 1) / 3;
+						var ducolor = w_len_indexacolor.split(",")[aindex + 1];
+ 
+						var errcolor = false;
+						if (fn == 1) { errcolor = (ducolor != colordata[0][4]); }
+						if (fn == 3) { errcolor = (ducolor != colordata[1][4]); }
+						if (fn == 5) { errcolor = (ducolor != colordata[2][4]); }
+						if (fn == 7) { errcolor = (ducolor != colordata[3][4]); }
+						if (fn == 1 && errcolor) { R(); }
+						if (fn == 3 && errcolor) { F(); }
+						if (fn == 5 && errcolor) { B(); }
+						if (fn == 7 && errcolor) { U1all(); F(); }
+						// 	colorseq.indexOf(colordata[5][fn])-  colorseq.indexOf(ducolor)
+						// console.log("ducolor："+ ducolor+",colordata[0][4]" + colordata[0][4]);
+					}
+				} else {
+					//has a
+					// console.log("has a and ：a"+   w_len_index.substr(w_len_index.indexOf("a")+1,1) );
+					var fn = w_len_index.substr(w_len_index.indexOf("a") + 1, 1);
+					var aindex = (w_len_index.indexOf("a" + fn) - 1) / 3;
+					var ducolor = w_len_indexacolor.split(",")[aindex + 1];
+ 
+ 
+					// var colorseq=["green","red","blue","yellow"];   green
+					//B_color w_len_indexacolor.split(",")[aindex+1]
+					// a面有白。a->a1->color->weizhi 
+ 
+					if (fn == 1) { }
+					if (fn == 3) { R(); }
+					if (fn == 5) { R1(); }
+					if (fn == 7) { R(); R(); }
+					var bcolor = colordata[1][4];
+					var N = 4 + colorseq.indexOf(bcolor) - colorseq.indexOf(ducolor);
+					for (var i = 0; i < N; i++) {
+						U1all(); U();
+					}
+					R1(); F(); R();
+ 
+				}
+			}
+ 
+ 
+ 
+ 
+ 
+			//计算棱位对应色		
+			// for (var j = 0; j < faces.length; j++) {
+			// 	for (var i = 0; i < arr_lenwei.length; i++) {
+			// 		map_lenwei.push(""+faces[j]+""+arr_lenwei[i]);
+			// 	}
+			// }
+			// console.log(map_lenwei); 
+			// ["a1", "a3", "a5", "a7", "b1", "b3", "b5", "b7", "c1", "c3", "c5", "c7", "d1", "d3", "d5", "d7", "e1", "e3", "e5", "e7", "f1", "f3", "f5", "f7"]
+ 
+		}
+		// 2找到底层角块，并归位
+		function step2() {
+ 
+			var w_index = "";
+			var w_len_index = "";
+			var w_len_indexa = "";
+			var w_len_indexacolor = "";
+			var checkeeee = "";
+			var faces = "abcdef".split("");
+			var lenwei = "1357"; //棱位 
+			var jiaowei = "0268"; //角位
+			var colorseq = ["green", "red", "blue", "yellow"];
+ 
+			for (var i = 0; i < colordata.length; i++) {
+				for (var j = 0; j < colordata[i].length; j++) {
+					if ('white' == colordata[i][j]) {
+						w_index += "," + faces[i] + "" + j;
+						if (jiaowei.indexOf(j) >= 0) {  //var  jiaowei="0268"; 
+							checkeeee += faces[i];
+							var this_w_len_index = "" + faces[i] + "" + j
+							w_len_index += "," + this_w_len_index;
+ 
+ 
+						}
+					}
+				}
+			}
+ 
+			// 白色9块分布于：,b0,c2,e1,e3,e4,e5,e6,e7,f6
+			// index_mofang.html:622 白色角位：,b0,c2,e6,f6
+			// index_mofang.html:631 checkeeee是：bcef,其中是否有a:false
+			// 同理也是先将1个白色角块转至A面。然后定位于A0，然后对应相应颜色。共3个步骤
+			var hasa = (checkeeee.indexOf("a") >= 0)
+			// console.log("白色9块分布于："+w_index);	 	
+			// console.log("白色角位："+w_len_index);	 //a3,a5,e5,e7 
+			// 	console.log("checkeeee是："+ checkeeee+",其中是否有a:" + hasa);
+ 
+ 
+ 
+			if (1 <= 100) {
+				if (checkeeee.indexOf("a") < 0) {
+					if (checkeeee.indexOf("b") >= 0) {
+						U1all();
+						step2();
+					} else if (checkeeee.indexOf("c") >= 0) {
+						Uall();
+						step2();
+					} else if (checkeeee.indexOf("d") >= 0) {
+						Uall(); Uall();
+						step2();
+					} else if (checkeeee.indexOf("f") >= 0) {
+						// 白角块在F面时有2个路线。
+						var fn = w_len_index.substr(w_len_index.indexOf("f") + 1, 1);
+						if (fn == 0) { U(); F1(); U1(); F() }
+						if (fn == 2) { F1(); U1(); F() }
+						if (fn == 6) { U1(); F1(); U(); F(); }
+						if (fn == 8) { F1(); U(); F(); }
+						step2();
+					} else {
+						//eeee就不拧了，先检查再拧。
+					}
+				} else {
+					// console.log("has a and ：a"+   w_len_index.substr(w_len_index.indexOf("a")+1,1) );
+					var fn = w_len_index.substr(w_len_index.indexOf("a") + 1, 1);
+					var aindex = (w_len_index.indexOf("a" + fn) - 1) / 3;
+ 
+					if (fn == 0) { }
+					if (fn == 2) { U1(); R(); U(); R1(); }
+					if (fn == 6) { R(); U(); R1(); U1(); }
+					if (fn == 8) { R1(); U1(); R(); U(); }
+					//A0已经有一个白角块了。到时间看下是什么颜色了。
+					var colorB = colordata[1][2];
+					var bcolor = colordata[1][4];
+					var N = 4 + colorseq.indexOf(bcolor) - colorseq.indexOf(colorB);
+					for (var i = 0; i < N; i++) {
+						U1all(); U();
+					}
+					U1(); F1(); U(); F();
+ 
+				}
+			}
+			// console.log(" step2执行了" +  step2_times + "次" );
+ 
+		}
+ 
+		var checkokstep1 = function () {
+			if (colordata[4][1] === colordata[4][4] &&
+				colordata[4][3] === colordata[4][4] &&
+				colordata[4][5] === colordata[4][4] &&
+				colordata[4][7] === colordata[4][4]) {
+				if (colordata[0][7] === colordata[0][4] &&
+					colordata[1][7] === colordata[1][4] &&
+					colordata[2][7] === colordata[2][4] &&
+					colordata[3][7] === colordata[3][4]) {
+					// console.log("底部小白花");
+					return true;
+				}
+			}
+			return false;
+		}
+ 
+		var checkokstep2 = function () { //底层ok
+			if (colordata[4][1] === colordata[4][4] &&
+				colordata[4][3] === colordata[4][4] &&
+				colordata[4][5] === colordata[4][4] &&
+				colordata[4][7] === colordata[4][4] &&
+				colordata[4][0] === colordata[4][4] &&
+				colordata[4][2] === colordata[4][4] &&
+				colordata[4][4] === colordata[4][4] &&
+				colordata[4][8] === colordata[4][4]) {
+				if (colordata[0][6] === colordata[0][4] && colordata[0][7] === colordata[0][4] && colordata[0][8] === colordata[0][4] &&
+					colordata[1][6] === colordata[1][4] && colordata[1][7] === colordata[1][4] && colordata[1][8] === colordata[1][4] &&
+					colordata[2][6] === colordata[2][4] && colordata[2][7] === colordata[2][4] && colordata[2][8] === colordata[2][4] &&
+					colordata[3][6] === colordata[3][4] && colordata[2][7] === colordata[2][4] && colordata[2][8] === colordata[2][4]) {
+					// console.log("底层");
+					return true;
+				}
+			}
+			return false;
+		}
+ 
+ 
+ 
+ 
+ 
+ 
+		function s3_zhongcheng(argument) {
+			var times = 30;
+			step3_times = 0;
+			for (var i = 0; i < times; i++) {
+				step3();
+				if (checkokstep3()) { break; }
+			}
+			fillcolor2box(colordata);
+			console.log('3中间层完成');
+		}
+ 
+		function step3(argument) {
+			// 思路也是把4个找出来。且把他们固定在A1位置。然后判定颜色，然后根据公式旋转。
+			// 如何找？经过12步骤，中层块只有4个，且只可能在f1357,a35,d35,这8个位置。去掉有顶色的块，剩下就是
+ 
+			var fcolro = colordata[5][4];
+			var maybepos = ["f1", "f3", "f5", "f7", "a3", "a5", "d3", "d5"];
+			var maybeposa = ["d1", "b1", "c1", "a1", "b5", "c3", "c5", "b3"];
+			var maybecolor = [];
+			var maybecolora = [];
+			var pos = [];
+			var posa = [];
+			var color3 = [];
+			var color3a = [];
+			var checkeeee = "";
+			var faces = "abcdef".split("");
+			maybecolor = maybepos.map(function (v, i) {
+				return colordata[faces.indexOf(v.substr(0, 1))][v.substr(1)];
+			});
+			maybecolora = maybeposa.map(function (v, i) {
+				return colordata[faces.indexOf(v.substr(0, 1))][v.substr(1)];
+			});
+ 
+			for (var i = 0; i < maybecolor.length; i++) {
+				if (maybecolor[i] != fcolro && maybecolora[i] != fcolro) {
+					checkeeee += maybepos[i].substr(0, 1);
+					pos.push(maybepos[i]);
+					posa.push(maybeposa[i]);
+					color3.push(maybecolor[i]);
+					color3a.push(maybecolora[i]);
+				}
+			}
+			// console.log(fcolro);
+			// console.log(pos);
+			// console.log(posa);		
+			// console.log(color3);
+			// console.log(color3a);
+			// console.log(checkeeee);
+			var colorseq = ["green", "red", "blue", "yellow"];
+			step3_times++;
+			if (step3_times <= 100) {
+				if (checkeeee.indexOf("f") < 0) {
+					if (checkeeee.indexOf("a") >= 0) {
+						if (pos.indexOf("a3") >= 0 && checknotokstep3("a3")) {
+							U1(); F1(); U(); F(); U(); R(); U1(); R1(); step3();
+						} else if (pos.indexOf("a5") >= 0 && checknotokstep3("a5")) { // a5
+							Uall(); step3();
+						}
+					} else if (checkeeee.indexOf("d") < 0) {
+						if (pos.indexOf("d3") >= 0 && checknotokstep3("d3")) {
+							U1all(); U1all(); step3();
+						} else if (pos.indexOf("d5") >= 0 && checknotokstep3("d5")) { // a5
+							Uall(); step3();
+						}
+					}
+				} else {
+					//公式f1357 
+					var fn = 0;
+					for (var i = 0; i < pos.length; i++) {
+						if (pos[i].indexOf("f") >= 0) {
+							fn = i;
+						}
+					}
+					// console.log(pos[fn]);
+					// console.log(color3[fn]);
+					// console.log(color3a[fn]);
+					// console.log(4+colorseq.indexOf(color3[fn])-colorseq.indexOf(color3a[fn]));
+					// console.log(colorseq);
+					if (colorseq.indexOf(color3[fn]) - colorseq.indexOf(color3a[fn]) == -1 || colorseq.indexOf(color3[fn]) - colorseq.indexOf(color3a[fn]) == 3) {
+						// console.log("顺：" + color3[fn] + color3a[fn] ); 
+						//顺就放到f7
+						if (pos[fn] == "f1") { U(); U(); }
+						if (pos[fn] == "f3") { U1(); }
+						if (pos[fn] == "f5") { U(); }
+						var N = 4 + colorseq.indexOf(colordata[0][4]) - colorseq.indexOf(color3a[fn]);
+						for (var i = 0; i < N; i++) {
+							U1all(); U();
+						}
+						//u1f1ufuru1r
+						U1(); F1(); U(); F(); U(); R(); U1(); R1();
+					} else {
+						//反就放到f3
+						if (pos[fn] == "f1") { U1(); }
+						if (pos[fn] == "f5") { U(); U(); }
+						if (pos[fn] == "f7") { U(); }
+						// console.log("反：" + color3[fn] + color3a[fn] ); 
+						var N = 4 + colorseq.indexOf(colordata[0][4]) - colorseq.indexOf(color3[fn]);
+						for (var i = 0; i < N; i++) {
+							U1all(); U();
+						}
+						U(); R(); U1(); R1(); U1(); F1(); U(); F();
+					}
+				}
+			}
+ 
+ 
+		}
+ 
+		function checkokstep3() { //中层ok
+			if (checkokstep2) {
+				if (colordata[0][3] === colordata[0][4] && colordata[0][5] === colordata[0][4] &&
+					colordata[1][3] === colordata[1][4] && colordata[1][5] === colordata[1][4] &&
+					colordata[2][3] === colordata[2][4] && colordata[2][5] === colordata[2][4] &&
+					colordata[3][3] === colordata[3][4] && colordata[2][5] === colordata[2][4]) {
+					// console.log("中层");
+					return true;
+				}
+			}
+			return false;
+		}
+ 
+		function checknotokstep3(pos) {
+			if (pos == "a3") {
+				var a = colordata[0][3];
+				var b = colordata[0][4];
+				var c = colordata[1][5];
+				var d = colordata[1][4];
+				return (a != b) || (c != d);
+			}
+			if (pos == "a5") { return (colordata[0][5] != colordata[0][4]) || (colordata[2][3] != colordata[2][4]); }
+			if (pos == "d3") { return (colordata[3][3] != colordata[3][4]) || (colordata[2][5] != colordata[2][4]); }
+			if (pos == "d5") { return (colordata[3][5] != colordata[3][4]) || (colordata[1][3] != colordata[1][4]); }
+		}
+ 
+	</script>
+</head>
+ 
+<body>
+	<div class="divbuttons">
+		<input type="button" class="button" value="U'" onclick="U1_End()">
+		<input type="button" class="button" value="U" onclick="U_End()">
+ 
+	</div>
+	<div class="container">
+		<!-- 左边两个按钮 -->
+		<div class="divbuttons" style="float: left;height: 100%;width: 100px;line-height: 161px;padding: 32px;">
+			<input type="button" class="button" value="F'" onclick="F1_End()">
+			<input type="button" class="button" value="F" onclick="F_End()">
+		</div>
+ 
+		<!-- 正方体 -->
+		<div class="box">
+			<div class="content">
+				<div class="aside face"> <!--魔方第一个面，类名aside-->
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+				</div>
+				<div class="bside face"> <!--魔方第2个面，类名bside-->
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+				</div>
+				<div class="cside face"> <!--魔方第3个面，类名cside-->
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+				</div>
+				<div class="dside face"> <!--魔方第一4个面，类名dside-->
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+				</div>
+				<div class="eside face"> <!--魔方第5个面，类名eside-->
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+				</div>
+				<div class="fside face"> <!--魔方第6个面，类名fside-->
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+				</div>
+			</div>
+		</div>
+ 
+		<div class="boxmin">
+			<div class="content">
+				<div class="aside face"> <!--魔方第一个面，类名aside-->
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+				</div>
+				<div class="bside face"> <!--魔方第2个面，类名bside-->
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+				</div>
+				<div class="cside face"> <!--魔方第3个面，类名cside-->
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+				</div>
+				<div class="dside face"> <!--魔方第一4个面，类名dside-->
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+				</div>
+				<div class="eside face"> <!--魔方第5个面，类名eside-->
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+				</div>
+				<div class="fside face"> <!--魔方第6个面，类名fside-->
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+					<div class="minibox"></div>
+				</div>
+			</div>
+		</div>
+ 
+	</div>
+	<div class="divbuttons">
+ 
+		<input type="button" class="button" value="R'" onclick="R1_End()">
+		<input type="button" class="button" value="R" onclick="R_End()">
+		<input type="button" class="button" value="B'" onclick="B1_End()">
+		<input type="button" class="button" value="B" onclick="B_End()"><br>
+ 
+		<input type="button" class="button" value="<-all" onclick="Uall_End()">
+		<input type="button" class="button" value="all'->" onclick="U1all_End()">
+		<input type="button" class="button" value="打乱" onclick="Rndx()">
+		<br>
+		<input type="button" class="button" value="1底层小白花" onclick="s1_xiaobai()">
+		<input type="button" class="button" value="2底层归位" onclick="s2_dicheng()">
+		<input type="button" class="button" value="3中层归位" onclick="s3_zhongcheng()">
+	 
+	</div>
+ 
 </body>
+ 
+</html>
