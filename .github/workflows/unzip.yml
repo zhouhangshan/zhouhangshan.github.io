@@ -3,7 +3,7 @@ name: Unzip htck.zip to newweb folder
 on:
   push:
     paths:
-      - 'newweb/htck.zip'  # 监听你上传的 ZIP 文件路径，例如 'assets/htck.zip'
+      - 'htck.zip'  # 监听你上传的 ZIP 文件路径，例如 'assets/htck.zip'
 
 jobs:
   unzip:
