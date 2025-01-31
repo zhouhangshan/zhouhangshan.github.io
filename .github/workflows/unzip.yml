@@ -7,7 +7,7 @@ on:
 
 jobs:
   unzip:
-    runs-on: ubuntu - latest  # 在 Ubuntu 环境下运行
+    runs-on: ubuntu-latest  # 在 Ubuntu 环境下运行
 
     steps:
       # Step 1: Checkout the repository
