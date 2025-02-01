@@ -13,32 +13,31 @@ on:
 
 jobs:
   unzip:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu - latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          persist-credentials: true
+          persist - credentials: true
           token: ${{ secrets.MY_GITHUB_PAT }}
 
       - name: Install unzip if not installed
         run: |
           if [[! $(command - v unzip) ]]; then
-            sudo apt-get update
-            sudo apt-get install -y unzip
+            sudo apt - get update
+            sudo apt - get install - y unzip
           fi
 
       - name: Unzip htck.zip
         run: |
-          mkdir -p newweb
-          unzip -o htck.zip -d newweb/
+          mkdir - p newweb
+          unzip - o htck.zip - d newweb/
 
       - name: Add and commit the unzipped files
         run: |
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github - actions[bot]@users.noreply.github.com"
+          git config --local user.name "github - actions[bot]"
           git add newweb/
           git commit -m "Unzipped htck.zip to newweb folder: ${{ github.event.inputs.custom_message }}"
-          git push origin main --access-token ${{ secrets.MY_GITHUB_PAT }}
-
+          git push https://${{ secrets.MY_GITHUB_PAT }}@github.com/zhouhangshan/zhouhangshan.github.io.git main
