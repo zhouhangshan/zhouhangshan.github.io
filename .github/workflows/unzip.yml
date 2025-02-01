@@ -31,7 +31,7 @@ jobs:
 
       - name: Unzip htck.zip
         run: |
-          unzip - o htck.zip - d newweb/
+          unzip -o htck.zip -d newweb/
 
       - name: Add and commit the unzipped files
         run: |
