@@ -18,12 +18,12 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       # Step 2: Install unzip if not installed
-      - name: Install unzip
-        run: |
-          if! command - v unzip &> /dev/null; then
-            sudo apt - get update
-            sudo apt - get install - y unzip
-          fi
+      - name: Install unzip if not installed
+      run: |
+          if [[! $(command - v unzip) ]]; then
+          sudo apt - get update
+          sudo apt - get install - y unzip
+      fi
 
       # Step 3: Unzip htck.zip to the newweb folder
       - name: Unzip htck.zip
