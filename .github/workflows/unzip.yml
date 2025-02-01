@@ -3,21 +3,19 @@ name: Unzip htck.zip to newweb folder
 on:
   push:
     paths:
-      - 'htck.zip'  # 监听你上传的 ZIP 文件路径，例如 'assets/htck.zip'
+      - 'htck.zip'
 
 jobs:
   unzip:
-    runs-on: ubuntu-latest  # 在 Ubuntu 环境下运行
+    runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           persist-credentials: true
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      # Step 2: Install unzip if not installed
       - name: Install unzip if not installed
         run: |
           if [[! $(command - v unzip) ]]; then
@@ -25,17 +23,15 @@ jobs:
             sudo apt-get install -y unzip
           fi
 
-      # Step 3: Unzip htck.zip to the newweb folder
       - name: Unzip htck.zip
         run: |
-          mkdir -p newweb  # 确保 newweb 文件夹存在
-          unzip htck.zip -d newweb/  # 解压文件到 newweb 文件夹
+          mkdir -p newweb
+          unzip -o htck.zip -d newweb/
 
-      # Step 4: Add and commit the unzipped files
       - name: Add and commit the unzipped files
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add newweb/  # 将解压后的文件添加到暂存区
-          git commit -m "Unzipped htck.zip to newweb folder"  # 提交更改
-          git push  # 推送更改到 GitHub 仓库
+          git add newweb/
+          git commit -m "Unzipped htck.zip to newweb folder"
+          git push
