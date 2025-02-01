@@ -4,6 +4,12 @@ on:
   push:
     paths:
       - 'htck.zip'
+  workflow_dispatch:
+    inputs:
+      custom_message:
+        description: 'Optional custom message for the workflow run'
+        required: false
+        default: 'Workflow triggered manually'
 
 jobs:
   unzip:
@@ -33,5 +39,5 @@ jobs:
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add newweb/
-          git commit -m "Unzipped htck.zip to newweb folder"
+          git commit -m "Unzipped htck.zip to newweb folder: ${{ github.event.inputs.custom_message }}"
           git push
