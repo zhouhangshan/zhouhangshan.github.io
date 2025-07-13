@@ -326,7 +326,7 @@
             </div>
             
             <div class="animation-container">
-                <canvas id="canvas1" width="500" height="220"></canvas>
+                <canvas id="canvas1"></canvas>
             </div>
             
             <div class="explanation">
@@ -362,7 +362,7 @@
             </div>
             
             <div class="animation-container">
-                <canvas id="canvas2" width="500" height="220"></canvas>
+                <canvas id="canvas2"></canvas>
             </div>
             
             <div class="explanation">
@@ -403,7 +403,7 @@
             </div>
             
             <div class="animation-container">
-                <canvas id="canvas3" width="500" height="220"></canvas>
+                <canvas id="canvas3"></canvas>
             </div>
             
             <div class="explanation">
@@ -452,14 +452,40 @@
          alt="Newton" class="newton-img floating">
     
     <script>
-        // 第一定律动画
-        const canvas1 = document.getElementById('canvas1');
-        const ctx1 = canvas1.getContext('2d');
+        // 初始化所有Canvas元素
+        function initCanvases() {
+            const canvas1 = document.getElementById('canvas1');
+            const canvas2 = document.getElementById('canvas2');
+            const canvas3 = document.getElementById('canvas3');
+            
+            // 设置Canvas尺寸为容器尺寸
+            function setCanvasSize(canvas) {
+                const container = canvas.parentElement;
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+                return canvas.getContext('2d');
+            }
+            
+            const ctx1 = setCanvasSize(canvas1);
+            const ctx2 = setCanvasSize(canvas2);
+            const ctx3 = setCanvasSize(canvas3);
+            
+            return { ctx1, ctx2, ctx3, canvas1, canvas2, canvas3 };
+        }
+        
+        // 初始化变量
+        const { ctx1, ctx2, ctx3, canvas1, canvas2, canvas3 } = initCanvases();
+        
         let position1 = 50;
         let velocity1 = 2;
         let friction1 = 0;
         let animationId1;
+        const boxes = [];
+        let animationId2;
+        let balls = [];
+        let animationId3;
         
+        // 第一定律动画
         function drawLaw1() {
             ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
             
@@ -528,11 +554,6 @@
         }
         
         // 第二定律动画
-        const canvas2 = document.getElementById('canvas2');
-        const ctx2 = canvas2.getContext('2d');
-        const boxes = [];
-        let animationId2;
-        
         function Box(mass, x) {
             this.mass = mass;
             this.x = x;
@@ -580,27 +601,29 @@
         }
         
         function applyForce(force) {
+            // 如果还没有创建方块，则创建它们
             if (boxes.length === 0) {
-                boxes.push(new Box(5, 150));
-                boxes.push(new Box(15, 350));
+                boxes.push(new Box(5, canvas2.width * 0.25));
+                boxes.push(new Box(15, canvas2.width * 0.75));
             }
             
             boxes[0].ax = force / boxes[0].mass * 0.05;
             boxes[1].ax = force / boxes[1].mass * 0.05;
+            
+            // 启动动画（如果尚未启动）
+            if (!animationId2) {
+                drawLaw2();
+            }
         }
         
         function resetLaw2() {
             if (animationId2) cancelAnimationFrame(animationId2);
+            animationId2 = null;
             boxes.length = 0;
             ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
         }
         
         // 第三定律动画
-        const canvas3 = document.getElementById('canvas3');
-        const ctx3 = canvas3.getContext('2d');
-        let balls = [];
-        let animationId3;
-        
         function Ball(x, y, radius, vx, color) {
             this.x = x;
             this.y = y;
@@ -722,14 +745,14 @@
             balls = [];
             
             if (type === 'equal') {
-                balls.push(new Ball(100, canvas3.height/2, 22, 3, '#ff6b6b'));
-                balls.push(new Ball(400, canvas3.height/2, 22, -1, '#4ecdc4'));
+                balls.push(new Ball(canvas3.width * 0.2, canvas3.height/2, 22, 3, '#ff6b6b'));
+                balls.push(new Ball(canvas3.width * 0.8, canvas3.height/2, 22, -1, '#4ecdc4'));
             } else if (type === 'heavy') {
-                balls.push(new Ball(100, canvas3.height/2, 30, 2, '#ff6b6b'));
-                balls.push(new Ball(400, canvas3.height/2, 18, 0, '#4ecdc4'));
+                balls.push(new Ball(canvas3.width * 0.2, canvas3.height/2, 30, 2, '#ff6b6b'));
+                balls.push(new Ball(canvas3.width * 0.8, canvas3.height/2, 18, 0, '#4ecdc4'));
             } else if (type === 'light') {
-                balls.push(new Ball(100, canvas3.height/2, 18, 3, '#ff6b6b'));
-                balls.push(new Ball(400, canvas3.height/2, 30, 0, '#4ecdc4'));
+                balls.push(new Ball(canvas3.width * 0.2, canvas3.height/2, 18, 3, '#ff6b6b'));
+                balls.push(new Ball(canvas3.width * 0.8, canvas3.height/2, 30, 0, '#4ecdc4'));
             }
             
             drawLaw3();
@@ -737,6 +760,7 @@
         
         function resetLaw3() {
             if (animationId3) cancelAnimationFrame(animationId3);
+            animationId3 = null;
             balls = [];
             ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
         }
@@ -749,6 +773,26 @@
             // 添加物理图标
             addPhysicsIcons();
         };
+        
+        // 处理窗口大小变化
+        window.addEventListener('resize', function() {
+            // 重新初始化Canvas
+            initCanvases();
+            
+            // 重启动画
+            if (animationId1) {
+                cancelAnimationFrame(animationId1);
+                startLaw1();
+            }
+            if (animationId2) {
+                cancelAnimationFrame(animationId2);
+                resetLaw2();
+            }
+            if (animationId3) {
+                cancelAnimationFrame(animationId3);
+                resetLaw3();
+            }
+        });
         
         function addPhysicsIcons() {
             const icons = ['⚛️', '🌌', '🚀', '🔭', '🧪', '🔬', '⚖️'];
