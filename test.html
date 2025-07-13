@@ -2,64 +2,74 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>牛顿三大定律动画教室</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>牛顿三大定律 - 手机版</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Comic Sans MS', '楷体', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
         
         body {
-            background: linear-gradient(135deg, #1a2980, #26d0ce);
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
             color: #fff;
             min-height: 100vh;
-            padding: 20px;
+            padding: 15px;
             overflow-x: hidden;
+            line-height: 1.6;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 100%;
             margin: 0 auto;
         }
         
         header {
             text-align: center;
             padding: 20px 0;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             position: relative;
         }
         
+        .title-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
         h1 {
-            font-size: 2.8rem;
-            text-shadow: 0 0 10px rgba(0, 150, 255, 0.7);
+            font-size: 2.2rem;
+            text-shadow: 0 2px 10px rgba(0, 150, 255, 0.7);
             margin-bottom: 10px;
-            animation: titleGlow 2s infinite alternate;
+            background: linear-gradient(to right, #ff9a9e, #fad0c4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
         }
         
         .subtitle {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             opacity: 0.9;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .laws-container {
-            display: flex;
-            flex-direction: column;
-            gap: 50px;
-            margin-top: 30px;
+            max-width: 100%;
+            margin: 0 auto 20px;
+            padding: 0 15px;
+            color: #e0f7fa;
         }
         
         .law-card {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(10px);
             border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             overflow: hidden;
             position: relative;
         }
@@ -67,89 +77,117 @@
         .law-header {
             display: flex;
             align-items: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 204, 0, 0.3);
         }
         
         .law-number {
-            font-size: 5rem;
+            font-size: 3.5rem;
             font-weight: bold;
-            color: rgba(255, 255, 255, 0.3);
-            margin-right: 20px;
+            color: rgba(255, 255, 255, 0.25);
+            margin-right: 15px;
             text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            min-width: 70px;
+            text-align: center;
         }
         
         .law-title {
-            font-size: 1.8rem;
-            margin-bottom: 8px;
+            font-size: 1.6rem;
+            margin-bottom: 5px;
             color: #ffcc00;
             text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
         }
         
         .law-statement {
-            font-size: 1.3rem;
+            font-size: 1.15rem;
             line-height: 1.5;
             margin-bottom: 20px;
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 30, 60, 0.4);
             padding: 15px;
-            border-radius: 10px;
-            border-left: 4px solid #ffcc00;
-        }
-        
-        .law-content {
-            display: flex;
-            gap: 30px;
-            flex-wrap: wrap;
+            border-radius: 12px;
+            border-left: 4px solid #4fc3f7;
         }
         
         .animation-container {
-            flex: 1;
-            min-width: 300px;
-            height: 300px;
+            width: 100%;
+            height: 220px;
             background: rgba(0, 20, 40, 0.4);
             border-radius: 15px;
             position: relative;
             overflow: hidden;
-            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        canvas {
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
         }
         
         .explanation {
-            flex: 1;
-            min-width: 300px;
-            padding: 15px;
-            font-size: 1.1rem;
+            padding: 10px 5px;
+            font-size: 1.05rem;
             line-height: 1.7;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
         }
         
         .explanation h3 {
-            color: #00ffaa;
+            color: #4fc3f7;
+            margin-bottom: 12px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .explanation p {
             margin-bottom: 15px;
-            font-size: 1.4rem;
+        }
+        
+        .example {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 12px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 3px solid #ff9800;
         }
         
         .controls {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             margin-top: 20px;
             flex-wrap: wrap;
+            justify-content: center;
         }
         
         button {
             background: linear-gradient(to right, #ff8a00, #ffcc00);
             border: none;
-            padding: 12px 25px;
+            padding: 12px 20px;
             border-radius: 50px;
             color: #fff;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(255, 140, 0, 0.4);
+            box-shadow: 0 4px 12px rgba(255, 140, 0, 0.4);
+            font-size: 0.95rem;
+            flex: 1;
+            min-width: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         
         button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(255, 140, 0, 0.6);
+            box-shadow: 0 6px 15px rgba(255, 140, 0, 0.6);
         }
         
         button:active {
@@ -160,71 +198,108 @@
             background: linear-gradient(to right, #00c9ff, #92fe9d);
         }
         
-        .sir-isaac {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            width: 100px;
-            opacity: 0.7;
-            z-index: -1;
-        }
-        
-        .physics-icon {
-            position: absolute;
-            font-size: 8rem;
-            opacity: 0.05;
-            z-index: -1;
-        }
-        
-        .icon1 { top: 20px; left: 30px; }
-        .icon2 { bottom: 10px; right: 40px; }
-        
         .conclusion {
             text-align: center;
-            margin: 50px auto;
-            padding: 30px;
-            max-width: 800px;
-            background: rgba(0, 0, 0, 0.2);
+            margin: 35px auto;
+            padding: 25px 20px;
+            background: rgba(0, 30, 60, 0.5);
             border-radius: 20px;
+            border: 1px solid rgba(100, 200, 255, 0.2);
         }
         
         .conclusion h2 {
             color: #ffcc00;
             margin-bottom: 20px;
+            font-size: 1.7rem;
+        }
+        
+        .conclusion p {
+            margin-bottom: 15px;
+        }
+        
+        .impact-items {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .impact-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px 15px;
+            border-radius: 12px;
+            min-width: 130px;
+            font-size: 0.95rem;
         }
         
         footer {
             text-align: center;
             padding: 20px;
-            margin-top: 40px;
-            color: rgba(255, 255, 255, 0.7);
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.6);
             font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .newton-img {
+            width: 80px;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            opacity: 0.3;
+            z-index: -1;
         }
         
         /* Animation Keyframes */
-        @keyframes titleGlow {
-            0% { text-shadow: 0 0 10px rgba(0, 150, 255, 0.7); }
-            100% { text-shadow: 0 0 20px rgba(100, 200, 255, 1), 0 0 30px rgba(0, 150, 255, 0.8); }
-        }
-        
         @keyframes float {
             0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
+            50% { transform: translateY(-10px); }
             100% { transform: translateY(0px); }
         }
         
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .law-content {
-                flex-direction: column;
+        .floating {
+            animation: float 4s infinite ease-in-out;
+        }
+        
+        /* Physics icons */
+        .physics-icon {
+            position: absolute;
+            font-size: 5rem;
+            opacity: 0.05;
+            z-index: -1;
+        }
+        
+        .icon1 { top: 15px; left: 15px; }
+        .icon2 { bottom: 15px; right: 20px; }
+        
+        /* Mobile specific adjustments */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .law-title {
+                font-size: 1.4rem;
+            }
+            
+            .law-statement {
+                font-size: 1.05rem;
             }
             
             .animation-container {
-                height: 250px;
+                height: 200px;
             }
             
-            h1 {
-                font-size: 2.2rem;
+            button {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+                min-width: 100px;
+            }
+            
+            .law-number {
+                font-size: 3rem;
+                min-width: 60px;
             }
         }
     </style>
@@ -232,120 +307,140 @@
 <body>
     <div class="container">
         <header>
-            <h1>牛顿三大定律动画教室</h1>
+            <div class="title-container">
+                <i class="fas fa-atom fa-2x" style="color: #4fc3f7;"></i>
+                <h1>牛顿三大定律动画教室</h1>
+                <i class="fas fa-rocket fa-2x" style="color: #ff9800;"></i>
+            </div>
             <p class="subtitle">通过互动动画和简单解释，一起探索艾萨克·牛顿爵士改变世界的三大运动定律！</p>
         </header>
         
-        <div class="laws-container">
-            <!-- 第一定律 -->
-            <div class="law-card">
-                <div class="law-header">
-                    <div class="law-number">1</div>
-                    <div>
-                        <h2 class="law-title">惯性定律</h2>
-                        <p class="law-statement">物体在没有外力作用时，保持静止或匀速直线运动状态</p>
-                    </div>
+        <!-- 第一定律 -->
+        <div class="law-card">
+            <div class="law-header">
+                <div class="law-number">1</div>
+                <div>
+                    <h2 class="law-title">惯性定律</h2>
+                    <p class="law-statement">物体在没有外力作用时，保持静止或匀速直线运动状态</p>
                 </div>
-                
-                <div class="law-content">
-                    <div class="animation-container" id="law1-animation">
-                        <canvas id="canvas1" width="500" height="300"></canvas>
-                    </div>
-                    
-                    <div class="explanation">
-                        <h3>📚 这是什么意思？</h3>
-                        <p>想象一下你在滑冰：当你停止蹬冰后，你还会继续滑行一段距离。这就是惯性！物体总是"懒惰"的 - 它们不想改变自己的运动状态。</p>
-                        <p>🚗 汽车例子：当汽车急刹车时，你会向前倾。因为你的身体还在保持向前运动的趋势。</p>
-                        <p>🌌 太空例子：在太空中，没有摩擦力，一个运动的物体会永远保持运动！</p>
-                        
-                        <div class="controls">
-                            <button onclick="startLaw1()">开始动画</button>
-                            <button onclick="addFriction()">增加摩擦力</button>
-                            <button class="reset-btn" onclick="resetLaw1()">重置</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="physics-icon">⚖️</div>
             </div>
             
-            <!-- 第二定律 -->
-            <div class="law-card">
-                <div class="law-header">
-                    <div class="law-number">2</div>
-                    <div>
-                        <h2 class="law-title">F=ma 定律</h2>
-                        <p class="law-statement">物体的加速度与作用力成正比，与物体质量成反比</p>
-                    </div>
-                </div>
-                
-                <div class="law-content">
-                    <div class="animation-container" id="law2-animation">
-                        <canvas id="canvas2" width="500" height="300"></canvas>
-                    </div>
-                    
-                    <div class="explanation">
-                        <h3>📚 这是什么意思？</h3>
-                        <p>F代表力，m代表质量，a代表加速度。这个公式告诉我们：</p>
-                        <ul>
-                            <li>推同一个物体，力越大，它动得越快（加速度越大）</li>
-                            <li>用同样的力推不同物体，轻的物体动得快，重的物体动得慢</li>
-                        </ul>
-                        <p>🚀 火箭例子：火箭需要巨大的力才能离开地球，因为它的质量非常大。</p>
-                        <p>⚽ 足球例子：踢一个足球比踢一个保龄球容易得多！</p>
-                        
-                        <div class="controls">
-                            <button onclick="applyForce(50)">小力推动</button>
-                            <button onclick="applyForce(150)">中力推动</button>
-                            <button onclick="applyForce(300)">大力推动</button>
-                            <button class="reset-btn" onclick="resetLaw2()">重置</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="physics-icon">🚀</div>
+            <div class="animation-container">
+                <canvas id="canvas1" width="500" height="220"></canvas>
             </div>
             
-            <!-- 第三定律 -->
-            <div class="law-card">
-                <div class="law-header">
-                    <div class="law-number">3</div>
-                    <div>
-                        <h2 class="law-title">作用力与反作用力定律</h2>
-                        <p class="law-statement">两个物体之间的作用力和反作用力总是大小相等，方向相反</p>
-                    </div>
+            <div class="explanation">
+                <h3><i class="fas fa-lightbulb"></i> 这是什么意思？</h3>
+                <p>想象一下你在滑冰：当你停止蹬冰后，你还会继续滑行一段距离。这就是惯性！物体总是"懒惰"的 - 它们不想改变自己的运动状态。</p>
+                
+                <div class="example">
+                    <p><i class="fas fa-car"></i> <strong>汽车例子</strong>：当汽车急刹车时，你会向前倾。因为你的身体还在保持向前运动的趋势。</p>
                 </div>
                 
-                <div class="law-content">
-                    <div class="animation-container" id="law3-animation">
-                        <canvas id="canvas3" width="500" height="300"></canvas>
-                    </div>
-                    
-                    <div class="explanation">
-                        <h3>📚 这是什么意思？</h3>
-                        <p>力总是成对出现的！当你对物体施加一个力时，物体也会对你施加一个大小相等、方向相反的力。</p>
-                        <p>🏊 游泳例子：你用手向后推水，水就向前推你，使你前进。</p>
-                        <p>🚶 走路例子：你的脚向后推地面，地面向前推你，让你向前走。</p>
-                        
-                        <div class="controls">
-                            <button onclick="startCollision('equal')">相同质量碰撞</button>
-                            <button onclick="startCollision('heavy')">大球撞小球</button>
-                            <button onclick="startCollision('light')">小球撞大球</button>
-                            <button class="reset-btn" onclick="resetLaw3()">重置</button>
-                        </div>
-                    </div>
+                <div class="example">
+                    <p><i class="fas fa-star"></i> <strong>太空例子</strong>：在太空中，没有摩擦力，一个运动的物体会永远保持运动！</p>
                 </div>
                 
-                <div class="physics-icon">🔁</div>
+                <div class="controls">
+                    <button onclick="startLaw1()"><i class="fas fa-play"></i> 开始动画</button>
+                    <button onclick="addFriction()"><i class="fas fa-wind"></i> 增加摩擦力</button>
+                    <button class="reset-btn" onclick="resetLaw1()"><i class="fas fa-redo"></i> 重置</button>
+                </div>
             </div>
+            
+            <div class="physics-icon">⚖️</div>
+        </div>
+        
+        <!-- 第二定律 -->
+        <div class="law-card">
+            <div class="law-header">
+                <div class="law-number">2</div>
+                <div>
+                    <h2 class="law-title">F=ma 定律</h2>
+                    <p class="law-statement">物体的加速度与作用力成正比，与物体质量成反比</p>
+                </div>
+            </div>
+            
+            <div class="animation-container">
+                <canvas id="canvas2" width="500" height="220"></canvas>
+            </div>
+            
+            <div class="explanation">
+                <h3><i class="fas fa-lightbulb"></i> 这是什么意思？</h3>
+                <p>F代表力，m代表质量，a代表加速度。这个公式告诉我们：</p>
+                <ul style="padding-left: 20px; margin: 10px 0;">
+                    <li>推同一个物体，力越大，它动得越快（加速度越大）</li>
+                    <li>用同样的力推不同物体，轻的物体动得快，重的物体动得慢</li>
+                </ul>
+                
+                <div class="example">
+                    <p><i class="fas fa-space-shuttle"></i> <strong>火箭例子</strong>：火箭需要巨大的力才能离开地球，因为它的质量非常大。</p>
+                </div>
+                
+                <div class="example">
+                    <p><i class="fas fa-futbol"></i> <strong>足球例子</strong>：踢一个足球比踢一个保龄球容易得多！</p>
+                </div>
+                
+                <div class="controls">
+                    <button onclick="applyForce(50)"><i class="fas fa-hand-paper"></i> 小力推动</button>
+                    <button onclick="applyForce(150)"><i class="fas fa-hand-rock"></i> 中力推动</button>
+                    <button onclick="applyForce(300)"><i class="fas fa-fist-raised"></i> 大力推动</button>
+                    <button class="reset-btn" onclick="resetLaw2()"><i class="fas fa-redo"></i> 重置</button>
+                </div>
+            </div>
+            
+            <div class="physics-icon">🚀</div>
+        </div>
+        
+        <!-- 第三定律 -->
+        <div class="law-card">
+            <div class="law-header">
+                <div class="law-number">3</div>
+                <div>
+                    <h2 class="law-title">作用力与反作用力定律</h2>
+                    <p class="law-statement">两个物体之间的作用力和反作用力总是大小相等，方向相反</p>
+                </div>
+            </div>
+            
+            <div class="animation-container">
+                <canvas id="canvas3" width="500" height="220"></canvas>
+            </div>
+            
+            <div class="explanation">
+                <h3><i class="fas fa-lightbulb"></i> 这是什么意思？</h3>
+                <p>力总是成对出现的！当你对物体施加一个力时，物体也会对你施加一个大小相等、方向相反的力。</p>
+                
+                <div class="example">
+                    <p><i class="fas fa-swimmer"></i> <strong>游泳例子</strong>：你用手向后推水，水就向前推你，使你前进。</p>
+                </div>
+                
+                <div class="example">
+                    <p><i class="fas fa-walking"></i> <strong>走路例子</strong>：你的脚向后推地面，地面向前推你，让你向前走。</p>
+                </div>
+                
+                <div class="controls">
+                    <button onclick="startCollision('equal')"><i class="fas fa-exchange-alt"></i> 相同质量</button>
+                    <button onclick="startCollision('heavy')"><i class="fas fa-circle"></i> 大撞小</button>
+                    <button onclick="startCollision('light')"><i class="fas fa-dot-circle"></i> 小撞大</button>
+                    <button class="reset-btn" onclick="resetLaw3()"><i class="fas fa-redo"></i> 重置</button>
+                </div>
+            </div>
+            
+            <div class="physics-icon">🔁</div>
         </div>
         
         <div class="conclusion">
-            <h2>牛顿定律如何改变世界？</h2>
+            <h2><i class="fas fa-globe-americas"></i> 牛顿定律如何改变世界？</h2>
             <p>牛顿在1687年发表的三大运动定律，奠定了经典力学的基础。这些定律让我们能够：</p>
-            <p>🚀 计算火箭如何飞向月球 🏗️ 设计不会倒塌的桥梁和建筑</p>
-            <p>🏎️ 制造更安全的汽车 🪐 预测行星的运动</p>
-            <p>这些简单的定律解释了从苹果落地到行星运动的几乎一切运动现象！</p>
+            
+            <div class="impact-items">
+                <div class="impact-item"><i class="fas fa-rocket"></i> 计算火箭轨道</div>
+                <div class="impact-item"><i class="fas fa-bridge"></i> 设计坚固桥梁</div>
+                <div class="impact-item"><i class="fas fa-car-crash"></i> 汽车安全设计</div>
+                <div class="impact-item"><i class="fas fa-satellite"></i> 预测行星运动</div>
+            </div>
+            
+            <p style="margin-top: 20px;">这些简单的定律解释了从苹果落地到行星运动的几乎一切运动现象！</p>
         </div>
         
         <footer>
@@ -353,7 +448,8 @@
         </footer>
     </div>
     
-    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23FFCC00'/%3E%3C/svg%3E" alt="Newton" class="sir-isaac">
+    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23FFCC00'/%3E%3Ccircle cx='35' cy='40' r='5' fill='%23000'/%3E%3Ccircle cx='65' cy='40' r='5' fill='%23000'/%3E%3Cpath d='M30,70 Q50,85 70,70' stroke='%23000' stroke-width='3' fill='none'/%3E%3C/svg%3E" 
+         alt="Newton" class="newton-img floating">
     
     <script>
         // 第一定律动画
@@ -368,19 +464,31 @@
             ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
             
             // 绘制轨道
-            ctx1.fillStyle = '#334';
-            ctx1.fillRect(0, canvas1.height/2, canvas1.width, 10);
+            ctx1.fillStyle = '#3a506b';
+            ctx1.fillRect(0, canvas1.height/2, canvas1.width, 8);
             
             // 绘制小车
             ctx1.fillStyle = '#ff6b6b';
-            ctx1.fillRect(position1, canvas1.height/2 - 25, 50, 25);
+            ctx1.fillRect(position1, canvas1.height/2 - 20, 45, 20);
             ctx1.fillStyle = '#4ecdc4';
             ctx1.beginPath();
-            ctx1.arc(position1 + 10, canvas1.height/2, 10, 0, Math.PI * 2);
+            ctx1.arc(position1 + 10, canvas1.height/2 + 4, 8, 0, Math.PI * 2);
             ctx1.fill();
             ctx1.beginPath();
-            ctx1.arc(position1 + 40, canvas1.height/2, 10, 0, Math.PI * 2);
+            ctx1.arc(position1 + 35, canvas1.height/2 + 4, 8, 0, Math.PI * 2);
             ctx1.fill();
+            
+            // 绘制箭头表示运动方向
+            if (velocity1 > 0) {
+                ctx1.fillStyle = '#4fc3f7';
+                ctx1.beginPath();
+                ctx1.moveTo(position1 + 55, canvas1.height/2 - 10);
+                ctx1.lineTo(position1 + 65, canvas1.height/2 - 10);
+                ctx1.lineTo(position1 + 60, canvas1.height/2 - 15);
+                ctx1.lineTo(position1 + 60, canvas1.height/2 - 5);
+                ctx1.closePath();
+                ctx1.fill();
+            }
             
             // 更新位置
             position1 += velocity1;
@@ -393,7 +501,7 @@
             
             // 边界检查
             if (position1 > canvas1.width) {
-                position1 = -50;
+                position1 = -45;
             }
             
             animationId1 = requestAnimationFrame(drawLaw1);
@@ -428,9 +536,9 @@
         function Box(mass, x) {
             this.mass = mass;
             this.x = x;
-            this.y = canvas2.height/2 - (mass * 5);
-            this.width = 40 + mass * 5;
-            this.height = 40 + mass * 5;
+            this.y = canvas2.height/2 - (mass * 4);
+            this.width = 35 + mass * 4;
+            this.height = 35 + mass * 4;
             this.vx = 0;
             this.ax = 0;
             this.color = `hsl(${Math.random() * 360}, 70%, 60%)`;
@@ -441,7 +549,7 @@
             ctx2.fillRect(this.x, this.y, this.width, this.height);
             ctx2.fillStyle = 'white';
             ctx2.font = '14px Arial';
-            ctx2.fillText(`${this.mass}kg`, this.x + 10, this.y + this.height/2 + 5);
+            ctx2.fillText(`${this.mass}kg`, this.x + 8, this.y + this.height/2 + 5);
         };
         
         Box.prototype.update = function() {
@@ -454,10 +562,10 @@
             ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
             
             // 绘制轨道
-            ctx2.fillStyle = '#334';
-            ctx2.fillRect(0, canvas2.height/2 + 30, canvas2.width, 10);
+            ctx2.fillStyle = '#3a506b';
+            ctx2.fillRect(0, canvas2.height/2 + 25, canvas2.width, 8);
             
-            // 绘制箭头
+            // 绘制箭头表示力
             ctx2.fillStyle = '#ffcc00';
             ctx2.font = 'bold 16px Arial';
             ctx2.fillText('→ 力', 30, canvas2.height/2 - 30);
@@ -514,15 +622,15 @@
                 ctx3.strokeStyle = 'white';
                 ctx3.lineWidth = 2;
                 ctx3.beginPath();
-                ctx3.moveTo(this.x, this.y - this.radius - 15);
-                ctx3.lineTo(this.x + direction * 30, this.y - this.radius - 15);
+                ctx3.moveTo(this.x, this.y - this.radius - 12);
+                ctx3.lineTo(this.x + direction * 25, this.y - this.radius - 12);
                 ctx3.stroke();
                 
                 // 箭头头部
                 ctx3.beginPath();
-                ctx3.moveTo(this.x + direction * 30, this.y - this.radius - 15);
-                ctx3.lineTo(this.x + direction * 25, this.y - this.radius - 20);
-                ctx3.lineTo(this.x + direction * 25, this.y - this.radius - 10);
+                ctx3.moveTo(this.x + direction * 25, this.y - this.radius - 12);
+                ctx3.lineTo(this.x + direction * 20, this.y - this.radius - 17);
+                ctx3.lineTo(this.x + direction * 20, this.y - this.radius - 7);
                 ctx3.closePath();
                 ctx3.fillStyle = 'white';
                 ctx3.fill();
@@ -585,14 +693,14 @@
             ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
             
             // 绘制轨道
-            ctx3.fillStyle = '#334';
-            ctx3.fillRect(0, canvas3.height/2 + 50, canvas3.width, 10);
+            ctx3.fillStyle = '#3a506b';
+            ctx3.fillRect(0, canvas3.height/2 + 45, canvas3.width, 8);
             
             // 绘制作用力文字
             ctx3.fillStyle = 'white';
-            ctx3.font = '16px Arial';
-            ctx3.fillText('作用力', 100, canvas3.height/2 - 60);
-            ctx3.fillText('反作用力', canvas3.width - 150, canvas3.height/2 - 60);
+            ctx3.font = '14px Arial';
+            ctx3.fillText('作用力', 80, canvas3.height/2 - 50);
+            ctx3.fillText('反作用力', canvas3.width - 140, canvas3.height/2 - 50);
             
             // 绘制和更新球
             balls.forEach(ball => {
@@ -614,14 +722,14 @@
             balls = [];
             
             if (type === 'equal') {
-                balls.push(new Ball(100, canvas3.height/2, 25, 3, '#ff6b6b'));
-                balls.push(new Ball(400, canvas3.height/2, 25, -1, '#4ecdc4'));
+                balls.push(new Ball(100, canvas3.height/2, 22, 3, '#ff6b6b'));
+                balls.push(new Ball(400, canvas3.height/2, 22, -1, '#4ecdc4'));
             } else if (type === 'heavy') {
-                balls.push(new Ball(100, canvas3.height/2, 35, 2, '#ff6b6b'));
-                balls.push(new Ball(400, canvas3.height/2, 20, 0, '#4ecdc4'));
+                balls.push(new Ball(100, canvas3.height/2, 30, 2, '#ff6b6b'));
+                balls.push(new Ball(400, canvas3.height/2, 18, 0, '#4ecdc4'));
             } else if (type === 'light') {
-                balls.push(new Ball(100, canvas3.height/2, 20, 3, '#ff6b6b'));
-                balls.push(new Ball(400, canvas3.height/2, 35, 0, '#4ecdc4'));
+                balls.push(new Ball(100, canvas3.height/2, 18, 3, '#ff6b6b'));
+                balls.push(new Ball(400, canvas3.height/2, 30, 0, '#4ecdc4'));
             }
             
             drawLaw3();
@@ -635,13 +743,30 @@
         
         // 初始化
         window.onload = function() {
-            // 绘制牛顿头像占位
-            const newtonImg = document.querySelector('.sir-isaac');
-            newtonImg.style.animation = 'float 4s infinite ease-in-out';
-            
             // 初始显示第一定律动画
             startLaw1();
+            
+            // 添加物理图标
+            addPhysicsIcons();
         };
+        
+        function addPhysicsIcons() {
+            const icons = ['⚛️', '🌌', '🚀', '🔭', '🧪', '🔬', '⚖️'];
+            const containers = document.querySelectorAll('.law-card');
+            
+            containers.forEach(container => {
+                for (let i = 0; i < 4; i++) {
+                    const icon = document.createElement('div');
+                    icon.className = 'physics-icon';
+                    icon.style.top = `${Math.random() * 80 + 10}%`;
+                    icon.style.left = `${Math.random() * 80 + 10}%`;
+                    icon.style.fontSize = `${Math.random() * 3 + 3}rem`;
+                    icon.style.opacity = `${Math.random() * 0.05 + 0.03}`;
+                    icon.textContent = icons[Math.floor(Math.random() * icons.length)];
+                    container.appendChild(icon);
+                }
+            });
+        }
     </script>
 </body>
 </html>
