@@ -1,516 +1,866 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>💗 Love you</title>
-    <style type="text/css">
-        body {
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星际纪元 | 科幻策略游戏</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
             margin: 0;
-            overflow: hidden;
-            background: #000;
+            padding: 0;
+            box-sizing: border-box;
         }
- 
-        canvas {
-            position: absolute;
+
+        :root {
+            --primary: #6a11cb;
+            --secondary: #2575fc;
+            --accent: #ff2d75;
+            --dark: #0f0c29;
+            --darker: #08061a;
+            --light: #f5f9ff;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+CiAgPHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiBmaWxsPSIjMDgwNjFhIi8+CiAgPHBhdGggZD0iTTAgMEg1MFY1MEgwWiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTExIiBzdHJva2Utd2lkdGg9IjEiLz4KPC9zdmc+');
+            opacity: 0.2;
+            z-index: -2;
         }
- 
-        #pinkboard {
-            animation: anim 1.5s ease-in-out infinite;
-            -webkit-animation: anim 1.5s ease-in-out infinite;
-            -o-animation: anim 1.5s ease-in-out infinite;
-            -moz-animation: anim 1.5s ease-in-out infinite;
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
         }
- 
-        @keyframes anim {
-            0% {
-                transform: scale(0.8);
-            }
-            25% {
-                transform: scale(0.7);
-            }
-            50% {
-                transform: scale(1);
-            }
-            75% {
-                transform: scale(0.7);
-            }
-            100% {
-                transform: scale(0.8);
-            }
-        }
- 
-        @-webkit-keyframes anim {
-            0% {
-                -webkit-transform: scale(0.8);
-            }
-            25% {
-                -webkit-transform: scale(0.7);
-            }
-            50% {
-                -webkit-transform: scale(1);
-            }
-            75% {
-                -webkit-transform: scale(0.7);
-            }
-            100% {
-                -webkit-transform: scale(0.8);
-            }
-        }
- 
-        @-o-keyframes anim {
-            0% {
-                -o-transform: scale(0.8);
-            }
-            25% {
-                -o-transform: scale(0.7);
-            }
-            50% {
-                -o-transform: scale(1);
-            }
-            75% {
-                -o-transform: scale(0.7);
-            }
-            100% {
-                -o-transform: scale(0.8);
-            }
-        }
- 
-        @-moz-keyframes anim {
-            0% {
-                -moz-transform: scale(0.8);
-            }
-            25% {
-                -moz-transform: scale(0.7);
-            }
-            50% {
-                -moz-transform: scale(1);
-            }
-            75% {
-                -moz-transform: scale(0.7);
-            }
-            100% {
-                -moz-transform: scale(0.8);
-            }
-        }
- 
-        #name {
+
+        .particle {
             position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 10px rgba(106, 17, 203, 0.7), 0 0 20px rgba(37, 117, 252, 0.5);
+        }
+
+        h1, h2, h3, h4, .nav-links a, .btn {
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 导航栏样式 */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 20px 0;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            background: rgba(15, 12, 41, 0.8);
+            border-bottom: 1px solid rgba(106, 17, 203, 0.3);
+        }
+
+        header.scrolled {
+            padding: 10px 0;
+            background: rgba(8, 6, 26, 0.95);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--light);
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .logo i {
+            margin-right: 10px;
+            color: var(--secondary);
+            font-size: 2.2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 30px;
+        }
+
+        .nav-links a {
+            position: relative;
+            color: var(--light);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 5px 0;
+            transition: var(--transition);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.4);
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(106, 17, 203, 0.6);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--secondary);
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(37, 117, 252, 0.1);
+        }
+
+        /* 英雄区域 */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 650px;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            line-height: 1.1;
+            text-shadow: 0 0 20px rgba(106, 17, 203, 0.7);
+            background: linear-gradient(to right, #f5f9ff, #a1c4fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 600px;
+            opacity: 0.9;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 20px;
+        }
+
+        .hero-image {
+            position: absolute;
+            right: -50px;
             top: 50%;
+            transform: translateY(-50%);
+            width: 50%;
+            max-width: 700px;
+            z-index: 1;
+            opacity: 0.9;
+            filter: drop-shadow(0 0 30px rgba(106, 17, 203, 0.5));
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* 游戏特色区域 */
+        .features {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 70px;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            display: inline-block;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
             left: 50%;
-            transform: translate(-50%, -50%);
-            margin-top: -20px;
-            font-size: 46px;
-            color: #ea80b0;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-card {
+            background: rgba(25, 22, 56, 0.6);
+            border-radius: 15px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: var(--transition);
+            border: 1px solid rgba(106, 17, 203, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(37, 117, 252, 0.5);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--light);
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* 游戏截图区域 */
+        .screenshots {
+            padding: 100px 0;
+            background: rgba(15, 12, 41, 0.5);
+        }
+
+        .screenshots-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 50px;
+        }
+
+        .screenshot {
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            height: 250px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            transition: var(--transition);
+        }
+
+        .screenshot:hover {
+            transform: scale(1.03);
+        }
+
+        .screenshot img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .screenshot:hover img {
+            transform: scale(1.1);
+        }
+
+        /* 下载区域 */
+        .download {
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .download-content {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .download h2 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .download p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .platforms {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .platform {
+            background: rgba(25, 22, 56, 0.6);
+            border: 1px solid rgba(106, 17, 203, 0.3);
+            border-radius: 10px;
+            padding: 25px;
+            width: 160px;
+            transition: var(--transition);
+        }
+
+        .platform:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .platform i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+
+        /* 页脚区域 */
+        footer {
+            background: rgba(8, 6, 26, 0.95);
+            padding: 60px 0 30px;
+            border-top: 1px solid rgba(106, 17, 203, 0.3);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            color: var(--light);
+        }
+
+        .footer-logo span {
+            color: var(--accent);
+        }
+
+        .footer-about p {
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(106, 17, 203, 0.2);
+            color: var(--light);
+            transition: var(--transition);
+            font-size: 1.2rem;
+        }
+
+        .social-links a:hover {
+            background: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        .footer-heading {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-heading::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--accent);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+            padding-left: 5px;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        /* 动画效果 */
+        @keyframes float {
+            0% {
+                transform: translateY(-50%) translateX(0);
+            }
+            50% {
+                transform: translateY(-53%) translateX(10px);
+            }
+            100% {
+                transform: translateY(-50%) translateX(0);
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 3.2rem;
+            }
+            .hero-image {
+                opacity: 0.4;
+                right: -100px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .nav-links li {
+                margin: 0 15px;
+            }
+            .hero {
+                text-align: center;
+            }
+            .hero-content {
+                margin: 0 auto;
+                padding-top: 100px;
+            }
+            .hero-btns {
+                justify-content: center;
+            }
+            .hero-image {
+                display: none;
+            }
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            .download h2 {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .hero-btns {
+                flex-direction: column;
+                align-items: center;
+            }
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
-<canvas id="pinkboard" width="1920" height="947"></canvas>
-<canvas id="canvas" width="1920" height="947"></canvas>
- 
-<script type="text/javascript">
-    var loverName = "💗I Love U💗我爱你"  //   要更改的名字
-    const colors = [
-        "#eec996",
-        "#8fb7d3",
-        "#b7d4c6",
-        "#c3bedd",
-        "#f1d5e4",
-        "#cae1d3",
-        "#f3c89d",
-        "#d0b0c3",
-        "#819d53",
-        "#c99294",
-        "#cec884",
-        "#ff8e70",
-        "#e0a111",
-        "#fffdf6",
-        "#cbd7ac",
-        "#e8c6c0",
-        "#dc9898",
-        "#ecc8ba",
-    ]; //用来设置的颜      var canvas = document.getElementById("canvas");
-    var ctx = canvas.getContext("2d");
-    let count = 1;
- 
-    var ww = window.innerWidth;
-    var wh = window.innerHeight;
- 
-    var hearts = [];
- 
-    function init() {
-        requestAnimationFrame(render);
-        canvas.width = ww;
-        canvas.height = wh;
-        for (var i = 0; i < 100; i++) {
-            hearts.push(new Heart());
-        }
-    }
- 
-    function Heart() {
-        this.x = Math.random() * ww;
-        this.y = Math.random() * wh;
-        this.opacity = Math.random() * 0.5 + 0.5;
-        this.vel = {
-            x: (Math.random() - 0.5) * 4,
-            y: (Math.random() - 0.5) * 4,
-        };
-        this.targetScale = Math.random() * 0.15 + 0.02;
-        this.scale = this.targetScale * Math.random();
-    }
- 
-    Heart.prototype.update = function (i) {
-        this.x += this.vel.x;
-        this.y += this.vel.y;
- 
-        this.scale += (this.targetScale - this.scale) * 0.01;
-        if (this.x - this.width > ww || this.x + this.width < 0) {
-            this.scale = 0;
-            this.x = Math.random() * ww;
-        }
-        if (this.y - this.height > wh || this.y + this.height < 0) {
-            this.scale = 0;
-            this.y = Math.random() * wh;
-        }
-        this.width = 473.8;
-        this.height = 408.6;
-    };
-    Heart.prototype.draw = function (i) {
-        ctx.globalAlpha = this.opacity;
-        ctx.font = `${180 * this.scale}px "微软雅黑"`;
-        // ctx.font="20px";
-        ctx.fillStyle = colors[i % 18];
-        ctx.fillText(
-            loverName,
-            this.x - this.width * 0.5,
-            this.y - this.height * 0.5,
-            this.width,
-            this.height
-        );
-        // ctx.drawImage(
-        //   heartImage,
-        //   this.x - this.width * 0.5,
-        //   this.y - this.height * 0.5,
-        //   this.width,
-        //   this.height
-        // );
-    };
- 
-    function render() {
-        ctx.clearRect(0, 0, ww, wh);
-        // ctx.globalAlpha = 1;
-        // ctx.fillStyle = "rgba(255,255,255,0.3)";
-        // ctx.fillRect(0, 0, ww, wh);
-        for (var i = 0; i < 100; i++) {
-            hearts[i].update(i);
-            hearts[i].draw(i);
-        }
-        requestAnimationFrame(render);
-    }
- 
-    init();
- 
-    // var heartImage = new Image();
-    // heartImage.onload = init();
-    // heartImage.src =
-    //   "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NzMuOHB4IiBoZWlnaHQ9IjQwOC42cHgiIHZpZXdCb3g9IjAgMCA0NzMuOCA0MDguNiI+PHBhdGggZmlsbD0iI2QzMjkzMiIgZD0iTTQwNC42LDE2LjZDMzg1LjQsNi4xLDM2My41LDAsMzQwLDBjLTQxLjUsMC03OC41LDE4LjktMTAzLDQ4LjVDMjEyLjMsMTguOSwxNzUuMywwLDEzMy44LDAgYy0yMy4zLDAtNDUuMyw2LjEtNjQuNSwxNi42QzI3LjksMzkuNSwwLDgzLjQsMCwxMzMuOWMwLDE0LjQsMi40LDI4LjMsNi42LDQxLjJDMjkuNiwyNzguNCwyMzcsNDA4LjYsMjM3LDQwOC42IHMyMDcuMi0xMzAuMiwyMzAuMi0yMzMuNWM0LjMtMTIuOSw2LjYtMjYuOCw2LjYtNDEuMkM0NzMuOCw4My40LDQ0NS45LDM5LjYsNDA0LjYsMTYuNnoiLz48L3N2Zz4=";
- 
-    window.addEventListener("resize", function () {
-        ww = window.innerWidth;
-        wh = window.innerHeight;
-    });
-</script>
-<script>
-    /*
-     * Settings
-     */
-    var settings = {
-        particles: {
-            length: 500, // maximum amount of particles
-            duration: 2, // particle duration in sec
-            velocity: 100, // particle velocity in pixels/sec
-            effect: -0.75, // play with this for a nice effect
-            size: 30, // particle size in pixels
-        },
-    };
- 
-    /*
-     * RequestAnimationFrame polyfill by Erik M?ller
-     */
-    (function () {
-        var b = 0;
-        var c = ["ms", "moz", "webkit", "o"];
-        for (var a = 0; a < c.length && !window.requestAnimationFrame; ++a) {
-            window.requestAnimationFrame = window[c[a] + "RequestAnimationFrame"];
-            window.cancelAnimationFrame =
-                window[c[a] + "CancelAnimationFrame"] ||
-                window[c[a] + "CancelRequestAnimationFrame"];
-        }
-        if (!window.requestAnimationFrame) {
-            window.requestAnimationFrame = function (h, e) {
-                var d = new Date().getTime();
-                var f = Math.max(0, 16 - (d - b));
-                var g = window.setTimeout(function () {
-                    h(d + f);
-                }, f);
-                b = d + f;
-                return g;
-            };
-        }
-        if (!window.cancelAnimationFrame) {
-            window.cancelAnimationFrame = function (d) {
-                clearTimeout(d);
-            };
-        }
-    })();
- 
-    /*
-     * Point class
-     */
-    var Point = (function () {
-        function Point(x, y) {
-            this.x = typeof x !== "undefined" ? x : 0;
-            this.y = typeof y !== "undefined" ? y : 0;
-        }
- 
-        Point.prototype.clone = function () {
-            return new Point(this.x, this.y);
-        };
-        Point.prototype.length = function (length) {
-            if (typeof length == "undefined")
-                return Math.sqrt(this.x * this.x + this.y * this.y);
-            this.normalize();
-            this.x *= length;
-            this.y *= length;
-            return this;
-        };
-        Point.prototype.normalize = function () {
-            var length = this.length();
-            this.x /= length;
-            this.y /= length;
-            return this;
-        };
-        return Point;
-    })();
- 
-    /*
-     * Particle class
-     */
-    var Particle = (function () {
-        function Particle() {
-            this.position = new Point();
-            this.velocity = new Point();
-            this.acceleration = new Point();
-            this.age = 0;
-        }
- 
-        Particle.prototype.initialize = function (x, y, dx, dy) {
-            this.position.x = x;
-            this.position.y = y;
-            this.velocity.x = dx;
-            this.velocity.y = dy;
-            this.acceleration.x = dx * settings.particles.effect;
-            this.acceleration.y = dy * settings.particles.effect;
-            this.age = 0;
-        };
-        Particle.prototype.update = function (deltaTime) {
-            this.position.x += this.velocity.x * deltaTime;
-            this.position.y += this.velocity.y * deltaTime;
-            this.velocity.x += this.acceleration.x * deltaTime;
-            this.velocity.y += this.acceleration.y * deltaTime;
-            this.age += deltaTime;
-        };
-        Particle.prototype.draw = function (context, image) {
-            function ease(t) {
-                return --t * t * t + 1;
+    <!-- 粒子背景 -->
+    <div class="particles" id="particles"></div>
+
+    <!-- 导航栏 -->
+    <header id="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="#" class="logo">
+                    <i class="fas fa-rocket"></i>
+                    STAR<span>COMMAND</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#features">特色</a></li>
+                    <li><a href="#screenshots">截图</a></li>
+                    <li><a href="#download">下载</a></li>
+                    <li><a href="#about">关于</a></li>
+                </ul>
+                <a href="#download" class="btn">立即游玩</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 英雄区域 -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>探索无尽宇宙的奥秘</h1>
+                <p>在《星际纪元》中，您将指挥自己的星际舰队，探索未知星系，建立星际帝国，与其他玩家争夺宇宙霸权。体验前所未有的太空策略游戏！</p>
+                <div class="hero-btns">
+                    <a href="#download" class="btn">开始征程</a>
+                    <a href="#features" class="btn btn-secondary">了解更多</a>
+                </div>
+            </div>
+        </div>
+        <div class="hero-image">
+            <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#6a11cb" d="M250,100 C320,80 380,120 400,200 C420,280 380,340 300,380 C220,420 150,400 100,330 C50,260 80,180 150,130 C180,110 220,100 250,100 Z" opacity="0.6"/>
+                <circle cx="250" cy="250" r="80" fill="#2575fc" opacity="0.7"/>
+                <circle cx="350" cy="200" r="40" fill="#ff2d75" opacity="0.8"/>
+                <circle cx="180" cy="300" r="30" fill="#6a11cb" opacity="0.8"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- 游戏特色 -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>游戏特色</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe-americas"></i>
+                    </div>
+                    <h3>浩瀚宇宙</h3>
+                    <p>探索超过1000个独特的星系，每个星系都有不同的行星、资源和挑战，等待您的发现。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-ship"></i>
+                    </div>
+                    <h3>舰队定制</h3>
+                    <p>设计并建造您独特的星际舰队，数百种模块和武器组合，打造属于您的无敌舰队。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>多人策略</h3>
+                    <p>与其他玩家组建联盟，进行史诗级的太空战斗，或通过外交手段建立强大的星际帝国。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-city"></i>
+                    </div>
+                    <h3>行星建设</h3>
+                    <p>在您征服的行星上建立繁荣的殖民地，发展科技树，建设强大的经济基础。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-vr-cardboard"></i>
+                    </div>
+                    <h3>沉浸体验</h3>
+                    <p>惊艳的视觉效果，震撼的太空音效，以及引人入胜的故事线，带来身临其境的太空体验。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>AI技术</h3>
+                    <p>先进的AI系统，无论是盟友还是敌人，都会根据您的策略做出智能反应，保持游戏挑战性。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 游戏截图 -->
+    <section class="screenshots" id="screenshots">
+        <div class="container">
+            <div class="section-title">
+                <h2>游戏截图</h2>
+            </div>
+            <div class="screenshots-container">
+                <div class="screenshot">
+                    <div style="background: linear-gradient(45deg, #6a11cb, #2575fc); height: 100%;"></div>
+                </div>
+                <div class="screenshot">
+                    <div style="background: linear-gradient(45deg, #ff2d75, #ff8e53); height: 100%;"></div>
+                </div>
+                <div class="screenshot">
+                    <div style="background: linear-gradient(45deg, #2575fc, #2af598); height: 100%;"></div>
+                </div>
+                <div class="screenshot">
+                    <div style="background: linear-gradient(45deg, #6a11cb, #ff2d75); height: 100%;"></div>
+                </div>
+                <div class="screenshot">
+                    <div style="background: linear-gradient(45deg, #08aeea, #2af598); height: 100%;"></div>
+                </div>
+                <div class="screenshot">
+                    <div style="background: linear-gradient(45deg, #ff2d75, #f9d423); height: 100%;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 下载区域 -->
+    <section class="download" id="download">
+        <div class="container">
+            <div class="download-content">
+                <h2>开启星际征程</h2>
+                <p>立即下载游戏，免费开始您的宇宙征服之旅！支持Windows、macOS、iOS和Android平台。</p>
+                <a href="#" class="btn">免费下载</a>
+                
+                <div class="platforms">
+                    <div class="platform">
+                        <i class="fab fa-windows"></i>
+                        <h4>Windows</h4>
+                    </div>
+                    <div class="platform">
+                        <i class="fab fa-apple"></i>
+                        <h4>macOS</h4>
+                    </div>
+                    <div class="platform">
+                        <i class="fab fa-android"></i>
+                        <h4>Android</h4>
+                    </div>
+                    <div class="platform">
+                        <i class="fab fa-app-store-ios"></i>
+                        <h4>iOS</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer id="about">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <div class="footer-logo">STAR<span>COMMAND</span></div>
+                    <p>《星际纪元》是由独立游戏工作室Nebula Games开发的太空策略游戏，我们的目标是带给玩家最真实、最震撼的宇宙探索体验。</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-reddit"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-links-container">
+                    <h3 class="footer-heading">快速链接</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">首页</a></li>
+                        <li><a href="#features">游戏特色</a></li>
+                        <li><a href="#screenshots">游戏截图</a></li>
+                        <li><a href="#download">下载游戏</a></li>
+                        <li><a href="#">开发日志</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links-container">
+                    <h3 class="footer-heading">支持</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">常见问题</a></li>
+                        <li><a href="#">用户指南</a></li>
+                        <li><a href="#">问题反馈</a></li>
+                        <li><a href="#">社区论坛</a></li>
+                        <li><a href="#">联系我们</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links-container">
+                    <h3 class="footer-heading">法律信息</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">服务条款</a></li>
+                        <li><a href="#">隐私政策</a></li>
+                        <li><a href="#">版权声明</a></li>
+                        <li><a href="#">Cookie政策</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                &copy; 2023 Nebula Games. 保留所有权利。STARCOMMAND是Nebula Games的注册商标。
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 粒子背景生成
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // 随机大小
+                const size = Math.random() * 5 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // 随机位置
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
+                
+                // 随机动画
+                const animationDuration = Math.random() * 20 + 10;
+                particle.style.animation = `float ${animationDuration}s infinite ease-in-out`;
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                
+                // 随机透明度
+                particle.style.opacity = Math.random() * 0.5 + 0.1;
+                
+                particlesContainer.appendChild(particle);
             }
- 
-            var size = image.width * ease(this.age / settings.particles.duration);
-            context.globalAlpha = 1 - this.age / settings.particles.duration;
-            context.drawImage(
-                image,
-                this.position.x - size / 2,
-                this.position.y - size / 2,
-                size,
-                size
-            );
-        };
-        return Particle;
-    })();
- 
-    /*
-     * ParticlePool class
-     */
-    var ParticlePool = (function () {
-        var particles,
-            firstActive = 0,
-            firstFree = 0,
-            duration = settings.particles.duration;
- 
-        function ParticlePool(length) {
-            // create and populate particle pool
-            particles = new Array(length);
-            for (var i = 0; i < particles.length; i++)
-                particles[i] = new Particle();
         }
- 
-        ParticlePool.prototype.add = function (x, y, dx, dy) {
-            particles[firstFree].initialize(x, y, dx, dy);
- 
-            // handle circular queue
-            firstFree++;
-            if (firstFree == particles.length) firstFree = 0;
-            if (firstActive == firstFree) firstActive++;
-            if (firstActive == particles.length) firstActive = 0;
-        };
-        ParticlePool.prototype.update = function (deltaTime) {
-            var i;
- 
-            // update active particles
-            if (firstActive < firstFree) {
-                for (i = firstActive; i < firstFree; i++)
-                    particles[i].update(deltaTime);
-            }
-            if (firstFree < firstActive) {
-                for (i = firstActive; i < particles.length; i++)
-                    particles[i].update(deltaTime);
-                for (i = 0; i < firstFree; i++) particles[i].update(deltaTime);
-            }
- 
-            // remove inactive particles
-            while (
-                particles[firstActive].age >= duration &&
-                firstActive != firstFree
-                ) {
-                firstActive++;
-                if (firstActive == particles.length) firstActive = 0;
-            }
-        };
-        ParticlePool.prototype.draw = function (context, image) {
-            // draw active particles
-            if (firstActive < firstFree) {
-                for (i = firstActive; i < firstFree; i++)
-                    particles[i].draw(context, image);
-            }
-            if (firstFree < firstActive) {
-                for (i = firstActive; i < particles.length; i++)
-                    particles[i].draw(context, image);
-                for (i = 0; i < firstFree; i++) particles[i].draw(context, image);
-            }
-        };
-        return ParticlePool;
-    })();
- 
-    /*
-     * Putting it all together
-     */
-    (function (canvas) {
-        var context = canvas.getContext("2d"),
-            particles = new ParticlePool(settings.particles.length),
-            particleRate =
-                settings.particles.length / settings.particles.duration, // particles/sec
-            time;
- 
-        // get point on heart with -PI <= t <= PI
-        function pointOnHeart(t) {
-            return new Point(
-                160 * Math.pow(Math.sin(t), 3),
-                130 * Math.cos(t) -
-                50 * Math.cos(2 * t) -
-                20 * Math.cos(3 * t) -
-                10 * Math.cos(4 * t) +
-                25
-            );
+        
+        // 导航栏滚动效果
+        function setupNavbar() {
+            const header = document.getElementById('header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 100) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
         }
- 
-        // creating the particle image using a dummy canvas
-        var image = (function () {
-            var canvas = document.createElement("canvas"),
-                context = canvas.getContext("2d");
-            canvas.width = settings.particles.size;
-            canvas.height = settings.particles.size;
- 
-            // helper function to create the path
-            function to(t) {
-                var point = pointOnHeart(t);
-                point.x =
-                    settings.particles.size / 2 +
-                    (point.x * settings.particles.size) / 350;
-                point.y =
-                    settings.particles.size / 2 -
-                    (point.y * settings.particles.size) / 350;
-                return point;
-            }
- 
-            // create the path
-            context.beginPath();
-            var t = -Math.PI;
-            var point = to(t);
-            context.moveTo(point.x, point.y);
-            while (t < Math.PI) {
-                t += 0.01; // baby steps!
-                point = to(t);
-                context.lineTo(point.x, point.y);
-            }
-            context.closePath();
-            // create the fill
-            context.fillStyle = "#ea80b0";
-            context.fill();
-            // create the image
-            var image = new Image();
-            image.src = canvas.toDataURL();
-            return image;
-        })();
- 
-        // render that thing!
-        function render() {
-            // next animation frame
-            requestAnimationFrame(render);
- 
-            // update time
-            var newTime = new Date().getTime() / 1000,
-                deltaTime = newTime - (time || newTime);
-            time = newTime;
- 
-            // clear canvas
-            context.clearRect(0, 0, canvas.width, canvas.height);
- 
-            // create new particles
-            var amount = particleRate * deltaTime;
-            for (var i = 0; i < amount; i++) {
-                var pos = pointOnHeart(Math.PI - 2 * Math.PI * Math.random());
-                var dir = pos.clone().length(settings.particles.velocity);
-                particles.add(
-                    canvas.width / 2 + pos.x,
-                    canvas.height / 2 - pos.y,
-                    dir.x,
-                    -dir.y
-                );
-            }
- 
-            // update and draw particles
-            particles.update(deltaTime);
-            particles.draw(context, image);
+        
+        // 平滑滚动
+        function setupSmoothScroll() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
         }
- 
-        // handle (re-)sizing of the canvas
-        function onResize() {
-            canvas.width = canvas.clientWidth;
-            canvas.height = canvas.clientHeight;
-        }
- 
-        window.onresize = onResize;
- 
-        // delay rendering bootstrap
-        setTimeout(function () {
-            onResize();
-            render();
-        }, 10);
-    })(document.getElementById("pinkboard"));
- 
-</script>
- 
+        
+        // 初始化函数
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            setupNavbar();
+            setupSmoothScroll();
+            
+            // 添加一些悬停效果
+            const featureCards = document.querySelectorAll('.feature-card');
+            featureCards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-10px)';
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
 </body>
 </html>
