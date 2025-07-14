@@ -1,897 +1,1255 @@
-<!doctype html>
-<html>
- 
+<!DOCTYPE html>
+<html lang="zh">
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-	<meta name="renderer" content="webkit">
-	<!-- 引入jquey -->
-	<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
- 
- 
-	<style>
-		* {
-			margin: 0;
-			padding: 0;
-			list-style: none;
-			box-sizing: border-box;
-		}
- 
-		.container {
- 
-			width: 100%;
-			height: 380px;
-			margin: 10px auto;
-		}
- 
-		.box {
-			left: 10%;
-			top: 110px;
-			width: 320px;
-			perspective: 500px;
-			position: relative;
-			margin: 0 auto;
-		}
- 
-		.boxmin {
-			left: 25%;
-			top: -40%;
-			width: 320px;
-			perspective: 500px;
-			position: relative;
-			margin: 0 auto;
-			zoom: 51%;
-		}
- 
- 
-		.content {
-			width: 180px;
-			height: 180px;
-			transform-style: preserve-3d;
-			animation: run 10s infinite;
-		}
- 
-		.face {
-			width: 180px;
-			height: 180px;
-			position: absolute;
-			text-align: center;
-			line-height: 180px;
- 
-		}
- 
-		.minibox {
-			width: 54px;
-			height: 54px;
-			border-radius: 4px;
-			float: left;
-			border: 3px solid #000;
-		}
- 
-		.divbuttons {
-			height: 60px;
-			margin: 10px auto;
-			text-align: center;
-		}
- 
-		.button {
-			font-size: xx-large;
-			width: 100px;
-			padding: 3px;
-			margin: 3px;
-		}
-	</style>
-	<script type="text/javascript">
-		var colors = ["blue", "orange", "red", "green", "white", "yellow"];
-		var sidenames = ["aside", "bside", "cside", "dside", "eside", "fside"];
-		var colordata = [];
- 
-		//把数据对应到格子上
-		function fillcolor2box() {
-			console.log('开始给魔方着色');
-			sidenames.map(function (v) {
-				var k = sidenames.indexOf(v);
-				for (var i = 0; i < 9; i++) {
-					// 填充大魔方
-					$(".box ." + v + " div").eq(i).css("background", colordata[k][i]);
- 
-					// 填充小魔方，便于观察
-					if ("aside,bside,fside".split(",").indexOf(v) >= 0) {
-						// 小魔方正面透明
-						$(".boxmin ." + v + " div").eq(i).css("background", "fixed");
-						$(".boxmin .minibox").css("border", "1px solid rgb(138, 135, 135)");
-					} else {
-						// 背面涂色
-						$(".boxmin ." + v + " div").eq(i).css("background", colordata[k][i]);
-					}
-				}
-			});
-		}
- 
-		function roteall(rotefaces, rotepos, movefave, bno) {
-			// 	var rotefaces=['fside','cside','eside','bside','fside']; //本次操作的4个相关面，一个顶面 
-			// var rotepos=[[8,7,6],[6,3,0],[0,1,2],[2,5,8],[8,7,6]]; //本次操作的块
-			// var movefave = "aside";  //本次操作的4个相关面，一个顶面		
-			// var bno = "36785210"; //01258763 36785210 
- 
-			//为复制先存一个a面的顶上3个块颜色
-			var tmpcolordata = [];
-			for (var i = 0; i < colordata.length; i++) {
-				tmpcolordata.push(colordata[i].concat()); //保存第一个数据
-			}
- 
-			for (var i = 0; i < rotefaces.length; i++) {  //4个面轮流复制，最后一个面的时候使用保存的数据
-				for (var j = 0; j < rotepos[i].length; j++) {
-					if (i < 4) {
-						colordata[sidenames.indexOf(rotefaces[i + 1])][rotepos[i + 1][j]] =
-							tmpcolordata[sidenames.indexOf(rotefaces[i])][rotepos[i][j]];
-					}
-				}
-			}
-			tmpcolordata = [];
- 
-			//顶面旋转
-			for (var k = 0; k < movefave.length; k++) {
-				var ci = sidenames.indexOf(movefave[k]);
-				var bn = bno[k].split("");// 顶面的操作是这8个格子依次右进3次 "01258763"顺时针
-				for (var i = 0; i < 2; i++) {
-					var tmp = colordata[ci][bn[0]]; //保存第一个数据
-					for (var j = 0; j < bn.length; j++) {
-						if (j >= bn.length - 1) {
-							colordata[ci][bn[j]] = tmp;
-						} else {
-							colordata[ci][bn[j]] = colordata[ci][bn[j + 1]];
-						}
-					}
-				}
-			}
- 
-		}
- 
-		// 顶逆
-		function U1() {
-			var rotefaces = ['aside', 'cside', 'dside', 'bside', 'aside']; //本次操作的4个相关面，一个顶面 
-			var rotepos = [[0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2]]; //本次操作的块
-			var movefave = ["fside"];  //本次操作的4个相关面，一个顶面		
-			var bno = ["01258763"]; //01258763 36785210
-			roteall(rotefaces, rotepos, movefave, bno);
- 
-		}
-		function U() {
-			var rotefaces = ['aside', 'bside', 'dside', 'cside', 'aside']; //本次操作的4个相关面，一个顶面 
-			var rotepos = [[0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2]]; //本次操作的块
-			var movefave = ["fside"];  //本次操作的4个相关面，一个顶面		
-			var bno = ["36785210"];
-			roteall(rotefaces, rotepos, movefave, bno);
- 
-		}
- 
-		// 前逆
-		function F1() {
-			var rotefaces = ['aside', 'fside', 'dside', 'eside', 'aside']; //本次操作的4个相关面，一个顶面 
-			var rotepos = [[6, 3, 0], [6, 3, 0], [2, 5, 8], [6, 3, 0], [6, 3, 0]]; //本次操作的块
-			var movefave = ["bside"];  //本次操作的4个相关面，一个顶面		
-			var bno = ["01258763"]; //01258763 36785210
-			roteall(rotefaces, rotepos, movefave, bno);
- 
-		}
-		function F() {
-			var rotefaces = ['aside', 'eside', 'dside', 'fside', 'aside']; //本次操作的4个相关面，一个顶面 
-			var rotepos = [[6, 3, 0], [6, 3, 0], [2, 5, 8], [6, 3, 0], [6, 3, 0]]; //本次操作的块
-			var movefave = ["bside"];  //本次操作的4个相关面，一个顶面		
-			var bno = ["36785210"]; //01258763 36785210
-			roteall(rotefaces, rotepos, movefave, bno);
- 
-		}
- 
-		//右逆
-		function R1() {
-			var rotefaces = ['fside', 'bside', 'eside', 'cside', 'fside']; //本次操作的4个相关面，一个顶面 
-			var rotepos = [[8, 7, 6], [2, 5, 8], [0, 1, 2], [6, 3, 0], [8, 7, 6]]; //本次操作的块
-			var movefave = ["aside"];  //本次操作的4个相关面，一个顶面		
-			var bno = ["01258763"]; //01258763 36785210
-			roteall(rotefaces, rotepos, movefave, bno);
- 
-		}
-		function R() {
-			var rotefaces = ['fside', 'cside', 'eside', 'bside', 'fside']; //本次操作的4个相关面，一个顶面 
-			var rotepos = [[8, 7, 6], [6, 3, 0], [0, 1, 2], [2, 5, 8], [8, 7, 6]]; //本次操作的块
-			var movefave = ["aside"];  //本次操作的4个相关面，一个顶面		
-			var bno = ["36785210"]; //01258763 36785210
-			roteall(rotefaces, rotepos, movefave, bno);
- 
-		}
-		// 后逆
-		function B1() {
-			var rotefaces = ['aside', 'fside', 'dside', 'eside', 'aside']; //本次操作的4个相关面，一个顶面 
-			var rotepos = [[2, 5, 8], [2, 5, 8], [6, 3, 0], [2, 5, 8], [2, 5, 8]]; //本次操作的块
-			var movefave = ["cside"];  //本次操作的4个相关面，一个顶面		
-			var bno = ["36785210"]; //01258763 36785210
-			roteall(rotefaces, rotepos, movefave, bno);
- 
-		}
-		function B() {
-			var rotefaces = ['aside', 'eside', 'dside', 'fside', 'aside']; //本次操作的4个相关面，一个顶面 
-			var rotepos = [[2, 5, 8], [2, 5, 8], [6, 3, 0], [2, 5, 8], [2, 5, 8]]; //本次操作的块
-			var movefave = ["cside"];  //本次操作的4个相关面，一个顶面		
-			var bno = ["01258763"]; //01258763 36785210
-			roteall(rotefaces, rotepos, movefave, bno);
- 
-		}
- 
-		// 整体顶逆
-		function U1all() {
-			var rotefaces = ['aside', 'cside', 'dside', 'bside', 'aside']; //本次操作的4个相关面，一个顶面 
-			var rotepos = [[0, 1, 2, 3, 4, 5, 6, 7, 8], [0, 1, 2, 3, 4, 5, 6, 7, 8], [0, 1, 2, 3, 4, 5, 6, 7, 8], [0, 1, 2, 3, 4, 5, 6, 7, 8], [0, 1, 2, 3, 4, 5, 6, 7, 8]]; //本次操作的块
-			var movefave = ['eside', 'fside'];  //本次操作的4个相关面，一个顶面		
-			var bno = ['36785210', '01258763']; //01258763 36785210
-			roteall(rotefaces, rotepos, movefave, bno);
- 
- 
- 
-		}
-		// 整体顶顺
-		function Uall() {
-			var rotefaces = ['aside', 'bside', 'dside', 'cside', 'aside']; //本次操作的4个相关面，一个顶面 
-			var rotepos = [[0, 1, 2, 3, 4, 5, 6, 7, 8], [0, 1, 2, 3, 4, 5, 6, 7, 8], [0, 1, 2, 3, 4, 5, 6, 7, 8], [0, 1, 2, 3, 4, 5, 6, 7, 8], [0, 1, 2, 3, 4, 5, 6, 7, 8]]; //本次操作的块
-			var movefave = ['eside', 'fside'];  //本次操作的4个相关面，一个顶面		
-			var bno = ['01258763', '36785210']; //01258763 36785210
-			roteall(rotefaces, rotepos, movefave, bno);
- 
-		}
- 
- 
-		$(function (argument) {
- 
- 
- 
-			for (var i = 0; i < colors.length; i++) {
-				// 面
-				var tmp = [];
-				for (var j = 0; j < 9; j++) {
-					// 一面9块
-					tmp.push(colors[i]);
-				}
-				// 往魔方上贴一面的颜色
-				colordata.push(tmp);
-			}
-			console.log('初始化魔方数据', colordata);
- 
-			fillcolor2box(colordata, sidenames);
- 
-			//整体有个旋转角度可以让我们看到3面    
-			$(".box .content").css("transform", "rotateX(-35deg) rotateY(54deg) rotateZ(9deg)");
-			$(".boxmin .content").css("transform", "rotateX(-35deg) rotateY(67deg) rotateZ(14deg)");
-			// 各面旋转拼凑正方体
-			$(".bside").css("transform", "rotateY(-90deg) translateX(-71px) translateZ(90px)");
-			$(".cside").css("transform", "rotateY(90deg) translateX(90px) translateZ(71px)");
-			$(".dside").css("transform", "rotateY(180deg) translateX(17px)   translateZ(161px)");
-			$(".eside").css("transform", "rotateX(269deg)  translateY(90px) translateZ(71px) ");
-			$(".fside").css("transform", "rotateX(90deg) translateY(-71px) translateZ(90px)");
- 
-			console.log('正在打乱魔方数据...');
-			setTimeout(() => { Rndx(); }, 3000);
- 
- 
- 
-		});
- 
-		// 打乱---随机旋转100次
-		function Rndx() {
-			console.log('打乱魔方', colordata);
-			for (var i = 0; i < 1000; i++) {
-				var rand = Math.floor(Math.random() * 4 + 1);
-				if (rand == 1) { R(); }
-				if (rand == 2) { U(); }
-				if (rand == 3) { F(); }
-				if (rand == 4) { Uall(); }
-			}
-			fillcolor2box(colordata);
-		}
- 
- 
- 
-		function F_End() { F(); fillcolor2box(colordata); }
-		function F1_End() { F1(); fillcolor2box(colordata); }
-		function R_End() { R(); fillcolor2box(colordata); }
-		function R1_End() { R1(); fillcolor2box(colordata); }
-		function B_End() { B(); fillcolor2box(colordata); }
-		function B1_End() { B1(); fillcolor2box(colordata); }
-		function U_End() { U(); fillcolor2box(colordata); }
-		function U1_End() { U1(); fillcolor2box(colordata); }
-		function Uall_End() { Uall(); fillcolor2box(colordata); }
-		function U1all_End() { U1all(); fillcolor2box(colordata); }
- 
- 
- 
-		// 1 底层小白
-		function s1_xiaobai() {
-			for (var i = 0; i < 100; i++) {
-				step1();
-				if (checkokstep1()) { break; }
-			}
-			fillcolor2box(colordata);
-			
-			console.log('1底层十字完成');
-		}
- 
-		function s2_dicheng() {
-			for (var i = 0; i < 100; i++) {
-				step2();
-				if (checkokstep2()) { break; }
-			}
-			fillcolor2box(colordata);
-			
-			console.log('2底层完成');
-		}
- 
-		function step1(step1_times) {
-			// 找到底层白色做成底层十字，俗称小白花
-			// 分析：白色共8个动快 0123 5678 
- 
-			var w_index = "";
-			var w_len_index = "";
-			var w_len_indexa = "";
-			var w_len_indexacolor = "";
-			var checkeeee = "";
-			var faces = "abcdef".split("");
-			var lenwei = "1357"; //棱位 
-			var jiaowei = "0268"; //角位
-			var colorseq = ["blue", "red", "green", "orange"];
-			var map_lenwei = ["a1", "a3", "a5", "a7", "b1", "b3", "b5", "b7", "c1", "c3", "c5", "c7", "d1", "d3", "d5", "d7", "e1", "e3", "e5", "e7", "f1", "f3", "f5", "f7"];
-			var map_lenweia = ["f7", "b5", "c3", "e1", "f3", "d5", "a3", "e3", "f5", "a5", "d3", "e5", "f1", "c5", "b3", "e7", "a7", "b7", "c7", "d7", "d1", "b1", "c1", "a1"];
-			for (var i = 0; i < colordata.length; i++) {
-				for (var j = 0; j < colordata[i].length; j++) {
-					if ('white' == colordata[i][j]) {
-						w_index += "," + faces[i] + "" + j;
-						if (lenwei.indexOf(j) >= 0) {  //var lenwei="1357"; //棱位 
-							checkeeee += faces[i];
-							var this_w_len_index = "" + faces[i] + "" + j
-							w_len_index += "," + this_w_len_index;
-							var this_w_len_indexa = map_lenweia[map_lenwei.indexOf(this_w_len_index)]
-							w_len_indexa += "," + this_w_len_indexa;
-							var ff = this_w_len_indexa.split("")[0];
-							var ffi = this_w_len_indexa.split("")[1];
-							w_len_indexacolor += "," + colordata[faces.indexOf(ff)][ffi];
-						}
-					}
-				}
-			}
- 
-			var hasa = (checkeeee.indexOf("a") >= 0)
-			// console.log("白色9块分布于："+w_index);		
-			// console.log("白色棱位："+w_len_index);	 //a3,a5,e5,e7
-			// console.log("白色棱位对位置："+w_len_indexa);	 //a3,a5,e5,e7
-			// console.log("白色棱位对颜色："+w_len_indexacolor);	 //a3,a5,e5,e7
-			// console.log("A面的颜色是："+ colordata[0][4]);
-			// 	console.log("B面的颜色是："+ colordata[1][4]);
-			// 	console.log("C面的颜色是："+ colordata[2][4]);
-			// 	console.log("D面的颜色是："+ colordata[3][4]);
-			// 	console.log("E面的颜色是："+ colordata[4][4]);
-			// 	console.log("F面的颜色是："+ colordata[5][4]);
-			// 	console.log("checkeeee是："+ checkeeee+",其中是否有a:" + hasa);
- 
-			var needmove = false;
- 
-			if (1 <= 100) {
-				if (checkeeee.indexOf("a") < 0) {
-					if (checkeeee.indexOf("b") >= 0) {
-						U1all();
-						step1();
-					} else if (checkeeee.indexOf("c") >= 0) {
-						Uall();
-						step1();
-					} else if (checkeeee.indexOf("d") >= 0) {
-						Uall(); Uall();
-						step1();
-					} else if (checkeeee.indexOf("f") >= 0) {
-						var fn = w_len_index.substr(w_len_index.indexOf("f") + 1, 1);
-						var aindex = (w_len_index.indexOf("f" + fn) - 1) / 3;
-						var ducolor = w_len_indexacolor.split(",")[aindex + 1];
-						var bcolor = colordata[1][4];
-						var N = 4 + colorseq.indexOf(bcolor) - colorseq.indexOf(ducolor);
-						if (fn == 1) { U1(); }
-						if (fn == 3) { }
-						if (fn == 5) { U(); U(); }
-						if (fn == 7) { U(); }
- 
-						for (var i = 0; i < N; i++) {
-							U1all(); U();
-						}
-						F(); F();
-						step1();
-					} else {
-						//这里已经是eeee.如果颜色不对是需要拧上去的。
-						var fn = w_len_index.substr(w_len_index.indexOf("e") + 1, 1);
-						var aindex = (w_len_index.indexOf("e" + fn) - 1) / 3;
-						var ducolor = w_len_indexacolor.split(",")[aindex + 1];
- 
-						var errcolor = false;
-						if (fn == 1) { errcolor = (ducolor != colordata[0][4]); }
-						if (fn == 3) { errcolor = (ducolor != colordata[1][4]); }
-						if (fn == 5) { errcolor = (ducolor != colordata[2][4]); }
-						if (fn == 7) { errcolor = (ducolor != colordata[3][4]); }
-						if (fn == 1 && errcolor) { R(); }
-						if (fn == 3 && errcolor) { F(); }
-						if (fn == 5 && errcolor) { B(); }
-						if (fn == 7 && errcolor) { U1all(); F(); }
-						// 	colorseq.indexOf(colordata[5][fn])-  colorseq.indexOf(ducolor)
-						// console.log("ducolor："+ ducolor+",colordata[0][4]" + colordata[0][4]);
-					}
-				} else {
-					//has a
-					// console.log("has a and ：a"+   w_len_index.substr(w_len_index.indexOf("a")+1,1) );
-					var fn = w_len_index.substr(w_len_index.indexOf("a") + 1, 1);
-					var aindex = (w_len_index.indexOf("a" + fn) - 1) / 3;
-					var ducolor = w_len_indexacolor.split(",")[aindex + 1];
- 
- 
-					// var colorseq=["blue","red","green","orange"];   blue
-					//B_color w_len_indexacolor.split(",")[aindex+1]
-					// a面有白。a->a1->color->weizhi 
- 
-					if (fn == 1) { }
-					if (fn == 3) { R(); }
-					if (fn == 5) { R1(); }
-					if (fn == 7) { R(); R(); }
-					var bcolor = colordata[1][4];
-					var N = 4 + colorseq.indexOf(bcolor) - colorseq.indexOf(ducolor);
-					for (var i = 0; i < N; i++) {
-						U1all(); U();
-					}
-					R1(); F(); R();
- 
-				}
-			}
- 
- 
- 
- 
- 
-			//计算棱位对应色		
-			// for (var j = 0; j < faces.length; j++) {
-			// 	for (var i = 0; i < arr_lenwei.length; i++) {
-			// 		map_lenwei.push(""+faces[j]+""+arr_lenwei[i]);
-			// 	}
-			// }
-			// console.log(map_lenwei); 
-			// ["a1", "a3", "a5", "a7", "b1", "b3", "b5", "b7", "c1", "c3", "c5", "c7", "d1", "d3", "d5", "d7", "e1", "e3", "e5", "e7", "f1", "f3", "f5", "f7"]
- 
-		}
-		// 2找到底层角块，并归位
-		function step2() {
- 
-			var w_index = "";
-			var w_len_index = "";
-			var w_len_indexa = "";
-			var w_len_indexacolor = "";
-			var checkeeee = "";
-			var faces = "abcdef".split("");
-			var lenwei = "1357"; //棱位 
-			var jiaowei = "0268"; //角位
-			var colorseq = ["blue", "red", "green", "orange"];
- 
-			for (var i = 0; i < colordata.length; i++) {
-				for (var j = 0; j < colordata[i].length; j++) {
-					if ('white' == colordata[i][j]) {
-						w_index += "," + faces[i] + "" + j;
-						if (jiaowei.indexOf(j) >= 0) {  //var  jiaowei="0268"; 
-							checkeeee += faces[i];
-							var this_w_len_index = "" + faces[i] + "" + j
-							w_len_index += "," + this_w_len_index;
- 
- 
-						}
-					}
-				}
-			}
- 
-			// 白色9块分布于：,b0,c2,e1,e3,e4,e5,e6,e7,f6
-			// index_mofang.html:622 白色角位：,b0,c2,e6,f6
-			// index_mofang.html:631 checkeeee是：bcef,其中是否有a:false
-			// 同理也是先将1个白色角块转至A面。然后定位于A0，然后对应相应颜色。共3个步骤
-			var hasa = (checkeeee.indexOf("a") >= 0)
-			// console.log("白色9块分布于："+w_index);	 	
-			// console.log("白色角位："+w_len_index);	 //a3,a5,e5,e7 
-			// 	console.log("checkeeee是："+ checkeeee+",其中是否有a:" + hasa);
- 
- 
- 
-			if (1 <= 100) {
-				if (checkeeee.indexOf("a") < 0) {
-					if (checkeeee.indexOf("b") >= 0) {
-						U1all();
-						step2();
-					} else if (checkeeee.indexOf("c") >= 0) {
-						Uall();
-						step2();
-					} else if (checkeeee.indexOf("d") >= 0) {
-						Uall(); Uall();
-						step2();
-					} else if (checkeeee.indexOf("f") >= 0) {
-						// 白角块在F面时有2个路线。
-						var fn = w_len_index.substr(w_len_index.indexOf("f") + 1, 1);
-						if (fn == 0) { U(); F1(); U1(); F() }
-						if (fn == 2) { F1(); U1(); F() }
-						if (fn == 6) { U1(); F1(); U(); F(); }
-						if (fn == 8) { F1(); U(); F(); }
-						step2();
-					} else {
-						//eeee就不拧了，先检查再拧。
-					}
-				} else {
-					// console.log("has a and ：a"+   w_len_index.substr(w_len_index.indexOf("a")+1,1) );
-					var fn = w_len_index.substr(w_len_index.indexOf("a") + 1, 1);
-					var aindex = (w_len_index.indexOf("a" + fn) - 1) / 3;
- 
-					if (fn == 0) { }
-					if (fn == 2) { U1(); R(); U(); R1(); }
-					if (fn == 6) { R(); U(); R1(); U1(); }
-					if (fn == 8) { R1(); U1(); R(); U(); }
-					//A0已经有一个白角块了。到时间看下是什么颜色了。
-					var colorB = colordata[1][2];
-					var bcolor = colordata[1][4];
-					var N = 4 + colorseq.indexOf(bcolor) - colorseq.indexOf(colorB);
-					for (var i = 0; i < N; i++) {
-						U1all(); U();
-					}
-					U1(); F1(); U(); F();
- 
-				}
-			}
-			// console.log(" step2执行了" +  step2_times + "次" );
- 
-		}
- 
-		var checkokstep1 = function () {
-			if (colordata[4][1] === colordata[4][4] &&
-				colordata[4][3] === colordata[4][4] &&
-				colordata[4][5] === colordata[4][4] &&
-				colordata[4][7] === colordata[4][4]) {
-				if (colordata[0][7] === colordata[0][4] &&
-					colordata[1][7] === colordata[1][4] &&
-					colordata[2][7] === colordata[2][4] &&
-					colordata[3][7] === colordata[3][4]) {
-					// console.log("底部小白花");
-					return true;
-				}
-			}
-			return false;
-		}
- 
-		var checkokstep2 = function () { //底层ok
-			if (colordata[4][1] === colordata[4][4] &&
-				colordata[4][3] === colordata[4][4] &&
-				colordata[4][5] === colordata[4][4] &&
-				colordata[4][7] === colordata[4][4] &&
-				colordata[4][0] === colordata[4][4] &&
-				colordata[4][2] === colordata[4][4] &&
-				colordata[4][4] === colordata[4][4] &&
-				colordata[4][8] === colordata[4][4]) {
-				if (colordata[0][6] === colordata[0][4] && colordata[0][7] === colordata[0][4] && colordata[0][8] === colordata[0][4] &&
-					colordata[1][6] === colordata[1][4] && colordata[1][7] === colordata[1][4] && colordata[1][8] === colordata[1][4] &&
-					colordata[2][6] === colordata[2][4] && colordata[2][7] === colordata[2][4] && colordata[2][8] === colordata[2][4] &&
-					colordata[3][6] === colordata[3][4] && colordata[2][7] === colordata[2][4] && colordata[2][8] === colordata[2][4]) {
-					// console.log("底层");
-					return true;
-				}
-			}
-			return false;
-		}
- 
- 
- 
- 
- 
- 
-		function s3_zhongcheng(argument) {
-			var times = 30;
-			step3_times = 0;
-			for (var i = 0; i < times; i++) {
-				step3();
-				if (checkokstep3()) { break; }
-			}
-			fillcolor2box(colordata);
-			console.log('3中间层完成');
-		}
- 
-		function step3(argument) {
-			// 思路也是把4个找出来。且把他们固定在A1位置。然后判定颜色，然后根据公式旋转。
-			// 如何找？经过12步骤，中层块只有4个，且只可能在f1357,a35,d35,这8个位置。去掉有顶色的块，剩下就是
- 
-			var fcolro = colordata[5][4];
-			var maybepos = ["f1", "f3", "f5", "f7", "a3", "a5", "d3", "d5"];
-			var maybeposa = ["d1", "b1", "c1", "a1", "b5", "c3", "c5", "b3"];
-			var maybecolor = [];
-			var maybecolora = [];
-			var pos = [];
-			var posa = [];
-			var color3 = [];
-			var color3a = [];
-			var checkeeee = "";
-			var faces = "abcdef".split("");
-			maybecolor = maybepos.map(function (v, i) {
-				return colordata[faces.indexOf(v.substr(0, 1))][v.substr(1)];
-			});
-			maybecolora = maybeposa.map(function (v, i) {
-				return colordata[faces.indexOf(v.substr(0, 1))][v.substr(1)];
-			});
- 
-			for (var i = 0; i < maybecolor.length; i++) {
-				if (maybecolor[i] != fcolro && maybecolora[i] != fcolro) {
-					checkeeee += maybepos[i].substr(0, 1);
-					pos.push(maybepos[i]);
-					posa.push(maybeposa[i]);
-					color3.push(maybecolor[i]);
-					color3a.push(maybecolora[i]);
-				}
-			}
-			// console.log(fcolro);
-			// console.log(pos);
-			// console.log(posa);		
-			// console.log(color3);
-			// console.log(color3a);
-			// console.log(checkeeee);
-			var colorseq = ["blue", "red", "green", "orange"];
-			step3_times++;
-			if (step3_times <= 100) {
-				if (checkeeee.indexOf("f") < 0) {
-					if (checkeeee.indexOf("a") >= 0) {
-						if (pos.indexOf("a3") >= 0 && checknotokstep3("a3")) {
-							U1(); F1(); U(); F(); U(); R(); U1(); R1(); step3();
-						} else if (pos.indexOf("a5") >= 0 && checknotokstep3("a5")) { // a5
-							Uall(); step3();
-						}
-					} else if (checkeeee.indexOf("d") < 0) {
-						if (pos.indexOf("d3") >= 0 && checknotokstep3("d3")) {
-							U1all(); U1all(); step3();
-						} else if (pos.indexOf("d5") >= 0 && checknotokstep3("d5")) { // a5
-							Uall(); step3();
-						}
-					}
-				} else {
-					//公式f1357 
-					var fn = 0;
-					for (var i = 0; i < pos.length; i++) {
-						if (pos[i].indexOf("f") >= 0) {
-							fn = i;
-						}
-					}
-					// console.log(pos[fn]);
-					// console.log(color3[fn]);
-					// console.log(color3a[fn]);
-					// console.log(4+colorseq.indexOf(color3[fn])-colorseq.indexOf(color3a[fn]));
-					// console.log(colorseq);
-					if (colorseq.indexOf(color3[fn]) - colorseq.indexOf(color3a[fn]) == -1 || colorseq.indexOf(color3[fn]) - colorseq.indexOf(color3a[fn]) == 3) {
-						// console.log("顺：" + color3[fn] + color3a[fn] ); 
-						//顺就放到f7
-						if (pos[fn] == "f1") { U(); U(); }
-						if (pos[fn] == "f3") { U1(); }
-						if (pos[fn] == "f5") { U(); }
-						var N = 4 + colorseq.indexOf(colordata[0][4]) - colorseq.indexOf(color3a[fn]);
-						for (var i = 0; i < N; i++) {
-							U1all(); U();
-						}
-						//u1f1ufuru1r
-						U1(); F1(); U(); F(); U(); R(); U1(); R1();
-					} else {
-						//反就放到f3
-						if (pos[fn] == "f1") { U1(); }
-						if (pos[fn] == "f5") { U(); U(); }
-						if (pos[fn] == "f7") { U(); }
-						// console.log("反：" + color3[fn] + color3a[fn] ); 
-						var N = 4 + colorseq.indexOf(colordata[0][4]) - colorseq.indexOf(color3[fn]);
-						for (var i = 0; i < N; i++) {
-							U1all(); U();
-						}
-						U(); R(); U1(); R1(); U1(); F1(); U(); F();
-					}
-				}
-			}
- 
- 
-		}
- 
-		function checkokstep3() { //中层ok
-			if (checkokstep2) {
-				if (colordata[0][3] === colordata[0][4] && colordata[0][5] === colordata[0][4] &&
-					colordata[1][3] === colordata[1][4] && colordata[1][5] === colordata[1][4] &&
-					colordata[2][3] === colordata[2][4] && colordata[2][5] === colordata[2][4] &&
-					colordata[3][3] === colordata[3][4] && colordata[2][5] === colordata[2][4]) {
-					// console.log("中层");
-					return true;
-				}
-			}
-			return false;
-		}
- 
-		function checknotokstep3(pos) {
-			if (pos == "a3") {
-				var a = colordata[0][3];
-				var b = colordata[0][4];
-				var c = colordata[1][5];
-				var d = colordata[1][4];
-				return (a != b) || (c != d);
-			}
-			if (pos == "a5") { return (colordata[0][5] != colordata[0][4]) || (colordata[2][3] != colordata[2][4]); }
-			if (pos == "d3") { return (colordata[3][3] != colordata[3][4]) || (colordata[2][5] != colordata[2][4]); }
-			if (pos == "d5") { return (colordata[3][5] != colordata[3][4]) || (colordata[1][3] != colordata[1][4]); }
-		}
- 
-	</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>周航山 | 个人网站</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4cc9f0;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #4ade80;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: var(--light-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(67, 97, 238, 0.15) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(76, 201, 240, 0.15) 0%, transparent 20%);
+            z-index: -1;
+        }
+
+        /* 通用样式 */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+            font-weight: 700;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 70px;
+            height: 4px;
+            background: var(--accent-color);
+            border-radius: 2px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
+        }
+
+        /* 手机端样式 */
+        .mobile-view {
+            display: block;
+        }
+
+        /* 电脑端样式 */
+        .desktop-view {
+            display: none;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            transition: var(--transition);
+        }
+
+        .navbar.scrolled {
+            padding: 10px 0;
+        }
+
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo span {
+            color: var(--accent-color);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 30px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-color);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-color);
+        }
+
+        /* 英雄区域 */
+        .hero {
+            padding: 150px 0 100px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 50px;
+        }
+
+        .hero-text {
+            flex: 1;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            animation: fadeIn 1.2s ease;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero h1 span {
+            color: var(--accent-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 600px;
+            opacity: 0.9;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .btn-outline:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .profile-img {
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--accent-color);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: var(--transition);
+        }
+
+        .profile-img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        /* 关于区域 */
+        .about {
+            padding: 100px 0;
+        }
+
+        .about-content {
+            display: flex;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .about-text {
+            flex: 1;
+        }
+
+        .about-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .about h3 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+        }
+
+        .about p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .info-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(76, 201, 240, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+        }
+
+        /* 技能区域 */
+        .skills {
+            padding: 100px 0;
+            background: rgba(15, 23, 42, 0.7);
+        }
+
+        .skills-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .skill-category {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+
+        .skill-category:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .skill-category h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .skill-category h3 i {
+            margin-right: 10px;
+            color: var(--accent-color);
+        }
+
+        .skill-item {
+            margin-bottom: 20px;
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .skill-bar {
+            height: 10px;
+            background: rgba(67, 97, 238, 0.2);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .skill-progress {
+            height: 100%;
+            background: var(--primary-color);
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .skill-progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: progressShine 2s infinite;
+        }
+
+        /* 教育经历 */
+        .education {
+            padding: 100px 0;
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--accent-color);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 50px;
+            width: calc(50% - 40px);
+        }
+
+        .timeline-item:nth-child(odd) {
+            float: left;
+            clear: right;
+            transform: translateX(-30px);
+        }
+
+        .timeline-item:nth-child(even) {
+            float: right;
+            clear: left;
+            transform: translateX(30px);
+        }
+
+        .timeline-content {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+
+        .timeline-content:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .timeline-content h4 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .timeline-content .date {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(67, 97, 238, 0.1);
+            border-radius: 30px;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .timeline-content p {
+            color: #555;
+            font-style: italic;
+        }
+
+        .timeline-content::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            top: 30px;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content::before {
+            right: -60px;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content::before {
+            left: -60px;
+        }
+
+        /* 成就区域 */
+        .achievements {
+            padding: 100px 0;
+            background: rgba(15, 23, 42, 0.7);
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .achievement-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .achievement-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(67, 97, 238, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .achievement-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .achievement-card p {
+            color: #666;
+        }
+
+        /* 推荐区域 */
+        .testimonials {
+            padding: 100px 0;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .testimonial-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 5rem;
+            color: rgba(67, 97, 238, 0.1);
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+
+        .testimonial-content {
+            margin-top: 30px;
+            color: #555;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .author-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+            border: 2px solid var(--accent-color);
+        }
+
+        .author-info h4 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        /* 页脚 */
+        .footer {
+            background: rgba(15, 23, 42, 0.95);
+            padding: 50px 0 20px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .footer-logo span {
+            color: var(--accent-color);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            margin: 30px 0;
+        }
+
+        .footer-links li {
+            margin: 0 15px;
+        }
+
+        .footer-links a {
+            color: #aaa;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-color);
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .social-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background: var(--primary-color);
+            transform: translateY(-5px);
+        }
+
+        .copyright {
+            color: #aaa;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes progressShine {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .hero-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero-text {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .hero-btns {
+                justify-content: center;
+            }
+
+            .about-content {
+                flex-direction: column;
+            }
+
+            .timeline::before {
+                left: 30px;
+            }
+
+            .timeline-item {
+                width: 100%;
+                margin-left: 70px;
+                margin-right: 0;
+                float: none;
+                clear: none;
+                transform: none;
+            }
+
+            .timeline-item:nth-child(odd) .timeline-content::before,
+            .timeline-item:nth-child(even) .timeline-content::before {
+                left: -60px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-view {
+                display: block;
+            }
+            
+            .desktop-view {
+                display: none;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .navbar {
+                padding: 15px 0;
+            }
+            
+            .hero {
+                padding: 120px 0 60px;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .profile-img {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .hero-btns {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-view {
+                display: none;
+            }
+            
+            .desktop-view {
+                display: block;
+            }
+        }
+    </style>
 </head>
- 
 <body>
-	<div class="divbuttons">
-		<input type="button" class="button" value="U'" onclick="U1_End()">
-		<input type="button" class="button" value="U" onclick="U_End()">
-			<input type="button" class="button" value="F'" onclick="F1_End()">
-			<input type="button" class="button" value="F" onclick="F_End()">
- 
-	</div>
-	<div class="container">
- 
-		<!-- 正方体 -->
-		<div class="box">
-			<div class="content">
-				<div class="aside face"> <!--魔方第一个面，类名aside-->
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-				</div>
-				<div class="bside face"> <!--魔方第2个面，类名bside-->
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-				</div>
-				<div class="cside face"> <!--魔方第3个面，类名cside-->
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-				</div>
-				<div class="dside face"> <!--魔方第一4个面，类名dside-->
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-				</div>
-				<div class="eside face"> <!--魔方第5个面，类名eside-->
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-				</div>
-				<div class="fside face"> <!--魔方第6个面，类名fside-->
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-				</div>
-			</div>
-		</div>
- 
-		<div class="boxmin">
-			<div class="content">
-				<div class="aside face"> <!--魔方第一个面，类名aside-->
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-				</div>
-				<div class="bside face"> <!--魔方第2个面，类名bside-->
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-				</div>
-				<div class="cside face"> <!--魔方第3个面，类名cside-->
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-				</div>
-				<div class="dside face"> <!--魔方第一4个面，类名dside-->
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-				</div>
-				<div class="eside face"> <!--魔方第5个面，类名eside-->
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-				</div>
-				<div class="fside face"> <!--魔方第6个面，类名fside-->
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-					<div class="minibox"></div>
-				</div>
-			</div>
-		</div>
- 
-	</div>
-	<div class="divbuttons">
- 
-		<input type="button" class="button" value="R'" onclick="R1_End()">
-		<input type="button" class="button" value="R" onclick="R_End()">
-		<input type="button" class="button" value="B'" onclick="B1_End()">
-		<input type="button" class="button" value="B" onclick="B_End()"><br>
- 
-		<input type="button" class="button" value="x" onclick="Uall_End()">
-		<input type="button" class="button" value="x'" onclick="U1all_End()">
-		<input type="button" class="button" value="打乱" onclick="Rndx()">
-		<br>
-		<input type="button" class="button" value="Cross" onclick="s1_xiaobai()">
-		<input type="button" class="button" value="F1L" onclick="s2_dicheng()">
-		<input type="button" class="button" value="F2L" onclick="s3_zhongcheng()">
-	 
-	</div>
- 
+    <!-- 手机端视图 -->
+    <div class="mobile-view">
+        <!-- 这里放置您原有的移动端HTML代码 -->
+        <!-- 由于代码过长，已省略，实际使用时请将原代码放在这里 -->
+    </div>
+
+    <!-- 电脑端视图 -->
+    <div class="desktop-view">
+        <!-- 导航栏 -->
+        <nav class="navbar">
+            <div class="container navbar-container">
+                <a href="#" class="logo">周航山<span>.</span></a>
+                <ul class="nav-links">
+                    <li><a href="#home">首页</a></li>
+                    <li><a href="#about">关于我</a></li>
+                    <li><a href="#skills">技能爱好</a></li>
+                    <li><a href="#education">教育经历</a></li>
+                    <li><a href="#achievements">成就</a></li>
+                    <li><a href="#testimonials">人物风评</a></li>
+                    <li><a href="#contact">联系</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- 英雄区域 -->
+        <section id="home" class="hero">
+            <div class="container hero-content">
+                <div class="hero-text">
+                    <h1>你好，我是<span>周航山</span></h1>
+                    <p>扶绥中学学生 | 书法协会副会长 | 编程爱好者 | 魔方达人</p>
+                    <div class="hero-btns">
+                        <a href="#about" class="btn">了解更多</a>
+                        <a href="#contact" class="btn btn-outline">联系我</a>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="https://s2.loli.net/2024/07/25/GHXzxf3NFlmCBeL.jpg" alt="周航山" class="profile-img">
+                </div>
+            </div>
+        </section>
+
+        <!-- 关于区域 -->
+        <section id="about" class="about">
+            <div class="container">
+                <h2 class="section-title">关于我</h2>
+                <div class="about-content">
+                    <div class="about-text">
+                        <p>周航山，外号小冰、张三。生于2008年11月7日，爱好编程、魔方、书法、乒乓球等，最喜欢的颜色是蓝粉白，现就读于扶绥县扶绥中学，担任扶绥中学书法协会24级副会长，年级领导指认"年级御用书法家"之一。</p>
+                        
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div>
+                                    <h4>所在地</h4>
+                                    <p>广西壮族自治区南宁市宾阳县</p>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div>
+                                    <h4>邮箱</h4>
+                                    <p>1945581557@qq.com</p>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div>
+                                    <h4>电话</h4>
+                                    <p>17374809507</p>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fab fa-qq"></i>
+                                </div>
+                                <div>
+                                    <h4>QQ</h4>
+                                    <p>1945581557</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="social-icons">
+                            <a href="https://facebook.com" class="social-icon">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="https://x.com/HeasonZou?s=09" class="social-icon">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="https://ig.inshelp.xyz/ins/jaychou" class="social-icon">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="about-image">
+                        <img src="https://s2.loli.net/2024/10/27/yRCMB2VhNJFmnWg.jpg" alt="周航山" class="profile-img">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 技能区域 -->
+        <section id="skills" class="skills">
+            <div class="container">
+                <h2 class="section-title">技能与爱好</h2>
+                <div class="skills-container">
+                    <div class="skill-category">
+                        <h3><i class="fas fa-cube"></i> 魔方</h3>
+                        <p>我在魔方上有一定造诣，平日里会喜欢玩魔方，我认为这一种放松与锻炼大脑的方式，魔方也不是让人高傲的一项技能，我更喜欢和大家一起学习、研究魔方的奥妙。</p>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span>多阶魔方</span>
+                                <span>90%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span>镜面魔方</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span>异形魔方</span>
+                                <span>80%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 80%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-category">
+                        <h3><i class="fas fa-laptop-code"></i> 编程</h3>
+                        <p>小时候，总是对信息技术很感兴趣，和别人不一样，拿到一个软件我会先里里外外浏览一遍功能，思考它的每个拆分原理，后来开始学习编程，感受到这是多么神奇和宏伟的东西。</p>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span>Python</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span>Web开发</span>
+                                <span>80%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 80%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span>Visual Basic</span>
+                                <span>75%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 75%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-category">
+                        <h3><i class="fas fa-book"></i> 学习</h3>
+                        <p>嘿嘿，在这里塞一个"学习"可能有点突兀吧。但是我确实拿不出什么值得我自豪的东西了，课内学习我反而还是比较得意的，大家学习有什么问题也可以问我哦～</p>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span>数学</span>
+                                <span>95%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 95%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span>物理</span>
+                                <span>90%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span>化学</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 教育经历 -->
+        <section id="education" class="education">
+            <div class="container">
+                <h2 class="section-title">教育经历</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="date">2011 - 2012</div>
+                            <h4>佳佳幼儿园 小班</h4>
+                            <p>“最模糊的记忆中总是浮现出点滴美好”</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="date">2012 - 2014</div>
+                            <h4>扶绥县第二幼儿园 113班</h4>
+                            <p>“世界上最纯真的样子停留在这个时刻”</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="date">2014 - 2015</div>
+                            <h4>新宁镇第二小学 学前班</h4>
+                            <p>“遇见是场意外，心却在风里摇摆”</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="date">2015 - 2021</div>
+                            <h4>新宁镇第二小学 206班</h4>
+                            <p>“那是一段小有遗憾的幸福时光”</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="date">2021 - 2024</div>
+                            <h4>扶绥中学初中部 141班</h4>
+                            <p>“爱意随风起，风止意难平”</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="date">2024 - 2027</div>
+                            <h4>扶绥县扶绥中学 622班</h4>
+                            <p>“如果巅峰留不住，那就重走来时路”</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 成就区域 -->
+        <section id="achievements" class="achievements">
+            <div class="container">
+                <h2 class="section-title">个人成就</h2>
+                <div class="achievements-grid">
+                    <div class="achievement-card">
+                        <div class="achievement-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <h3>学习成绩</h3>
+                        <p>2019年期中总分全县前十</p>
+                        <p>2021年小考二模总分全县第四</p>
+                        <p>2024年中考二模总分全县第三</p>
+                    </div>
+                    
+                    <div class="achievement-card">
+                        <div class="achievement-icon">
+                            <i class="fas fa-medal"></i>
+                        </div>
+                        <h3>校运会荣誉</h3>
+                        <p>2021年立定跳远年级第一</p>
+                        <p>2022年立定跳远年级第二</p>
+                    </div>
+                    
+                    <div class="achievement-card">
+                        <div class="achievement-icon">
+                            <i class="fas fa-paint-brush"></i>
+                        </div>
+                        <h3>书法成就</h3>
+                        <p>2023年元旦书法展三等奖</p>
+                        <p>2024年凤凰花节书法展三等奖</p>
+                        <p>2024年书法等级考核A等级(年级共4个)</p>
+                    </div>
+                    
+                    <div class="achievement-card">
+                        <div class="achievement-icon">
+                            <i class="fas fa-cube"></i>
+                        </div>
+                        <h3>魔方成就</h3>
+                        <p>2021-2024年发展部第二名</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 人物风评 -->
+        <section id="testimonials" class="testimonials">
+            <div class="container">
+                <h2 class="section-title">人物风评</h2>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>张三这个人呢，是我们班的同学，名字叫周航山，三年的初中友谊，我对张三也算了解了许多，那我就来说一说他吧。</p>
+                            <p>三年来呢，我们有争有好，有苦有甜，有难有易。刚认识那会儿就吵了，但不要紧，我意识到这原来也是同道中人。</p>
+                            <p>唉！张三这个人呢，真是过于深情了，一个女生困住了他4年，第二个女的说不定他现在都还没走出来，我也挺为他感到惋惜的，真希望以后他能找一个对他好点的女孩。</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="https://s2.loli.net/2024/07/25/ThEaGZml9eO2yfW.jpg" alt="盛俊" class="author-img">
+                            <div class="author-info">
+                                <h4>盛俊</h4>
+                                <p>初中同学</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>张三，本人上高中之后的第一个同桌。此前记住他还是因为一件很尴尬的事，但是上高中认识他之后才发现他其实挺乐于助人的。问他问题他都会耐心解答💪🏻</p>
+                            <p>举个栗子，某次物理考试前的一个晚自习，本人正在奋力复习物理，看到一道不懂的题，遂向张三寻求帮助。过了十几分钟，张三递过来一张写得满满的草稿纸。</p>
+                            <p>上面是那道题的详细解析，解释得比答案还清楚，还附上了相似题型的解法d(^_^o)当时就一阵暖心啊。</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="https://via.placeholder.com/60" alt="何佳璟" class="author-img">
+                            <div class="author-info">
+                                <h4>何佳璟</h4>
+                                <p>高中同学</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>周航山，首先他是一个博学多才的人，会的范围非常的广，无论是学习还是体育，都有他的一席之地，很会做事，很努力去做事，就拿我和他比较来讲，他确实能做到一些我做不到的，不过他好像很容易受到别人的影响。</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="https://s2.loli.net/2024/07/25/ThEaGZml9eO2yfW.jpg" alt="黄名轩" class="author-img">
+                            <div class="author-info">
+                                <h4>黄名轩</h4>
+                                <p>扶中141班常驻前五</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>周航山是一个博学多才的人，对各种知识都充满了好奇心，不断地学习和探索。他努力不懈，对待任何事情都充满热情和毅力，从不轻言放弃。兴趣爱好广泛，喜欢尝试新事物，对生活充满热情。</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="https://s2.loli.net/2024/07/25/vqGU4BeyRfCblOW.jpg" alt="黄耀乐" class="author-img">
+                            <div class="author-info">
+                                <h4>黄耀乐</h4>
+                                <p>扶中2-503最强侦查兵</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 联系区域 -->
+        <section id="contact" class="contact">
+            <div class="container">
+                <!-- 联系表单可以放在这里 -->
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-logo">周航山<span>.</span></div>
+                    <p>扶绥中学学生 | 书法协会副会长 | 编程爱好者 | 魔方达人</p>
+                    
+                    <ul class="footer-links">
+                        <li><a href="#home">首页</a></li>
+                        <li><a href="#about">关于我</a></li>
+                        <li><a href="#skills">技能爱好</a></li>
+                        <li><a href="#education">教育经历</a></li>
+                        <li><a href="#achievements">成就</a></li>
+                        <li><a href="#testimonials">人物风评</a></li>
+                    </ul>
+                    
+                    <div class="social-icons">
+                        <a href="https://facebook.com" class="social-icon">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://x.com/HeasonZou?s=09" class="social-icon">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://ig.inshelp.xyz/ins/jaychou" class="social-icon">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-icon">
+                            <i class="fab fa-qq"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="copyright">
+                        &copy; 2025 周航山. 保留所有权利
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // 动画效果 - 当元素进入视口时添加动画
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animated');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('.hero-text, .hero-image, .about-text, .about-image, .skill-category, .timeline-content, .achievement-card, .testimonial-card').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
 </body>
- 
 </html>
