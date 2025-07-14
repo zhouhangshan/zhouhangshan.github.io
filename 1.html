@@ -1,682 +1,353 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>周航山 | 个人网站</title>
+    <meta charset="utf-8">
+    <title>「周航山」的个人网站</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta name="keywords" content="周航山, 个人网站, 扶绥中学">
+    <meta content="周航山的个人网站" name="description">
+    
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Edu+TAS+Beginner:wght@400..700&family=Jost:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
     <style>
+        :root {
+            --primary: #4e73df;
+            --secondary: #6f42c1;
+            --accent: #20c997;
+            --light: #f8f9fc;
+            --dark: #2e3a59;
+            --transition: all 0.4s ease;
+            --shadow: 0 10px 20px rgba(0,0,0,0.1);
+            --card-radius: 16px;
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
-        :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3f37c9;
-            --accent-color: #4cc9f0;
-            --light-color: #f8f9fa;
-            --dark-color: #212529;
-            --success-color: #4ade80;
-            --card-bg: rgba(255, 255, 255, 0.85);
-            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
+        
         body {
-            font-family: 'Noto Sans SC', 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            color: var(--light-color);
+            font-family: 'Jost', 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7ff 0%, #e6e9ff 100%);
+            color: var(--dark);
             line-height: 1.6;
-            min-height: 100vh;
-            position: relative;
             overflow-x: hidden;
         }
-
-        body::before {
-            content: '';
+        
+        /* 移动端样式 - 原始布局 */
+        #mobile-view {
+            display: block;
+        }
+        
+        /* PC端样式 - 新设计 */
+        #desktop-view {
+            display: none;
+        }
+        
+        /* 根据宽高比切换视图 */
+        @media (min-aspect-ratio: 1/1) {
+            #mobile-view {
+                display: none;
+            }
+            #desktop-view {
+                display: block;
+            }
+        }
+        
+        /* ============= PC端新设计样式 ============= */
+        .desktop-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* 导航栏 */
+        .desktop-nav {
             position: fixed;
             top: 0;
             left: 0;
+            width: 250px;
+            height: 100vh;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+            color: white;
+            padding: 40px 20px;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            overflow-y: auto;
+        }
+        
+        .profile-card {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .profile-img {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            border: 4px solid white;
+            margin: 0 auto 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .profile-img img {
             width: 100%;
             height: 100%;
-            background: 
-                radial-gradient(circle at 10% 20%, rgba(67, 97, 238, 0.15) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(76, 201, 240, 0.15) 0%, transparent 20%);
-            z-index: -1;
+            object-fit: cover;
         }
-
-        /* 通用样式 */
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-
-        .section-title {
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            position: relative;
-            display: inline-block;
+        
+        .profile-card h1 {
+            font-size: 1.8rem;
+            margin: 10px 0 5px;
             font-weight: 700;
         }
-
+        
+        .profile-card p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .nav-links {
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-bottom: 12px;
+        }
+        
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            transition: var(--transition);
+            font-size: 1.1rem;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(255,255,255,0.15);
+            transform: translateX(5px);
+        }
+        
+        .nav-links i {
+            font-size: 1.3rem;
+            margin-right: 15px;
+            width: 25px;
+            text-align: center;
+        }
+        
+        /* 主内容区域 */
+        .desktop-main {
+            margin-left: 250px;
+            padding: 40px;
+        }
+        
+        .section {
+            background: white;
+            border-radius: var(--card-radius);
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+        }
+        
+        .section-title {
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            color: var(--primary);
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
         .section-title::after {
             content: '';
             position: absolute;
-            bottom: -10px;
+            bottom: 0;
             left: 0;
             width: 70px;
             height: 4px;
-            background: var(--accent-color);
+            background: linear-gradient(to right, var(--primary), var(--accent));
             border-radius: 2px;
         }
-
-        .btn {
-            display: inline-block;
-            padding: 12px 28px;
-            background: var(--primary-color);
-            color: white;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition);
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
-        }
-
-        .btn:hover {
-            background: var(--secondary-color);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
-        }
-
-        /* 手机端样式 */
-        .mobile-view {
-            display: block;
-        }
-
-        /* 电脑端样式 */
-        .desktop-view {
-            display: none;
-        }
-
-        /* 导航栏 */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            padding: 15px 0;
-            transition: var(--transition);
-        }
-
-        .navbar.scrolled {
-            padding: 10px 0;
-        }
-
-        .navbar-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: white;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-        }
-
-        .logo span {
-            color: var(--accent-color);
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-        }
-
-        .nav-links li {
-            margin-left: 30px;
-        }
-
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 1.1rem;
-            transition: var(--transition);
-            position: relative;
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--accent-color);
-            transition: var(--transition);
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        .nav-links a:hover {
-            color: var(--accent-color);
-        }
-
-        /* 英雄区域 */
-        .hero {
-            padding: 150px 0 100px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 50px;
-        }
-
-        .hero-text {
-            flex: 1;
-            animation: fadeInUp 1s ease;
-        }
-
-        .hero-image {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            animation: fadeIn 1.2s ease;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 20px;
-            line-height: 1.2;
-        }
-
-        .hero h1 span {
-            color: var(--accent-color);
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            max-width: 600px;
-            opacity: 0.9;
-        }
-
-        .hero-btns {
-            display: flex;
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--accent-color);
-            color: var(--accent-color);
-        }
-
-        .btn-outline:hover {
-            background: var(--accent-color);
-            color: white;
-        }
-
-        .profile-img {
-            width: 350px;
-            height: 350px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 5px solid var(--accent-color);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            transition: var(--transition);
-        }
-
-        .profile-img:hover {
-            transform: scale(1.05);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-        }
-
+        
         /* 关于区域 */
-        .about {
-            padding: 100px 0;
-        }
-
         .about-content {
             display: flex;
-            gap: 50px;
-            align-items: center;
-        }
-
-        .about-text {
-            flex: 1;
-        }
-
-        .about-image {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-        }
-
-        .about h3 {
-            font-size: 2rem;
-            margin-bottom: 20px;
-            color: var(--accent-color);
-        }
-
-        .about p {
-            margin-bottom: 20px;
-            font-size: 1.1rem;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin: 30px 0;
-        }
-
-        .info-item {
-            display: flex;
-            align-items: center;
-        }
-
-        .info-icon {
-            width: 50px;
-            height: 50px;
-            background: rgba(76, 201, 240, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            font-size: 1.2rem;
-            color: var(--accent-color);
-        }
-
-        /* 技能区域 */
-        .skills {
-            padding: 100px 0;
-            background: rgba(15, 23, 42, 0.7);
-        }
-
-        .skills-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            flex-wrap: wrap;
             gap: 30px;
         }
-
-        .skill-category {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: var(--transition);
-            backdrop-filter: blur(10px);
+        
+        .about-text {
+            flex: 1;
+            min-width: 300px;
         }
-
-        .skill-category:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        .skill-category h3 {
-            font-size: 1.8rem;
+        
+        .about-text p {
             margin-bottom: 20px;
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
+            font-size: 1.1rem;
+            line-height: 1.8;
         }
-
-        .skill-category h3 i {
-            margin-right: 10px;
-            color: var(--accent-color);
-        }
-
-        .skill-item {
-            margin-bottom: 20px;
-        }
-
-        .skill-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .skill-bar {
-            height: 10px;
-            background: rgba(67, 97, 238, 0.2);
-            border-radius: 5px;
+        
+        .about-img {
+            flex: 1;
+            min-width: 300px;
+            border-radius: var(--card-radius);
             overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            height: 350px;
         }
-
-        .skill-progress {
-            height: 100%;
-            background: var(--primary-color);
-            border-radius: 5px;
-            position: relative;
-        }
-
-        .skill-progress::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
+        
+        .about-img img {
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-            animation: progressShine 2s infinite;
+            object-fit: cover;
+            transition: transform 0.5s ease;
         }
-
-        /* 教育经历 */
-        .education {
-            padding: 100px 0;
+        
+        .about-img:hover img {
+            transform: scale(1.05);
         }
-
+        
+        /* 时间线样式 */
         .timeline {
             position: relative;
-            max-width: 800px;
-            margin: 0 auto;
+            padding-left: 30px;
         }
-
+        
         .timeline::before {
             content: '';
             position: absolute;
+            left: 0;
             top: 0;
-            bottom: 0;
-            width: 4px;
-            background: var(--accent-color);
-            left: 50%;
-            transform: translateX(-50%);
+            height: 100%;
+            width: 3px;
+            background: var(--accent);
         }
-
+        
         .timeline-item {
             position: relative;
-            margin-bottom: 50px;
-            width: calc(50% - 40px);
+            padding-left: 30px;
+            margin-bottom: 40px;
         }
-
-        .timeline-item:nth-child(odd) {
-            float: left;
-            clear: right;
-            transform: translateX(-30px);
-        }
-
-        .timeline-item:nth-child(even) {
-            float: right;
-            clear: left;
-            transform: translateX(30px);
-        }
-
-        .timeline-content {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
-            transition: var(--transition);
-            backdrop-filter: blur(10px);
-        }
-
-        .timeline-content:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .timeline-content h4 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            color: var(--primary-color);
-        }
-
-        .timeline-content .date {
-            display: inline-block;
-            padding: 5px 15px;
-            background: rgba(67, 97, 238, 0.1);
-            border-radius: 30px;
-            color: var(--accent-color);
-            margin-bottom: 15px;
-            font-weight: 500;
-        }
-
-        .timeline-content p {
-            color: #555;
-            font-style: italic;
-        }
-
-        .timeline-content::before {
+        
+        .timeline-item::before {
             content: '';
             position: absolute;
-            width: 20px;
-            height: 20px;
-            background: var(--accent-color);
+            left: -8px;
+            top: 5px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
-            top: 30px;
+            background: var(--primary);
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px var(--primary);
         }
-
-        .timeline-item:nth-child(odd) .timeline-content::before {
-            right: -60px;
-        }
-
-        .timeline-item:nth-child(even) .timeline-content::before {
-            left: -60px;
-        }
-
-        /* 成就区域 */
-        .achievements {
-            padding: 100px 0;
-            background: rgba(15, 23, 42, 0.7);
-        }
-
-        .achievements-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .achievement-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 30px;
-            text-align: center;
-            transition: var(--transition);
-            backdrop-filter: blur(10px);
-        }
-
-        .achievement-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        .achievement-icon {
-            width: 80px;
-            height: 80px;
-            background: rgba(67, 97, 238, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 2rem;
-            color: var(--primary-color);
-        }
-
-        .achievement-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            color: var(--primary-color);
-        }
-
-        .achievement-card p {
-            color: #666;
-        }
-
-        /* 推荐区域 */
-        .testimonials {
-            padding: 100px 0;
-        }
-
-        .testimonials-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-        }
-
-        .testimonial-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 30px;
-            transition: var(--transition);
-            backdrop-filter: blur(10px);
-            position: relative;
-        }
-
-        .testimonial-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        .testimonial-card::before {
-            content: '"';
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            font-size: 5rem;
-            color: rgba(67, 97, 238, 0.1);
-            font-family: Georgia, serif;
-            line-height: 1;
-        }
-
-        .testimonial-content {
-            margin-top: 30px;
-            color: #555;
-            font-style: italic;
-            position: relative;
-            z-index: 1;
-        }
-
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            margin-top: 20px;
-        }
-
-        .author-img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 15px;
-            border: 2px solid var(--accent-color);
-        }
-
-        .author-info h4 {
-            color: var(--primary-color);
+        
+        .timeline-date {
+            font-weight: 600;
+            color: var(--secondary);
             margin-bottom: 5px;
-        }
-
-        /* 页脚 */
-        .footer {
-            background: rgba(15, 23, 42, 0.95);
-            padding: 50px 0 20px;
-            text-align: center;
-        }
-
-        .footer-content {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .footer-logo {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: white;
-        }
-
-        .footer-logo span {
-            color: var(--accent-color);
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            list-style: none;
-            margin: 30px 0;
-        }
-
-        .footer-links li {
-            margin: 0 15px;
-        }
-
-        .footer-links a {
-            color: #aaa;
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .footer-links a:hover {
-            color: var(--accent-color);
-        }
-
-        .social-icons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin: 30px 0;
-        }
-
-        .social-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-            transition: var(--transition);
         }
-
-        .social-icon:hover {
-            background: var(--primary-color);
-            transform: translateY(-5px);
+        
+        .timeline-date i {
+            margin-right: 10px;
+            color: var(--accent);
         }
-
-        .copyright {
-            color: #aaa;
+        
+        .timeline-content {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .timeline-content h4 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        /* 卡片布局 */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
             margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
-
+        
+        .card {
+            background: white;
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: var(--transition);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .card-img {
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .card:hover .card-img img {
+            transform: scale(1.1);
+        }
+        
+        .card-body {
+            padding: 25px;
+        }
+        
+        .card-title {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
         /* 动画效果 */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -687,569 +358,445 @@
                 transform: translateY(0);
             }
         }
-
-        @keyframes progressShine {
-            0% {
-                transform: translateX(-100%);
+        
+        .animate {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        
+        .delay-1 {
+            animation-delay: 0.2s;
+        }
+        
+        .delay-2 {
+            animation-delay: 0.4s;
+        }
+        
+        .delay-3 {
+            animation-delay: 0.6s;
+        }
+        
+        /* 页脚 */
+        .desktop-footer {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            margin-top: 50px;
+            border-radius: var(--card-radius);
+        }
+        
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .social-icons a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            font-size: 1.3rem;
+            transition: var(--transition);
+        }
+        
+        .social-icons a:hover {
+            background: white;
+            color: var(--primary);
+            transform: translateY(-5px);
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 992px) {
+            .desktop-nav {
+                width: 200px;
             }
-            100% {
-                transform: translateX(100%);
+            .desktop-main {
+                margin-left: 200px;
             }
         }
-
-        /* 响应式设计 */
-        @media (max-width: 992px) {
-            .hero-content {
+        
+        @media (max-width: 768px) {
+            .desktop-nav {
+                position: relative;
+                width: 100%;
+                height: auto;
+                padding: 20px;
+            }
+            .desktop-main {
+                margin-left: 0;
+            }
+            .profile-card {
                 flex-direction: column;
                 text-align: center;
             }
-
-            .hero-text {
+            .nav-links {
                 display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .hero-btns {
+                flex-wrap: wrap;
                 justify-content: center;
             }
-
-            .about-content {
-                flex-direction: column;
-            }
-
-            .timeline::before {
-                left: 30px;
-            }
-
-            .timeline-item {
-                width: 100%;
-                margin-left: 70px;
-                margin-right: 0;
-                float: none;
-                clear: none;
-                transform: none;
-            }
-
-            .timeline-item:nth-child(odd) .timeline-content::before,
-            .timeline-item:nth-child(even) .timeline-content::before {
-                left: -60px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .mobile-view {
-                display: block;
-            }
-            
-            .desktop-view {
-                display: none;
-            }
-            
-            .nav-links {
-                display: none;
-            }
-            
-            .navbar {
-                padding: 15px 0;
-            }
-            
-            .hero {
-                padding: 120px 0 60px;
-            }
-            
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .profile-img {
-                width: 250px;
-                height: 250px;
-            }
-            
-            .section-title {
-                font-size: 2rem;
-            }
-            
-            .hero-btns {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .mobile-menu-btn {
-                display: block;
-            }
-        }
-
-        @media (min-width: 769px) {
-            .mobile-view {
-                display: none;
-            }
-            
-            .desktop-view {
-                display: block;
+            .nav-links li {
+                margin: 5px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 手机端视图 -->
-    <div class="mobile-view">
-        <!-- 这里放置您原有的移动端HTML代码 -->
-        <!-- 由于代码过长，已省略，实际使用时请将原代码放在这里 -->
+    <!-- 移动端视图 -->
+    <div id="mobile-view">
+        <!-- 这里包含原始移动端HTML内容 -->
+        <!-- 由于原始代码很长，这里保留结构但移除具体内容 -->
     </div>
-
-    <!-- 电脑端视图 -->
-    <div class="desktop-view">
-        <!-- 导航栏 -->
-        <nav class="navbar">
-            <div class="container navbar-container">
-                <a href="#" class="logo">周航山<span>.</span></a>
+    
+    <!-- PC端视图 -->
+    <div id="desktop-view">
+        <div class="desktop-container">
+            <!-- 导航栏 -->
+            <nav class="desktop-nav">
+                <div class="profile-card">
+                    <div class="profile-img">
+                        <img src="https://s2.loli.net/2024/07/25/GHXzxf3NFlmCBeL.jpg" alt="周航山">
+                    </div>
+                    <h1>周航山</h1>
+                    <p>扶绥中学学生</p>
+                </div>
+                
                 <ul class="nav-links">
-                    <li><a href="#home">首页</a></li>
-                    <li><a href="#about">关于我</a></li>
-                    <li><a href="#skills">技能爱好</a></li>
-                    <li><a href="#education">教育经历</a></li>
-                    <li><a href="#achievements">成就</a></li>
-                    <li><a href="#testimonials">人物风评</a></li>
-                    <li><a href="#contact">联系</a></li>
+                    <li><a href="#home" class="active"><i class="fas fa-home"></i> 首页</a></li>
+                    <li><a href="#about"><i class="fas fa-user"></i> 关于我</a></li>
+                    <li><a href="#education"><i class="fas fa-graduation-cap"></i> 教育经历</a></li>
+                    <li><a href="#achievements"><i class="fas fa-trophy"></i> 成就</a></li>
+                    <li><a href="#recommend"><i class="fas fa-heart"></i> 推荐</a></li>
+                    <li><a href="#contact"><i class="fas fa-envelope"></i> 联系我</a></li>
                 </ul>
-            </div>
-        </nav>
-
-        <!-- 英雄区域 -->
-        <section id="home" class="hero">
-            <div class="container hero-content">
-                <div class="hero-text">
-                    <h1>你好，我是<span>周航山</span></h1>
-                    <p>扶绥中学学生 | 书法协会副会长 | 编程爱好者 | 魔方达人</p>
-                    <div class="hero-btns">
-                        <a href="#about" class="btn">了解更多</a>
-                        <a href="#contact" class="btn btn-outline">联系我</a>
-                    </div>
-                </div>
-                <div class="hero-image">
-                    <img src="https://s2.loli.net/2024/07/25/GHXzxf3NFlmCBeL.jpg" alt="周航山" class="profile-img">
-                </div>
-            </div>
-        </section>
-
-        <!-- 关于区域 -->
-        <section id="about" class="about">
-            <div class="container">
-                <h2 class="section-title">关于我</h2>
-                <div class="about-content">
-                    <div class="about-text">
-                        <p>周航山，外号小冰、张三。生于2008年11月7日，爱好编程、魔方、书法、乒乓球等，最喜欢的颜色是蓝粉白，现就读于扶绥县扶绥中学，担任扶绥中学书法协会24级副会长，年级领导指认"年级御用书法家"之一。</p>
-                        
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <div class="info-icon">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                </div>
-                                <div>
-                                    <h4>所在地</h4>
-                                    <p>广西壮族自治区南宁市宾阳县</p>
-                                </div>
+            </nav>
+            
+            <!-- 主内容区 -->
+            <main class="desktop-main">
+                <!-- 首页部分 -->
+                <section id="home" class="section animate">
+                    <h2 class="section-title">个人简介</h2>
+                    <div class="about-content">
+                        <div class="about-text">
+                            <p>周航山，外号小冰、张三。生于2008年11月7日，爱好编程、魔方、书法、乒乓球等，最喜欢的颜色是蓝粉白，现就读于扶绥县扶绥中学，担任扶绥中学书法协会24级副会长，年级领导指认"年级御用书法家"之一。</p>
+                            
+                            <div class="contact-info">
+                                <p><i class="fas fa-map-marker-alt"></i> 广西壮族自治区南宁市宾阳县</p>
+                                <p><i class="fas fa-envelope"></i> 1945581557@qq.com</p>
+                                <p><i class="fas fa-phone-alt"></i> 17374809507</p>
+                                <p><i class="fab fa-qq"></i> QQ: 1945581557</p>
                             </div>
-                            <div class="info-item">
-                                <div class="info-icon">
-                                    <i class="fas fa-envelope"></i>
-                                </div>
-                                <div>
-                                    <h4>邮箱</h4>
-                                    <p>1945581557@qq.com</p>
-                                </div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-icon">
-                                    <i class="fas fa-phone"></i>
-                                </div>
-                                <div>
-                                    <h4>电话</h4>
-                                    <p>17374809507</p>
-                                </div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-icon">
-                                    <i class="fab fa-qq"></i>
-                                </div>
-                                <div>
-                                    <h4>QQ</h4>
-                                    <p>1945581557</p>
-                                </div>
+                            
+                            <div class="social-icons" style="margin-top: 20px;">
+                                <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                                <a href="https://x.com/HeasonZou?s=09" target="_blank"><i class="fab fa-twitter"></i></a>
+                                <a href="https://ig.inshelp.xyz/ins/jaychou" target="_blank"><i class="fab fa-instagram"></i></a>
                             </div>
                         </div>
                         
-                        <div class="social-icons">
-                            <a href="https://facebook.com" class="social-icon">
-                                <i class="fab fa-facebook-f"></i>
-                            </a>
-                            <a href="https://x.com/HeasonZou?s=09" class="social-icon">
-                                <i class="fab fa-twitter"></i>
-                            </a>
-                            <a href="https://ig.inshelp.xyz/ins/jaychou" class="social-icon">
-                                <i class="fab fa-instagram"></i>
-                            </a>
+                        <div class="about-img">
+                            <img src="https://s2.loli.net/2024/10/27/yRCMB2VhNJFmnWg.jpg" alt="周航山">
                         </div>
                     </div>
-                    <div class="about-image">
-                        <img src="https://s2.loli.net/2024/10/27/yRCMB2VhNJFmnWg.jpg" alt="周航山" class="profile-img">
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 技能区域 -->
-        <section id="skills" class="skills">
-            <div class="container">
-                <h2 class="section-title">技能与爱好</h2>
-                <div class="skills-container">
-                    <div class="skill-category">
-                        <h3><i class="fas fa-cube"></i> 魔方</h3>
-                        <p>我在魔方上有一定造诣，平日里会喜欢玩魔方，我认为这一种放松与锻炼大脑的方式，魔方也不是让人高傲的一项技能，我更喜欢和大家一起学习、研究魔方的奥妙。</p>
-                        <div class="skill-item">
-                            <div class="skill-header">
-                                <span>多阶魔方</span>
-                                <span>90%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 90%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-header">
-                                <span>镜面魔方</span>
-                                <span>85%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 85%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-header">
-                                <span>异形魔方</span>
-                                <span>80%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 80%"></div>
-                            </div>
-                        </div>
-                    </div>
+                </section>
+                
+                <!-- 关于部分 -->
+                <section id="about" class="section animate delay-1">
+                    <h2 class="section-title">人物风评</h2>
                     
-                    <div class="skill-category">
-                        <h3><i class="fas fa-laptop-code"></i> 编程</h3>
-                        <p>小时候，总是对信息技术很感兴趣，和别人不一样，拿到一个软件我会先里里外外浏览一遍功能，思考它的每个拆分原理，后来开始学习编程，感受到这是多么神奇和宏伟的东西。</p>
-                        <div class="skill-item">
-                            <div class="skill-header">
-                                <span>Python</span>
-                                <span>85%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 85%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-header">
-                                <span>Web开发</span>
-                                <span>80%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 80%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-header">
-                                <span>Visual Basic</span>
-                                <span>75%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 75%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="skill-category">
-                        <h3><i class="fas fa-book"></i> 学习</h3>
-                        <p>嘿嘿，在这里塞一个"学习"可能有点突兀吧。但是我确实拿不出什么值得我自豪的东西了，课内学习我反而还是比较得意的，大家学习有什么问题也可以问我哦～</p>
-                        <div class="skill-item">
-                            <div class="skill-header">
-                                <span>数学</span>
-                                <span>95%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 95%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-header">
-                                <span>物理</span>
-                                <span>90%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 90%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-header">
-                                <span>化学</span>
-                                <span>85%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 85%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 教育经历 -->
-        <section id="education" class="education">
-            <div class="container">
-                <h2 class="section-title">教育经历</h2>
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-content">
-                            <div class="date">2011 - 2012</div>
-                            <h4>佳佳幼儿园 小班</h4>
-                            <p>“最模糊的记忆中总是浮现出点滴美好”</p>
-                        </div>
-                    </div>
-                    
-                    <div class="timeline-item">
-                        <div class="timeline-content">
-                            <div class="date">2012 - 2014</div>
-                            <h4>扶绥县第二幼儿园 113班</h4>
-                            <p>“世界上最纯真的样子停留在这个时刻”</p>
-                        </div>
-                    </div>
-                    
-                    <div class="timeline-item">
-                        <div class="timeline-content">
-                            <div class="date">2014 - 2015</div>
-                            <h4>新宁镇第二小学 学前班</h4>
-                            <p>“遇见是场意外，心却在风里摇摆”</p>
-                        </div>
-                    </div>
-                    
-                    <div class="timeline-item">
-                        <div class="timeline-content">
-                            <div class="date">2015 - 2021</div>
-                            <h4>新宁镇第二小学 206班</h4>
-                            <p>“那是一段小有遗憾的幸福时光”</p>
-                        </div>
-                    </div>
-                    
-                    <div class="timeline-item">
-                        <div class="timeline-content">
-                            <div class="date">2021 - 2024</div>
-                            <h4>扶绥中学初中部 141班</h4>
-                            <p>“爱意随风起，风止意难平”</p>
-                        </div>
-                    </div>
-                    
-                    <div class="timeline-item">
-                        <div class="timeline-content">
-                            <div class="date">2024 - 2027</div>
-                            <h4>扶绥县扶绥中学 622班</h4>
-                            <p>“如果巅峰留不住，那就重走来时路”</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 成就区域 -->
-        <section id="achievements" class="achievements">
-            <div class="container">
-                <h2 class="section-title">个人成就</h2>
-                <div class="achievements-grid">
-                    <div class="achievement-card">
-                        <div class="achievement-icon">
-                            <i class="fas fa-trophy"></i>
-                        </div>
-                        <h3>学习成绩</h3>
-                        <p>2019年期中总分全县前十</p>
-                        <p>2021年小考二模总分全县第四</p>
-                        <p>2024年中考二模总分全县第三</p>
-                    </div>
-                    
-                    <div class="achievement-card">
-                        <div class="achievement-icon">
-                            <i class="fas fa-medal"></i>
-                        </div>
-                        <h3>校运会荣誉</h3>
-                        <p>2021年立定跳远年级第一</p>
-                        <p>2022年立定跳远年级第二</p>
-                    </div>
-                    
-                    <div class="achievement-card">
-                        <div class="achievement-icon">
-                            <i class="fas fa-paint-brush"></i>
-                        </div>
-                        <h3>书法成就</h3>
-                        <p>2023年元旦书法展三等奖</p>
-                        <p>2024年凤凰花节书法展三等奖</p>
-                        <p>2024年书法等级考核A等级(年级共4个)</p>
-                    </div>
-                    
-                    <div class="achievement-card">
-                        <div class="achievement-icon">
-                            <i class="fas fa-cube"></i>
-                        </div>
-                        <h3>魔方成就</h3>
-                        <p>2021-2024年发展部第二名</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 人物风评 -->
-        <section id="testimonials" class="testimonials">
-            <div class="container">
-                <h2 class="section-title">人物风评</h2>
-                <div class="testimonials-grid">
-                    <div class="testimonial-card">
-                        <div class="testimonial-content">
+                    <div class="about-content">
+                        <div class="about-text">
+                            <h3><i class="fas fa-pen"></i> 盛俊发来稿</h3>
                             <p>张三这个人呢，是我们班的同学，名字叫周航山，三年的初中友谊，我对张三也算了解了许多，那我就来说一说他吧。</p>
                             <p>三年来呢，我们有争有好，有苦有甜，有难有易。刚认识那会儿就吵了，但不要紧，我意识到这原来也是同道中人。</p>
-                            <p>唉！张三这个人呢，真是过于深情了，一个女生困住了他4年，第二个女的说不定他现在都还没走出来，我也挺为他感到惋惜的，真希望以后他能找一个对他好点的女孩。</p>
+                            <p>唉！张三这个人呢，真是过于深情了，一个女生困住了他4年，第二个女的说不定他现在都还没走出来，我也挺为他感到惋惜的，真希望以后他能找一个对他好点的女孩。不过他这人感情归感情，学习归学习，他在万般伤心中却依旧不被负面情绪影响走向极端，他依旧考上了扶中，去了直播班；还有人说他舔狗，那咋了，人生就三次那咋了，我自己从不在意别人的眼光。三年了，我也找不到他至死不渝的原因是啥，说实话忘掉一个人，我觉得有多快，完全取决于新欢的快慢。</p>
+                            <p>张三是一个文武双全的狠人，不光学习上优秀，体育上也十分牛逼，我能拿捏他的，恐怕只有50米了。</p>
                         </div>
-                        <div class="testimonial-author">
-                            <img src="https://s2.loli.net/2024/07/25/ThEaGZml9eO2yfW.jpg" alt="盛俊" class="author-img">
-                            <div class="author-info">
-                                <h4>盛俊</h4>
-                                <p>初中同学</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="testimonial-card">
-                        <div class="testimonial-content">
+                        
+                        <div class="about-text">
+                            <h3><i class="fas fa-pen"></i> 何佳璟来稿</h3>
                             <p>张三，本人上高中之后的第一个同桌。此前记住他还是因为一件很尴尬的事，但是上高中认识他之后才发现他其实挺乐于助人的。问他问题他都会耐心解答💪🏻</p>
-                            <p>举个栗子，某次物理考试前的一个晚自习，本人正在奋力复习物理，看到一道不懂的题，遂向张三寻求帮助。过了十几分钟，张三递过来一张写得满满的草稿纸。</p>
-                            <p>上面是那道题的详细解析，解释得比答案还清楚，还附上了相似题型的解法d(^_^o)当时就一阵暖心啊。</p>
-                        </div>
-                        <div class="testimonial-author">
-                            <img src="https://via.placeholder.com/60" alt="何佳璟" class="author-img">
-                            <div class="author-info">
-                                <h4>何佳璟</h4>
-                                <p>高中同学</p>
-                            </div>
+                            <p>举个栗子，某次物理考试前的一个晚自习，本人正在奋力复习物理，看到一道不懂的题，遂向张三寻求帮助。过了十几分钟，张三递过来一张写得满满的草稿纸。上面是那道题的详细解析，解释得比答案还清楚，还附上了相似题型的解法d(^_^o)当时就一阵暖心啊。还有刚开学的时候被基本不等式折磨得不成人样，他也写了一整页的答案解析给我以及周围的同学阅览🤓</p>
+                            <p>最后总结一下就是非常感谢他哈，这学期他在学习上对本人帮助颇多，在此向他表示诚挚的谢意🤓☝️</p>
                         </div>
                     </div>
                     
-                    <div class="testimonial-card">
-                        <div class="testimonial-content">
-                            <p>周航山，首先他是一个博学多才的人，会的范围非常的广，无论是学习还是体育，都有他的一席之地，很会做事，很努力去做事，就拿我和他比较来讲，他确实能做到一些我做不到的，不过他好像很容易受到别人的影响。</p>
-                        </div>
-                        <div class="testimonial-author">
-                            <img src="https://s2.loli.net/2024/07/25/ThEaGZml9eO2yfW.jpg" alt="黄名轩" class="author-img">
-                            <div class="author-info">
-                                <h4>黄名轩</h4>
+                    <h3 style="margin-top: 30px; color: var(--secondary);">特邀嘉宾评价</h3>
+                    <div class="card-grid">
+                        <div class="card animate">
+                            <div class="card-img">
+                                <img src="https://s2.loli.net/2024/07/25/ThEaGZml9eO2yfW.jpg" alt="黄名轩">
+                            </div>
+                            <div class="card-body">
+                                <h3 class="card-title">黄名轩</h3>
                                 <p>扶中141班常驻前五</p>
+                                <p>周航山，首先他是一个博学多才的人，会的范围非常的广，无论是学习还是体育，都有他的一席之地，很会做事，很努力去做事，就拿我和他比较来讲，他确实能做到一些我做不到的，不过他好像很容易受到别人的影响。</p>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="testimonial-card">
-                        <div class="testimonial-content">
-                            <p>周航山是一个博学多才的人，对各种知识都充满了好奇心，不断地学习和探索。他努力不懈，对待任何事情都充满热情和毅力，从不轻言放弃。兴趣爱好广泛，喜欢尝试新事物，对生活充满热情。</p>
-                        </div>
-                        <div class="testimonial-author">
-                            <img src="https://s2.loli.net/2024/07/25/vqGU4BeyRfCblOW.jpg" alt="黄耀乐" class="author-img">
-                            <div class="author-info">
-                                <h4>黄耀乐</h4>
+                        
+                        <div class="card animate delay-1">
+                            <div class="card-img">
+                                <img src="https://s2.loli.net/2024/07/25/vqGU4BeyRfCblOW.jpg" alt="黄耀乐">
+                            </div>
+                            <div class="card-body">
+                                <h3 class="card-title">黄耀乐</h3>
                                 <p>扶中2-503最强侦查兵</p>
+                                <p>周航山是一个博学多才的人，对各种知识都充满了好奇心，不断地学习和探索。他努力不懈，对待任何事情都充满热情和毅力，从不轻言放弃。兴趣爱好广泛，喜欢尝试新事物，对生活充满热情。</p>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 联系区域 -->
-        <section id="contact" class="contact">
-            <div class="container">
-                <!-- 联系表单可以放在这里 -->
-            </div>
-        </section>
-
-        <!-- 页脚 -->
-        <footer class="footer">
-            <div class="container">
-                <div class="footer-content">
-                    <div class="footer-logo">周航山<span>.</span></div>
-                    <p>扶绥中学学生 | 书法协会副会长 | 编程爱好者 | 魔方达人</p>
+                </section>
+                
+                <!-- 教育经历 -->
+                <section id="education" class="section animate delay-2">
+                    <h2 class="section-title">教育经历</h2>
                     
-                    <ul class="footer-links">
-                        <li><a href="#home">首页</a></li>
-                        <li><a href="#about">关于我</a></li>
-                        <li><a href="#skills">技能爱好</a></li>
-                        <li><a href="#education">教育经历</a></li>
-                        <li><a href="#achievements">成就</a></li>
-                        <li><a href="#testimonials">人物风评</a></li>
-                    </ul>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-date"><i class="fas fa-calendar"></i> 2011 - 2012</div>
+                            <div class="timeline-content">
+                                <h4>佳佳幼儿园 小班</h4>
+                                <p>"最模糊的记忆中总是浮现出点滴美好"</p>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-date"><i class="fas fa-calendar"></i> 2012 - 2014</div>
+                            <div class="timeline-content">
+                                <h4>扶绥县第二幼儿园</h4>
+                                <p>"世界上最纯真的样子停留在这个时刻"</p>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-date"><i class="fas fa-calendar"></i> 2014 - 2015</div>
+                            <div class="timeline-content">
+                                <h4>新宁镇第二小学</h4>
+                                <p>"遇见是场意外，心却在风里摇摆"</p>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-date"><i class="fas fa-calendar"></i> 2015 - 2021</div>
+                            <div class="timeline-content">
+                                <h4>新宁镇第二小学</h4>
+                                <p>"那是一段小有遗憾的幸福时光"</p>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-date"><i class="fas fa-calendar"></i> 2021 - 2024</div>
+                            <div class="timeline-content">
+                                <h4>扶绥县扶绥中学发展部</h4>
+                                <p>"爱意随风起，风止意难平"</p>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-date"><i class="fas fa-calendar"></i> 2024 - 2027</div>
+                            <div class="timeline-content">
+                                <h4>扶绥县扶绥中学</h4>
+                                <p>"如果巅峰留不住，那就重走来时路"</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 成就部分 -->
+                <section id="achievements" class="section animate delay-1">
+                    <h2 class="section-title">成就</h2>
                     
+                    <div class="card-grid">
+                        <div class="card animate">
+                            <div class="card-body">
+                                <h3 class="card-title">学习成绩</h3>
+                                <p><i class="fas fa-calendar"></i> 2019.11</p>
+                                <p>期中总分全县前十</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card animate delay-1">
+                            <div class="card-body">
+                                <h3 class="card-title">学习成绩</h3>
+                                <p><i class="fas fa-calendar"></i> 2021.6</p>
+                                <p>小考二模总分全县第四</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card animate delay-2">
+                            <div class="card-body">
+                                <h3 class="card-title">校运会</h3>
+                                <p><i class="fas fa-calendar"></i> 2021.10</p>
+                                <p>立定跳远年级第一</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card animate">
+                            <div class="card-body">
+                                <h3 class="card-title">校运会</h3>
+                                <p><i class="fas fa-calendar"></i> 2022.10</p>
+                                <p>立定跳远年级第二</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card animate delay-1">
+                            <div class="card-body">
+                                <h3 class="card-title">书法</h3>
+                                <p><i class="fas fa-calendar"></i> 2023.1.1</p>
+                                <p>元旦书法展三等奖</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card animate delay-2">
+                            <div class="card-body">
+                                <h3 class="card-title">学习成绩</h3>
+                                <p><i class="fas fa-calendar"></i> 2024.6</p>
+                                <p>中考二模总分全县第三</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 推荐部分 -->
+                <section id="recommend" class="section animate delay-2">
+                    <h2 class="section-title">值得推荐的事物</h2>
+                    
+                    <div class="card-grid">
+                        <div class="card animate">
+                            <div class="card-img">
+                                <img src="https://s2.loli.net/2024/07/25/LXGxgNq27EHDT4r.jpg" alt="周杰伦">
+                            </div>
+                            <div class="card-body">
+                                <h3 class="card-title">周杰伦</h3>
+                                <p>最喜欢的流行歌手</p>
+                                <a href="https://m.kugou.com/singer/info/3E0KCC3671E7/" class="btn" target="_blank" style="display: inline-block; margin-top: 15px; background: var(--primary); color: white; padding: 8px 20px; border-radius: 30px; text-decoration: none;">了解更多</a>
+                            </div>
+                        </div>
+                        
+                        <div class="card animate delay-1">
+                            <div class="card-img">
+                                <img src="https://s2.loli.net/2024/08/30/DEAGxJIObd362ml.webp" alt="三体">
+                            </div>
+                            <div class="card-body">
+                                <h3 class="card-title">三体</h3>
+                                <p>推荐的小说</p>
+                                <a href="https://baike.baidu.com/item/%E4%B8%89%E4%BD%93/5739303?fr=ge_ala" class="btn" target="_blank" style="display: inline-block; margin-top: 15px; background: var(--primary); color: white; padding: 8px 20px; border-radius: 30px; text-decoration: none;">了解更多</a>
+                            </div>
+                        </div>
+                        
+                        <div class="card animate delay-2">
+                            <div class="card-img">
+                                <img src="https://s2.loli.net/2024/07/25/5fs64cWGibQNSa1.jpg" alt="七里香">
+                            </div>
+                            <div class="card-body">
+                                <h3 class="card-title">七里香</h3>
+                                <p>最喜欢的专辑</p>
+                                <a href="https://t1.kugou.com/song.html?id=aIMcJe6CPV2" class="btn" target="_blank" style="display: inline-block; margin-top: 15px; background: var(--primary); color: white; padding: 8px 20px; border-radius: 30px; text-decoration: none;">了解更多</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 联系部分 -->
+                <section id="contact" class="section animate">
+                    <h2 class="section-title">联系我</h2>
+                    
+                    <div style="text-align: center; padding: 30px;">
+                        <h3 style="color: var(--secondary); margin-bottom: 20px;">向未来出发！</h3>
+                        <p>QQ: 1945581557</p>
+                        <p>邮箱: 1945581557@qq.com</p>
+                        <p>GitHub: zhs141</p>
+                        
+                        <div class="social-icons" style="margin-top: 30px; justify-content: center;">
+                            <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                            <a href="https://x.com/HeasonZou?s=09" target="_blank"><i class="fab fa-twitter"></i></a>
+                            <a href="https://ig.inshelp.xyz/ins/jaychou" target="_blank"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 页脚 -->
+                <footer class="desktop-footer animate">
                     <div class="social-icons">
-                        <a href="https://facebook.com" class="social-icon">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="https://x.com/HeasonZou?s=09" class="social-icon">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="https://ig.inshelp.xyz/ins/jaychou" class="social-icon">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#" class="social-icon">
-                            <i class="fab fa-qq"></i>
-                        </a>
+                        <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://x.com/HeasonZou?s=09" target="_blank"><i class="fab fa-twitter"></i></a>
+                        <a href="https://ig.inshelp.xyz/ins/jaychou" target="_blank"><i class="fab fa-instagram"></i></a>
                     </div>
-                    
-                    <div class="copyright">
-                        &copy; 2025 周航山. 保留所有权利
-                    </div>
-                </div>
-            </div>
-        </footer>
+                    <p>© 2025 周航山的个人网站. 保留所有权利.</p>
+                </footer>
+            </main>
+        </div>
     </div>
 
     <script>
-        // 导航栏滚动效果
-        window.addEventListener('scroll', function() {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-        });
-
-        // 平滑滚动
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
+        // 滚动动画效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 导航链接点击事件
+            document.querySelectorAll('.nav-links a').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // 更新活动链接
+                    document.querySelectorAll('.nav-links a').forEach(a => {
+                        a.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // 滚动到对应区域
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
                 });
             });
-        });
-
-        // 动画效果 - 当元素进入视口时添加动画
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animated');
-                }
+            
+            // 滚动时更新活动链接
+            window.addEventListener('scroll', function() {
+                const sections = document.querySelectorAll('.section');
+                let current = '';
+                
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (window.scrollY >= sectionTop - 150) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                document.querySelectorAll('.nav-links a').forEach(a => {
+                    a.classList.remove('active');
+                    if (a.getAttribute('href') === `#${current}`) {
+                        a.classList.add('active');
+                    }
+                });
             });
-        }, {
-            threshold: 0.1
+            
+            // 页面加载时滚动到顶部
+            window.scrollTo(0, 0);
         });
-
-        document.querySelectorAll('.hero-text, .hero-image, .about-text, .about-image, .skill-category, .timeline-content, .achievement-card, .testimonial-card').forEach(el => {
-            observer.observe(el);
-        });
+        
+        // 设备检测（根据宽高比）
+        function checkOrientation() {
+            if (window.innerWidth > window.innerHeight) {
+                document.getElementById('mobile-view').style.display = 'none';
+                document.getElementById('desktop-view').style.display = 'block';
+            } else {
+                document.getElementById('mobile-view').style.display = 'block';
+                document.getElementById('desktop-view').style.display = 'none';
+            }
+        }
+        
+        // 初始检测
+        checkOrientation();
+        
+        // 窗口大小变化时重新检测
+        window.addEventListener('resize', checkOrientation);
     </script>
 </body>
 </html>
