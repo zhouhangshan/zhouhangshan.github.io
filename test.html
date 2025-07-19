@@ -2,815 +2,865 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>牛顿三大定律</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星际纪元 | 科幻策略游戏</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
         }
-        
+
+        :root {
+            --primary: #6a11cb;
+            --secondary: #2575fc;
+            --accent: #ff2d75;
+            --dark: #0f0c29;
+            --darker: #08061a;
+            --light: #f5f9ff;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
         body {
-            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            color: #fff;
-            min-height: 100vh;
-            padding: 15px;
-            overflow-x: hidden;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: var(--light);
             line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 100%;
-            margin: 0 auto;
-        }
-        
-        header {
-            text-align: center;
-            padding: 20px 0;
-            margin-bottom: 20px;
+            overflow-x: hidden;
             position: relative;
         }
-        
-        .title-container {
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+CiAgPHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiBmaWxsPSIjMDgwNjFhIi8+CiAgPHBhdGggZD0iTTAgMEg1MFY1MEgwWiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTExIiBzdHJva2Utd2lkdGg9IjEiLz4KPC9zdmc+');
+            opacity: 0.2;
+            z-index: -2;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 10px rgba(106, 17, 203, 0.7), 0 0 20px rgba(37, 117, 252, 0.5);
+        }
+
+        h1, h2, h3, h4, .nav-links a, .btn {
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 导航栏样式 */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 20px 0;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            background: rgba(15, 12, 41, 0.8);
+            border-bottom: 1px solid rgba(106, 17, 203, 0.3);
+        }
+
+        header.scrolled {
+            padding: 10px 0;
+            background: rgba(8, 6, 26, 0.95);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 15px;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--light);
+            text-decoration: none;
         }
-        
-        h1 {
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .logo i {
+            margin-right: 10px;
+            color: var(--secondary);
             font-size: 2.2rem;
-            text-shadow: 0 2px 10px rgba(0, 150, 255, 0.7);
-            margin-bottom: 10px;
-            background: linear-gradient(to right, #ff9a9e, #fad0c4);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 30px;
+        }
+
+        .nav-links a {
+            position: relative;
+            color: var(--light);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 5px 0;
+            transition: var(--transition);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.4);
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(106, 17, 203, 0.6);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--secondary);
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(37, 117, 252, 0.1);
+        }
+
+        /* 英雄区域 */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 650px;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            line-height: 1.1;
+            text-shadow: 0 0 20px rgba(106, 17, 203, 0.7);
+            background: linear-gradient(to right, #f5f9ff, #a1c4fd);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-weight: 700;
         }
-        
-        .subtitle {
-            font-size: 1.1rem;
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 600px;
             opacity: 0.9;
-            max-width: 100%;
-            margin: 0 auto 20px;
-            padding: 0 15px;
-            color: #e0f7fa;
         }
-        
-        .law-card {
-            background: rgba(255, 255, 255, 0.08);
+
+        .hero-btns {
+            display: flex;
+            gap: 20px;
+        }
+
+        .hero-image {
+            position: absolute;
+            right: -50px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50%;
+            max-width: 700px;
+            z-index: 1;
+            opacity: 0.9;
+            filter: drop-shadow(0 0 30px rgba(106, 17, 203, 0.5));
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* 游戏特色区域 */
+        .features {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 70px;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            display: inline-block;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-card {
+            background: rgba(25, 22, 56, 0.6);
+            border-radius: 15px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: var(--transition);
+            border: 1px solid rgba(106, 17, 203, 0.3);
             backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            overflow: hidden;
-            position: relative;
         }
-        
-        .law-header {
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(37, 117, 252, 0.5);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
             display: flex;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid rgba(255, 204, 0, 0.3);
-        }
-        
-        .law-number {
-            font-size: 3.5rem;
-            font-weight: bold;
-            color: rgba(255, 255, 255, 0.25);
-            margin-right: 15px;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            min-width: 70px;
-            text-align: center;
-        }
-        
-        .law-title {
-            font-size: 1.6rem;
-            margin-bottom: 5px;
-            color: #ffcc00;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-        }
-        
-        .law-statement {
-            font-size: 1.15rem;
-            line-height: 1.5;
-            margin-bottom: 20px;
-            background: rgba(0, 30, 60, 0.4);
-            padding: 15px;
-            border-radius: 12px;
-            border-left: 4px solid #4fc3f7;
-        }
-        
-        .animation-container {
-            width: 100%;
-            height: 220px;
-            background: rgba(0, 20, 40, 0.4);
-            border-radius: 15px;
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 20px;
-            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
-            display: flex;
             justify-content: center;
-            align-items: center;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            font-size: 2.5rem;
+            color: white;
         }
-        
-        canvas {
-            display: block;
-            max-width: 100%;
-            max-height: 100%;
-        }
-        
-        .explanation {
-            padding: 10px 5px;
-            font-size: 1.05rem;
-            line-height: 1.7;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-        }
-        
-        .explanation h3 {
-            color: #4fc3f7;
-            margin-bottom: 12px;
-            font-size: 1.3rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .explanation p {
+
+        .feature-card h3 {
+            font-size: 1.5rem;
             margin-bottom: 15px;
+            color: var(--light);
         }
-        
-        .example {
-            background: rgba(255, 255, 255, 0.08);
-            padding: 12px;
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* 游戏截图区域 */
+        .screenshots {
+            padding: 100px 0;
+            background: rgba(15, 12, 41, 0.5);
+        }
+
+        .screenshots-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 50px;
+        }
+
+        .screenshot {
             border-radius: 10px;
-            margin: 15px 0;
-            border-left: 3px solid #ff9800;
+            overflow: hidden;
+            position: relative;
+            height: 250px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            transition: var(--transition);
         }
-        
-        .controls {
+
+        .screenshot:hover {
+            transform: scale(1.03);
+        }
+
+        .screenshot img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .screenshot:hover img {
+            transform: scale(1.1);
+        }
+
+        /* 下载区域 */
+        .download {
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .download-content {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .download h2 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .download p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .platforms {
             display: flex;
-            gap: 12px;
-            margin-top: 20px;
-            flex-wrap: wrap;
             justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 40px;
         }
-        
-        button {
-            background: linear-gradient(to right, #ff8a00, #ffcc00);
-            border: none;
-            padding: 12px 20px;
-            border-radius: 50px;
-            color: #fff;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(255, 140, 0, 0.4);
-            font-size: 0.95rem;
-            flex: 1;
-            min-width: 120px;
+
+        .platform {
+            background: rgba(25, 22, 56, 0.6);
+            border: 1px solid rgba(106, 17, 203, 0.3);
+            border-radius: 10px;
+            padding: 25px;
+            width: 160px;
+            transition: var(--transition);
+        }
+
+        .platform:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .platform i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+
+        /* 页脚区域 */
+        footer {
+            background: rgba(8, 6, 26, 0.95);
+            padding: 60px 0 30px;
+            border-top: 1px solid rgba(106, 17, 203, 0.3);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            color: var(--light);
+        }
+
+        .footer-logo span {
+            color: var(--accent);
+        }
+
+        .footer-about p {
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-links a {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(106, 17, 203, 0.2);
+            color: var(--light);
+            transition: var(--transition);
+            font-size: 1.2rem;
         }
-        
-        button:hover {
+
+        .social-links a:hover {
+            background: var(--accent);
             transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(255, 140, 0, 0.6);
         }
-        
-        button:active {
-            transform: translateY(1px);
+
+        .footer-heading {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            position: relative;
+            display: inline-block;
         }
-        
-        .reset-btn {
-            background: linear-gradient(to right, #00c9ff, #92fe9d);
+
+        .footer-heading::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--accent);
         }
-        
-        .conclusion {
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+            padding-left: 5px;
+        }
+
+        .copyright {
             text-align: center;
-            margin: 35px auto;
-            padding: 25px 20px;
-            background: rgba(0, 30, 60, 0.5);
-            border-radius: 20px;
-            border: 1px solid rgba(100, 200, 255, 0.2);
-        }
-        
-        .conclusion h2 {
-            color: #ffcc00;
-            margin-bottom: 20px;
-            font-size: 1.7rem;
-        }
-        
-        .conclusion p {
-            margin-bottom: 15px;
-        }
-        
-        .impact-items {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .impact-item {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 12px 15px;
-            border-radius: 12px;
-            min-width: 130px;
-            font-size: 0.95rem;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 20px;
-            margin-top: 20px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
             color: rgba(255, 255, 255, 0.6);
             font-size: 0.9rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
-        .newton-img {
-            width: 80px;
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            opacity: 0.3;
-            z-index: -1;
-        }
-        
-        /* Animation Keyframes */
+
+        /* 动画效果 */
         @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+            0% {
+                transform: translateY(-50%) translateX(0);
+            }
+            50% {
+                transform: translateY(-53%) translateX(10px);
+            }
+            100% {
+                transform: translateY(-50%) translateX(0);
+            }
         }
-        
-        .floating {
-            animation: float 4s infinite ease-in-out;
+
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 3.2rem;
+            }
+            .hero-image {
+                opacity: 0.4;
+                right: -100px;
+            }
         }
-        
-        /* Physics icons */
-        .physics-icon {
-            position: absolute;
-            font-size: 5rem;
-            opacity: 0.05;
-            z-index: -1;
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .nav-links li {
+                margin: 0 15px;
+            }
+            .hero {
+                text-align: center;
+            }
+            .hero-content {
+                margin: 0 auto;
+                padding-top: 100px;
+            }
+            .hero-btns {
+                justify-content: center;
+            }
+            .hero-image {
+                display: none;
+            }
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            .download h2 {
+                font-size: 2.2rem;
+            }
         }
-        
-        .icon1 { top: 15px; left: 15px; }
-        .icon2 { bottom: 15px; right: 20px; }
-        
-        /* Mobile specific adjustments */
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.8rem;
+
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 2.5rem;
             }
-            
-            .law-title {
-                font-size: 1.4rem;
+            .hero-btns {
+                flex-direction: column;
+                align-items: center;
             }
-            
-            .law-statement {
-                font-size: 1.05rem;
-            }
-            
-            .animation-container {
-                height: 200px;
-            }
-            
-            button {
-                padding: 10px 15px;
-                font-size: 0.9rem;
-                min-width: 100px;
-            }
-            
-            .law-number {
-                font-size: 3rem;
-                min-width: 60px;
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="title-container">
-                <i class="fas fa-atom fa-2x" style="color: #4fc3f7;"></i>
-                <h1>牛顿三大定律动画教室</h1>
-                <i class="fas fa-rocket fa-2x" style="color: #ff9800;"></i>
-            </div>
-            <p class="subtitle">通过互动动画和简单解释，一起探索艾萨克·牛顿爵士改变世界的三大运动定律！</p>
-        </header>
-        
-        <!-- 第一定律 -->
-        <div class="law-card">
-            <div class="law-header">
-                <div class="law-number">1</div>
-                <div>
-                    <h2 class="law-title">惯性定律</h2>
-                    <p class="law-statement">物体在没有外力作用时，保持静止或匀速直线运动状态</p>
-                </div>
-            </div>
-            
-            <div class="animation-container">
-                <canvas id="canvas1"></canvas>
-            </div>
-            
-            <div class="explanation">
-                <h3><i class="fas fa-lightbulb"></i> 这是什么意思？</h3>
-                <p>想象一下你在滑冰：当你停止蹬冰后，你还会继续滑行一段距离。这就是惯性！物体总是"懒惰"的 - 它们不想改变自己的运动状态。</p>
-                
-                <div class="example">
-                    <p><i class="fas fa-car"></i> <strong>汽车例子</strong>：当汽车急刹车时，你会向前倾。因为你的身体还在保持向前运动的趋势。</p>
-                </div>
-                
-                <div class="example">
-                    <p><i class="fas fa-star"></i> <strong>太空例子</strong>：在太空中，没有摩擦力，一个运动的物体会永远保持运动！</p>
-                </div>
-                
-                <div class="controls">
-                    <button onclick="startLaw1()"><i class="fas fa-play"></i> 开始动画</button>
-                    <button onclick="addFriction()"><i class="fas fa-wind"></i> 增加摩擦力</button>
-                    <button class="reset-btn" onclick="resetLaw1()"><i class="fas fa-redo"></i> 重置</button>
-                </div>
-            </div>
-            
-            <div class="physics-icon">⚖️</div>
-        </div>
-        
-        <!-- 第二定律 -->
-        <div class="law-card">
-            <div class="law-header">
-                <div class="law-number">2</div>
-                <div>
-                    <h2 class="law-title">F=ma 定律</h2>
-                    <p class="law-statement">物体的加速度与作用力成正比，与物体质量成反比</p>
-                </div>
-            </div>
-            
-            <div class="animation-container">
-                <canvas id="canvas2"></canvas>
-            </div>
-            
-            <div class="explanation">
-                <h3><i class="fas fa-lightbulb"></i> 这是什么意思？</h3>
-                <p>F代表力，m代表质量，a代表加速度。这个公式告诉我们：</p>
-                <ul style="padding-left: 20px; margin: 10px 0;">
-                    <li>推同一个物体，力越大，它动得越快（加速度越大）</li>
-                    <li>用同样的力推不同物体，轻的物体动得快，重的物体动得慢</li>
+    <!-- 粒子背景 -->
+    <div class="particles" id="particles"></div>
+
+    <!-- 导航栏 -->
+    <header id="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="#" class="logo">
+                    <i class="fas fa-rocket"></i>
+                    STAR<span>COMMAND</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#features">特色</a></li>
+                    <li><a href="#screenshots">截图</a></li>
+                    <li><a href="#download">下载</a></li>
+                    <li><a href="#about">关于</a></li>
                 </ul>
-                
-                <div class="example">
-                    <p><i class="fas fa-space-shuttle"></i> <strong>火箭例子</strong>：火箭需要巨大的力才能离开地球，因为它的质量非常大。</p>
-                </div>
-                
-                <div class="example">
-                    <p><i class="fas fa-futbol"></i> <strong>足球例子</strong>：踢一个足球比踢一个保龄球容易得多！</p>
-                </div>
-                
-                <div class="controls">
-                    <button onclick="applyForce(50)"><i class="fas fa-hand-paper"></i> 小力推动</button>
-                    <button onclick="applyForce(150)"><i class="fas fa-hand-rock"></i> 中力推动</button>
-                    <button onclick="applyForce(300)"><i class="fas fa-fist-raised"></i> 大力推动</button>
-                    <button class="reset-btn" onclick="resetLaw2()"><i class="fas fa-redo"></i> 重置</button>
-                </div>
-            </div>
-            
-            <div class="physics-icon">🚀</div>
+                <a href="#download" class="btn">立即游玩</a>
+            </nav>
         </div>
-        
-        <!-- 第三定律 -->
-        <div class="law-card">
-            <div class="law-header">
-                <div class="law-number">3</div>
-                <div>
-                    <h2 class="law-title">作用力与反作用力定律</h2>
-                    <p class="law-statement">两个物体之间的作用力和反作用力总是大小相等，方向相反</p>
+    </header>
+
+    <!-- 英雄区域 -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>探索无尽宇宙的奥秘</h1>
+                <p>在《星际纪元》中，您将指挥自己的星际舰队，探索未知星系，建立星际帝国，与其他玩家争夺宇宙霸权。体验前所未有的太空策略游戏！</p>
+                <div class="hero-btns">
+                    <a href="#download" class="btn">开始征程</a>
+                    <a href="#features" class="btn btn-secondary">了解更多</a>
                 </div>
             </div>
-            
-            <div class="animation-container">
-                <canvas id="canvas3"></canvas>
-            </div>
-            
-            <div class="explanation">
-                <h3><i class="fas fa-lightbulb"></i> 这是什么意思？</h3>
-                <p>力总是成对出现的！当你对物体施加一个力时，物体也会对你施加一个大小相等、方向相反的力。</p>
-                
-                <div class="example">
-                    <p><i class="fas fa-swimmer"></i> <strong>游泳例子</strong>：你用手向后推水，水就向前推你，使你前进。</p>
-                </div>
-                
-                <div class="example">
-                    <p><i class="fas fa-walking"></i> <strong>走路例子</strong>：你的脚向后推地面，地面向前推你，让你向前走。</p>
-                </div>
-                
-                <div class="controls">
-                    <button onclick="startCollision('equal')"><i class="fas fa-exchange-alt"></i> 相同质量</button>
-                    <button onclick="startCollision('heavy')"><i class="fas fa-circle"></i> 大撞小</button>
-                    <button onclick="startCollision('light')"><i class="fas fa-dot-circle"></i> 小撞大</button>
-                    <button class="reset-btn" onclick="resetLaw3()"><i class="fas fa-redo"></i> 重置</button>
-                </div>
-            </div>
-            
-            <div class="physics-icon">🔁</div>
         </div>
-        
-        <div class="conclusion">
-            <h2><i class="fas fa-globe-americas"></i> 牛顿定律如何改变世界？</h2>
-            <p>牛顿在1687年发表的三大运动定律，奠定了经典力学的基础。这些定律让我们能够：</p>
-            
-            <div class="impact-items">
-                <div class="impact-item"><i class="fas fa-rocket"></i> 计算火箭轨道</div>
-                <div class="impact-item"><i class="fas fa-bridge"></i> 设计坚固桥梁</div>
-                <div class="impact-item"><i class="fas fa-car-crash"></i> 汽车安全设计</div>
-                <div class="impact-item"><i class="fas fa-satellite"></i> 预测行星运动</div>
+        <div class="hero-image">
+            <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#6a11cb" d="M250,100 C320,80 380,120 400,200 C420,280 380,340 300,380 C220,420 150,400 100,330 C50,260 80,180 150,130 C180,110 220,100 250,100 Z" opacity="0.6"/>
+                <circle cx="250" cy="250" r="80" fill="#2575fc" opacity="0.7"/>
+                <circle cx="350" cy="200" r="40" fill="#ff2d75" opacity="0.8"/>
+                <circle cx="180" cy="300" r="30" fill="#6a11cb" opacity="0.8"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- 游戏特色 -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>游戏特色</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe-americas"></i>
+                    </div>
+                    <h3>浩瀚宇宙</h3>
+                    <p>探索超过1000个独特的星系，每个星系都有不同的行星、资源和挑战，等待您的发现。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-ship"></i>
+                    </div>
+                    <h3>舰队定制</h3>
+                    <p>设计并建造您独特的星际舰队，数百种模块和武器组合，打造属于您的无敌舰队。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>多人策略</h3>
+                    <p>与其他玩家组建联盟，进行史诗级的太空战斗，或通过外交手段建立强大的星际帝国。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-city"></i>
+                    </div>
+                    <h3>行星建设</h3>
+                    <p>在您征服的行星上建立繁荣的殖民地，发展科技树，建设强大的经济基础。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-vr-cardboard"></i>
+                    </div>
+                    <h3>沉浸体验</h3>
+                    <p>惊艳的视觉效果，震撼的太空音效，以及引人入胜的故事线，带来身临其境的太空体验。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>AI技术</h3>
+                    <p>先进的AI系统，无论是盟友还是敌人，都会根据您的策略做出智能反应，保持游戏挑战性。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 游戏截图 -->
+    <section class="screenshots" id="screenshots">
+        <div class="container">
+            <div class="section-title">
+                <h2>游戏截图</h2>
+            </div>
+            <div class="screenshots-container">
+                <div class="screenshot">
+                    <div style="background: linear-gradient(45deg, #6a11cb, #2575fc); height: 100%;"></div>
+                </div>
+                <div class="screenshot">
+                    <div style="background: linear-gradient(45deg, #ff2d75, #ff8e53); height: 100%;"></div>
+                </div>
+                <div class="screenshot">
+                    <div style="background: linear-gradient(45deg, #2575fc, #2af598); height: 100%;"></div>
+                </div>
+                <div class="screenshot">
+                    <div style="background: linear-gradient(45deg, #6a11cb, #ff2d75); height: 100%;"></div>
+                </div>
+                <div class="screenshot">
+                    <div style="background: linear-gradient(45deg, #08aeea, #2af598); height: 100%;"></div>
+                </div>
+                <div class="screenshot">
+                    <div style="background: linear-gradient(45deg, #ff2d75, #f9d423); height: 100%;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 下载区域 -->
+    <section class="download" id="download">
+        <div class="container">
+            <div class="download-content">
+                <h2>开启星际征程</h2>
+                <p>立即下载游戏，免费开始您的宇宙征服之旅！支持Windows、macOS、iOS和Android平台。</p>
+                <a href="#" class="btn">免费下载</a>
+                
+                <div class="platforms">
+                    <div class="platform">
+                        <i class="fab fa-windows"></i>
+                        <h4>Windows</h4>
+                    </div>
+                    <div class="platform">
+                        <i class="fab fa-apple"></i>
+                        <h4>macOS</h4>
+                    </div>
+                    <div class="platform">
+                        <i class="fab fa-android"></i>
+                        <h4>Android</h4>
+                    </div>
+                    <div class="platform">
+                        <i class="fab fa-app-store-ios"></i>
+                        <h4>iOS</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer id="about">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <div class="footer-logo">STAR<span>COMMAND</span></div>
+                    <p>《星际纪元》是由独立游戏工作室Nebula Games开发的太空策略游戏，我们的目标是带给玩家最真实、最震撼的宇宙探索体验。</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-reddit"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-links-container">
+                    <h3 class="footer-heading">快速链接</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">首页</a></li>
+                        <li><a href="#features">游戏特色</a></li>
+                        <li><a href="#screenshots">游戏截图</a></li>
+                        <li><a href="#download">下载游戏</a></li>
+                        <li><a href="#">开发日志</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links-container">
+                    <h3 class="footer-heading">支持</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">常见问题</a></li>
+                        <li><a href="#">用户指南</a></li>
+                        <li><a href="#">问题反馈</a></li>
+                        <li><a href="#">社区论坛</a></li>
+                        <li><a href="#">联系我们</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links-container">
+                    <h3 class="footer-heading">法律信息</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">服务条款</a></li>
+                        <li><a href="#">隐私政策</a></li>
+                        <li><a href="#">版权声明</a></li>
+                        <li><a href="#">Cookie政策</a></li>
+                    </ul>
+                </div>
             </div>
             
-            <p style="margin-top: 20px;">这些简单的定律解释了从苹果落地到行星运动的几乎一切运动现象！</p>
+            <div class="copyright">
+                &copy; 2023 Nebula Games. 保留所有权利。STARCOMMAND是Nebula Games的注册商标。
+            </div>
         </div>
-        
-        <footer>
-            <p>牛顿三大定律动画教室 | 为年轻科学家设计 | 艾萨克·牛顿爵士 (1643-1727)</p>
-        </footer>
-    </div>
-    
-    <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23FFCC00'/%3E%3Ccircle cx='35' cy='40' r='5' fill='%23000'/%3E%3Ccircle cx='65' cy='40' r='5' fill='%23000'/%3E%3Cpath d='M30,70 Q50,85 70,70' stroke='%23000' stroke-width='3' fill='none'/%3E%3C/svg%3E" 
-         alt="Newton" class="newton-img floating">
-    
+    </footer>
+
     <script>
-        // 初始化所有Canvas元素
-        function initCanvases() {
-            const canvas1 = document.getElementById('canvas1');
-            const canvas2 = document.getElementById('canvas2');
-            const canvas3 = document.getElementById('canvas3');
+        // 粒子背景生成
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
             
-            // 设置Canvas尺寸为容器尺寸
-            function setCanvasSize(canvas) {
-                const container = canvas.parentElement;
-                canvas.width = container.clientWidth;
-                canvas.height = container.clientHeight;
-                return canvas.getContext('2d');
-            }
-            
-            const ctx1 = setCanvasSize(canvas1);
-            const ctx2 = setCanvasSize(canvas2);
-            const ctx3 = setCanvasSize(canvas3);
-            
-            return { ctx1, ctx2, ctx3, canvas1, canvas2, canvas3 };
-        }
-        
-        // 初始化变量
-        const { ctx1, ctx2, ctx3, canvas1, canvas2, canvas3 } = initCanvases();
-        
-        let position1 = 50;
-        let velocity1 = 2;
-        let friction1 = 0;
-        let animationId1;
-        const boxes = [];
-        let animationId2;
-        let balls = [];
-        let animationId3;
-        
-        // 第一定律动画
-        function drawLaw1() {
-            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
-            
-            // 绘制轨道
-            ctx1.fillStyle = '#3a506b';
-            ctx1.fillRect(0, canvas1.height/2, canvas1.width, 8);
-            
-            // 绘制小车
-            ctx1.fillStyle = '#ff6b6b';
-            ctx1.fillRect(position1, canvas1.height/2 - 20, 45, 20);
-            ctx1.fillStyle = '#4ecdc4';
-            ctx1.beginPath();
-            ctx1.arc(position1 + 10, canvas1.height/2 + 4, 8, 0, Math.PI * 2);
-            ctx1.fill();
-            ctx1.beginPath();
-            ctx1.arc(position1 + 35, canvas1.height/2 + 4, 8, 0, Math.PI * 2);
-            ctx1.fill();
-            
-            // 绘制箭头表示运动方向
-            if (velocity1 > 0) {
-                ctx1.fillStyle = '#4fc3f7';
-                ctx1.beginPath();
-                ctx1.moveTo(position1 + 55, canvas1.height/2 - 10);
-                ctx1.lineTo(position1 + 65, canvas1.height/2 - 10);
-                ctx1.lineTo(position1 + 60, canvas1.height/2 - 15);
-                ctx1.lineTo(position1 + 60, canvas1.height/2 - 5);
-                ctx1.closePath();
-                ctx1.fill();
-            }
-            
-            // 更新位置
-            position1 += velocity1;
-            
-            // 应用摩擦力
-            if (friction1 > 0) {
-                velocity1 *= (1 - friction1);
-                if (Math.abs(velocity1) < 0.05) velocity1 = 0;
-            }
-            
-            // 边界检查
-            if (position1 > canvas1.width) {
-                position1 = -45;
-            }
-            
-            animationId1 = requestAnimationFrame(drawLaw1);
-        }
-        
-        function startLaw1() {
-            if (animationId1) cancelAnimationFrame(animationId1);
-            position1 = 50;
-            velocity1 = 2;
-            friction1 = 0;
-            drawLaw1();
-        }
-        
-        function addFriction() {
-            friction1 = 0.02;
-        }
-        
-        function resetLaw1() {
-            if (animationId1) cancelAnimationFrame(animationId1);
-            ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
-            position1 = 50;
-            velocity1 = 2;
-            friction1 = 0;
-        }
-        
-        // 第二定律动画
-        function Box(mass, x) {
-            this.mass = mass;
-            this.x = x;
-            this.y = canvas2.height/2 - (mass * 4);
-            this.width = 35 + mass * 4;
-            this.height = 35 + mass * 4;
-            this.vx = 0;
-            this.ax = 0;
-            this.color = `hsl(${Math.random() * 360}, 70%, 60%)`;
-        }
-        
-        Box.prototype.draw = function() {
-            ctx2.fillStyle = this.color;
-            ctx2.fillRect(this.x, this.y, this.width, this.height);
-            ctx2.fillStyle = 'white';
-            ctx2.font = '14px Arial';
-            ctx2.fillText(`${this.mass}kg`, this.x + 8, this.y + this.height/2 + 5);
-        };
-        
-        Box.prototype.update = function() {
-            this.vx += this.ax;
-            this.x += this.vx;
-            this.ax = 0;
-        };
-        
-        function drawLaw2() {
-            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
-            
-            // 绘制轨道
-            ctx2.fillStyle = '#3a506b';
-            ctx2.fillRect(0, canvas2.height/2 + 25, canvas2.width, 8);
-            
-            // 绘制箭头表示力
-            ctx2.fillStyle = '#ffcc00';
-            ctx2.font = 'bold 16px Arial';
-            ctx2.fillText('→ 力', 30, canvas2.height/2 - 30);
-            
-            // 绘制和更新盒子
-            boxes.forEach(box => {
-                box.update();
-                box.draw();
-            });
-            
-            animationId2 = requestAnimationFrame(drawLaw2);
-        }
-        
-        function applyForce(force) {
-            // 如果还没有创建方块，则创建它们
-            if (boxes.length === 0) {
-                boxes.push(new Box(5, canvas2.width * 0.25));
-                boxes.push(new Box(15, canvas2.width * 0.75));
-            }
-            
-            boxes[0].ax = force / boxes[0].mass * 0.05;
-            boxes[1].ax = force / boxes[1].mass * 0.05;
-            
-            // 启动动画（如果尚未启动）
-            if (!animationId2) {
-                drawLaw2();
-            }
-        }
-        
-        function resetLaw2() {
-            if (animationId2) cancelAnimationFrame(animationId2);
-            animationId2 = null;
-            boxes.length = 0;
-            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
-        }
-        
-        // 第三定律动画
-        function Ball(x, y, radius, vx, color) {
-            this.x = x;
-            this.y = y;
-            this.radius = radius;
-            this.vx = vx;
-            this.vy = 0;
-            this.color = color;
-        }
-        
-        Ball.prototype.draw = function() {
-            ctx3.fillStyle = this.color;
-            ctx3.beginPath();
-            ctx3.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-            ctx3.fill();
-            
-            // 绘制力箭头
-            if (Math.abs(this.vx) > 0.1) {
-                const direction = this.vx > 0 ? 1 : -1;
-                ctx3.strokeStyle = 'white';
-                ctx3.lineWidth = 2;
-                ctx3.beginPath();
-                ctx3.moveTo(this.x, this.y - this.radius - 12);
-                ctx3.lineTo(this.x + direction * 25, this.y - this.radius - 12);
-                ctx3.stroke();
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
                 
-                // 箭头头部
-                ctx3.beginPath();
-                ctx3.moveTo(this.x + direction * 25, this.y - this.radius - 12);
-                ctx3.lineTo(this.x + direction * 20, this.y - this.radius - 17);
-                ctx3.lineTo(this.x + direction * 20, this.y - this.radius - 7);
-                ctx3.closePath();
-                ctx3.fillStyle = 'white';
-                ctx3.fill();
-            }
-        };
-        
-        Ball.prototype.update = function() {
-            this.x += this.vx;
-            
-            // 边界检查
-            if (this.x < this.radius) {
-                this.x = this.radius;
-                this.vx = -this.vx * 0.8;
-            }
-            if (this.x > canvas3.width - this.radius) {
-                this.x = canvas3.width - this.radius;
-                this.vx = -this.vx * 0.8;
-            }
-        };
-        
-        function checkCollision(ball1, ball2) {
-            const dx = ball2.x - ball1.x;
-            const dy = ball2.y - ball1.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            
-            if (distance < ball1.radius + ball2.radius) {
-                // 碰撞响应
-                const angle = Math.atan2(dy, dx);
-                const sin = Math.sin(angle);
-                const cos = Math.cos(angle);
+                // 随机大小
+                const size = Math.random() * 5 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
                 
-                // 旋转速度
-                const vx1 = ball1.vx * cos + ball1.vy * sin;
-                const vy1 = ball1.vy * cos - ball1.vx * sin;
-                const vx2 = ball2.vx * cos + ball2.vy * sin;
-                const vy2 = ball2.vy * cos - ball2.vx * sin;
+                // 随机位置
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
                 
-                // 碰撞后速度 (质量和速度交换)
-                const final_vx1 = ((ball1.radius**3 - ball2.radius**3) * vx1 + 2 * ball2.radius**3 * vx2) / 
-                                  (ball1.radius**3 + ball2.radius**3);
-                const final_vx2 = ((ball2.radius**3 - ball1.radius**3) * vx2 + 2 * ball1.radius**3 * vx1) / 
-                                  (ball1.radius**3 + ball2.radius**3);
+                // 随机动画
+                const animationDuration = Math.random() * 20 + 10;
+                particle.style.animation = `float ${animationDuration}s infinite ease-in-out`;
+                particle.style.animationDelay = `${Math.random() * 5}s`;
                 
-                // 旋转回原坐标系
-                ball1.vx = final_vx1 * cos - vy1 * sin;
-                ball1.vy = vy1 * cos + final_vx1 * sin;
-                ball2.vx = final_vx2 * cos - vy2 * sin;
-                ball2.vy = vy2 * cos + final_vx2 * sin;
+                // 随机透明度
+                particle.style.opacity = Math.random() * 0.5 + 0.1;
                 
-                // 防止粘连
-                const overlap = (ball1.radius + ball2.radius - distance) / 2;
-                ball1.x -= overlap * cos;
-                ball1.y -= overlap * sin;
-                ball2.x += overlap * cos;
-                ball2.y += overlap * sin;
+                particlesContainer.appendChild(particle);
             }
         }
         
-        function drawLaw3() {
-            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
-            
-            // 绘制轨道
-            ctx3.fillStyle = '#3a506b';
-            ctx3.fillRect(0, canvas3.height/2 + 45, canvas3.width, 8);
-            
-            // 绘制作用力文字
-            ctx3.fillStyle = 'white';
-            ctx3.font = '14px Arial';
-            ctx3.fillText('作用力', 80, canvas3.height/2 - 50);
-            ctx3.fillText('反作用力', canvas3.width - 140, canvas3.height/2 - 50);
-            
-            // 绘制和更新球
-            balls.forEach(ball => {
-                ball.update();
-                ball.draw();
-            });
-            
-            // 检查碰撞
-            if (balls.length > 1) {
-                checkCollision(balls[0], balls[1]);
-            }
-            
-            animationId3 = requestAnimationFrame(drawLaw3);
-        }
-        
-        function startCollision(type) {
-            if (animationId3) cancelAnimationFrame(animationId3);
-            
-            balls = [];
-            
-            if (type === 'equal') {
-                balls.push(new Ball(canvas3.width * 0.2, canvas3.height/2, 22, 3, '#ff6b6b'));
-                balls.push(new Ball(canvas3.width * 0.8, canvas3.height/2, 22, -1, '#4ecdc4'));
-            } else if (type === 'heavy') {
-                balls.push(new Ball(canvas3.width * 0.2, canvas3.height/2, 30, 2, '#ff6b6b'));
-                balls.push(new Ball(canvas3.width * 0.8, canvas3.height/2, 18, 0, '#4ecdc4'));
-            } else if (type === 'light') {
-                balls.push(new Ball(canvas3.width * 0.2, canvas3.height/2, 18, 3, '#ff6b6b'));
-                balls.push(new Ball(canvas3.width * 0.8, canvas3.height/2, 30, 0, '#4ecdc4'));
-            }
-            
-            drawLaw3();
-        }
-        
-        function resetLaw3() {
-            if (animationId3) cancelAnimationFrame(animationId3);
-            animationId3 = null;
-            balls = [];
-            ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
-        }
-        
-        // 初始化
-        window.onload = function() {
-            // 初始显示第一定律动画
-            startLaw1();
-            
-            // 添加物理图标
-            addPhysicsIcons();
-        };
-        
-        // 处理窗口大小变化
-        window.addEventListener('resize', function() {
-            // 重新初始化Canvas
-            initCanvases();
-            
-            // 重启动画
-            if (animationId1) {
-                cancelAnimationFrame(animationId1);
-                startLaw1();
-            }
-            if (animationId2) {
-                cancelAnimationFrame(animationId2);
-                resetLaw2();
-            }
-            if (animationId3) {
-                cancelAnimationFrame(animationId3);
-                resetLaw3();
-            }
-        });
-        
-        function addPhysicsIcons() {
-            const icons = ['⚛️', '🌌', '🚀', '🔭', '🧪', '🔬', '⚖️'];
-            const containers = document.querySelectorAll('.law-card');
-            
-            containers.forEach(container => {
-                for (let i = 0; i < 4; i++) {
-                    const icon = document.createElement('div');
-                    icon.className = 'physics-icon';
-                    icon.style.top = `${Math.random() * 80 + 10}%`;
-                    icon.style.left = `${Math.random() * 80 + 10}%`;
-                    icon.style.fontSize = `${Math.random() * 3 + 3}rem`;
-                    icon.style.opacity = `${Math.random() * 0.05 + 0.03}`;
-                    icon.textContent = icons[Math.floor(Math.random() * icons.length)];
-                    container.appendChild(icon);
+        // 导航栏滚动效果
+        function setupNavbar() {
+            const header = document.getElementById('header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 100) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
                 }
             });
         }
+        
+        // 平滑滚动
+        function setupSmoothScroll() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        }
+        
+        // 初始化函数
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            setupNavbar();
+            setupSmoothScroll();
+            
+            // 添加一些悬停效果
+            const featureCards = document.querySelectorAll('.feature-card');
+            featureCards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-10px)';
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0)';
+                });
+            });
+        });
     </script>
 </body>
 </html>
