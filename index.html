@@ -8,6 +8,23 @@
     <meta name="keywords" content="「周航山」的网站">
     <meta content="「周航山」的网站" name="description">
 
+    <!-- 电脑横屏版本 -->
+    <script>
+        function checkOrientation() {
+            // 检测是否是横屏（landscape）
+            if (window.matchMedia("(orientation: landscape)").matches) {
+                // 如果是横屏，跳转到指定页面
+                window.location.href = "window.html"; // DeepSeek生成
+            }
+        }
+
+        // 页面加载时检查一次
+        window.addEventListener('load', checkOrientation);
+
+        // 当屏幕方向改变时再次检查
+        window.addEventListener('orientationchange', checkOrientation);
+    </script>
+
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,22 +48,6 @@
     <!-- Template Stylesheet -->
     <link href="newweb/css/style.css" rel="stylesheet">
 
-    <!-- 电脑横屏版本 -->
-    <script>
-        function checkOrientation() {
-            // 检测是否是横屏（landscape）
-            if (window.matchMedia("(orientation: landscape)").matches) {
-                // 如果是横屏，跳转到指定页面
-                window.location.href = "window.html"; // DeepSeek生成
-            }
-        }
-
-        // 页面加载时检查一次
-        window.addEventListener('load', checkOrientation);
-
-        // 当屏幕方向改变时再次检查
-        window.addEventListener('orientationchange', checkOrientation);
-    </script>
 </head>
 
 <body>
