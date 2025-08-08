@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高考倒计时</title>
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+    .countdown {
+        color: white;
+        font-size: 24px;
+        text-align: center;
+    }
+</style>
+</head>
+<body bgcolor="black">
+<div class="countdown" id="countdown"></div>
+
+<script>
+    // 设置高考日期（假设为2027年6月7日）
+    const examDate = new Date('2027-06-07');
+    // 设置当前日期
+    const currentDate = new Date();
+    // 计算距离高考还有的天数
+    const daysLeft = Math.ceil((examDate - currentDate) / (1000 * 60 * 60 * 24));
+
+    // 在页面中显示倒计时
+    document.getElementById('countdown').innerText = `距离高考还有 ${daysLeft} 天`;
+</script>
+</body>
+</html>
