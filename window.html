@@ -574,6 +574,20 @@
             color: white;
         }
 
+        /* 评价容器布局 */
+        .evaluation-container {
+            position: relative;
+        }
+
+        /* 留言板按钮容器 */
+        .comment-btn-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+            padding-right: 10px;
+            width: 100%;
+        }
+
         /* 页脚 */
         .footer {
             background: rgba(15, 23, 42, 0.9);
@@ -671,6 +685,11 @@
 
             .contact-info {
                 flex-direction: column;
+            }
+
+            .comment-btn-container {
+                justify-content: center;
+                padding-right: 0;
             }
         }
 
@@ -783,107 +802,111 @@
         <!-- 人物风评 -->
         <section id="about" class="section animate-on-scroll">
             <h2 class="section-title">人物风评</h2>
-
-            <div class="evaluation">
-                <div class="evaluation-card">
-                    <div class="evaluation-header">
-                        <div class="evaluation-avatar">
-                            <img src="https://s2.loli.net/2024/07/25/xrq4jy3cXlA7Swb.jpg" alt="盛俊发">
+            
+            <div class="evaluation-container">
+                <div class="evaluation">
+                    <div class="evaluation-card">
+                        <div class="evaluation-header">
+                            <div class="evaluation-avatar">
+                                <img src="https://s2.loli.net/2024/07/25/xrq4jy3cXlA7Swb.jpg" alt="盛俊发">
+                            </div>
+                            <div>
+                                <div class="evaluation-author">盛俊发</div>
+                                <div class="evaluation-title">初中同学 | 三年好友</div>
+                            </div>
                         </div>
-                        <div>
-                            <div class="evaluation-author">盛俊发</div>
-                            <div class="evaluation-title">初中同学 | 三年好友</div>
+                        <div class="evaluation-content">
+                            张三这个人呢，是我们班的同学，名字叫周航山，三年的初中友谊，我对张三也算了解了许多，那我就来说一说他吧。
+                            三年来呢，我们有争有好，有苦有甜，有难有易。刚认识那会儿就吵了，但不要紧，我意识到这原来也是同道中人。
+                            张三是一个文武双全的狠人，不光学习上优秀，体育上也十分牛逼，我能拿捏他的，恐怕只有50米了。
+                            张三他学习能力很强，学习能力强的人，打游戏也屌，他学习快，一下就了解了这游戏的大概，再有意识和思路这两个强项，上分是真嘎嘎快。
+                            还有呢，张三这个人书法很牛逼的，我还是他门徒先，他的字，飘逸自然却不失楷书的气息，练字的大多都是高尚的人吧，张三有时候也有点雅里雅气的。
+                            张三他还比较喜欢打乒乓球，我们班里他排第二，没人敢排第一。
+                            最后是关于细节的问题，他的桌子上会有点小玩意儿，他也会买一些小礼品，反正我觉得这蛮有个性的。
                         </div>
                     </div>
-                    <div class="evaluation-content">
-                        张三这个人呢，是我们班的同学，名字叫周航山，三年的初中友谊，我对张三也算了解了许多，那我就来说一说他吧。
-                        三年来呢，我们有争有好，有苦有甜，有难有易。刚认识那会儿就吵了，但不要紧，我意识到这原来也是同道中人。
-                        张三是一个文武双全的狠人，不光学习上优秀，体育上也十分牛逼，我能拿捏他的，恐怕只有50米了。
-                        张三他学习能力很强，学习能力强的人，打游戏也屌，他学习快，一下就了解了这游戏的大概，再有意识和思路这两个强项，上分是真嘎嘎快。
-                        还有呢，张三这个人书法很牛逼的，我还是他门徒先，他的字，飘逸自然却不失楷书的气息，练字的大多都是高尚的人吧，张三有时候也有点雅里雅气的。
-                        张三他还比较喜欢打乒乓球，我们班里他排第二，没人敢排第一。
-                        最后是关于细节的问题，他的桌子上会有点小玩意儿，他也会买一些小礼品，反正我觉得这蛮有个性的。
+
+                    <div class="evaluation-card">
+                        <div class="evaluation-header">
+                            <div class="evaluation-avatar">
+                                <img src="https://i.imgs.ovh/2025/08/08/ECb89.jpeg" alt="何佳璟">
+                            </div>
+                            <div>
+                                <div class="evaluation-author">何佳璟</div>
+                                <div class="evaluation-title">高中同桌 | 学习伙伴</div>
+                            </div>
+                        </div>
+                        <div class="evaluation-content">
+                            张三，本人上高中之后的第一个同桌。此前记住他还是因为一件很尴尬的事，但是上高中认识他之后才发现他其实挺乐于助人的。问他问题他都会耐心解答💪🏻
+                            举个栗子，某次物理考试前的一个晚自习，本人正在奋力复习物理，看到一道不懂的题，遂向张三寻求帮助。过了十几分钟，张三递过来一张写得满满的草稿纸。上面是那道题的详细解析，解释得比答案还清楚，还附上了相似题型的解法d(^_^o)当时就一阵暖心啊。还有刚开学的时候被基本不等式折磨得不成人样，他也写了一整页的答案解析给我以及周围的同学阅览🤓
+                            最后总结一下就是非常感谢他哈，这学期他在学习上对本人帮助颇多，在此向他表示诚挚的谢意🤓☝️
+                        </div>
+                    </div>
+
+                    <div class="evaluation-card">
+                        <div class="evaluation-header">
+                            <div class="evaluation-avatar">
+                                <img src="https://s2.loli.net/2024/07/25/ThEaGZml9eO2yfW.jpg" alt="黄名轩">
+                            </div>
+                            <div>
+                                <div class="evaluation-author">黄名轩</div>
+                                <div class="evaluation-title">扶中直播班理科第一</div>
+                            </div>
+                        </div>
+                        <div class="evaluation-content">
+                            周航山，首先他是一个博学多才的人，会的范围非常的广，无论是学习还是体育，都有他的一席之地，很会做事，很努力去做事，就拿我和他比较来讲，他确实能做到一些我做不到的，不过他好像很容易受到别人的影响。
+                        </div>
+                    </div>
+
+                    <div class="evaluation-card">
+                        <div class="evaluation-header">
+                            <div class="evaluation-avatar">
+                                <img src="https://i.imgs.ovh/2025/08/10/ExjTC.jpeg" alt="黄耀乐">
+                            </div>
+                            <div>
+                                <div class="evaluation-author">黄耀乐</div>
+                                <div class="evaluation-title">初中同学 | 三年好友</div>
+                            </div>
+                        </div>
+                        <div class="evaluation-content">
+                            周航山是一个博学多才的人，对各种知识都充满了好奇心，不断地学习和探索。他努力不懈，对待任何事情都充满热情和毅力，从不轻言放弃。兴趣爱好广泛，喜欢尝试新事物，对生活充满热情。他的求知欲望和积极向上的态度激励着身边的人，是一个令人钦佩的榜样。
+                        </div>
+                    </div>
+
+                    <div class="evaluation-card">
+                        <div class="evaluation-header">
+                            <div class="evaluation-avatar">
+                                <img src="https://i.imgs.ovh/2025/08/09/E6hi4.jpeg" alt="农峻熙">
+                            </div>
+                            <div>
+                                <div class="evaluation-author">农峻熙</div>
+                                <div class="evaluation-title">高中同学 | 编程合作</div>
+                            </div>
+                        </div>
+                        <div class="evaluation-content">
+                            我在622班之前就有幸认识到张三，一个十分有潜力的人。初次见面时，张三递给我一个属于他的个性的名片，写有自己亲手创下的网站地址。就当我与其聊天后，了解到张三是一位专业于软件编程的程序员,我与张三一些共享这份兴趣。他曾教我基本的编程语言，一起去探索硬件编程未知，而如今的我在偕行中收获了成长，有感写下这些。
+                        </div>
+                    </div>
+
+                    <div class="evaluation-card">
+                        <div class="evaluation-header">
+                            <div class="evaluation-avatar">
+                                <img src="https://i.imgs.ovh/2025/08/10/ExZ1q.jpeg" alt="韦岚耀">
+                            </div>
+                            <div>
+                                <div class="evaluation-author">韦岚耀</div>
+                                <div class="evaluation-title">十年好友</div>
+                            </div>
+                        </div>
+                        <div class="evaluation-content">
+                            周航山，本人的小学兼高中同学。未曾设想过初中分别三度春秋，再次相遇，他的变化居然如此之大。相较于从前，更加稳重，更加牛逼，更加努力，拥有了许多领域的能力，能做到许多事情。最后，愿张三天天向上！ദ്ദി˶•̀֊•́)✧
+                        </div>
                     </div>
                 </div>
-
-                <div class="evaluation-card">
-                    <div class="evaluation-header">
-                        <div class="evaluation-avatar">
-                            <img src="https://i.imgs.ovh/2025/08/08/ECb89.jpeg" alt="何佳璟">
-                        </div>
-                        <div>
-                            <div class="evaluation-author">何佳璟</div>
-                            <div class="evaluation-title">高中同桌 | 学习伙伴</div>
-                        </div>
-                    </div>
-                    <div class="evaluation-content">
-                        张三，本人上高中之后的第一个同桌。此前记住他还是因为一件很尴尬的事，但是上高中认识他之后才发现他其实挺乐于助人的。问他问题他都会耐心解答💪🏻
-                        举个栗子，某次物理考试前的一个晚自习，本人正在奋力复习物理，看到一道不懂的题，遂向张三寻求帮助。过了十几分钟，张三递过来一张写得满满的草稿纸。上面是那道题的详细解析，解释得比答案还清楚，还附上了相似题型的解法d(^_^o)当时就一阵暖心啊。还有刚开学的时候被基本不等式折磨得不成人样，他也写了一整页的答案解析给我以及周围的同学阅览🤓
-                        最后总结一下就是非常感谢他哈，这学期他在学习上对本人帮助颇多，在此向他表示诚挚的谢意🤓☝️
-                    </div>
-                </div>
-
-                <div class="evaluation-card">
-                    <div class="evaluation-header">
-                        <div class="evaluation-avatar">
-                            <img src="https://s2.loli.net/2024/07/25/ThEaGZml9eO2yfW.jpg" alt="黄名轩">
-                        </div>
-                        <div>
-                            <div class="evaluation-author">黄名轩</div>
-                            <div class="evaluation-title">扶中直播班理科第一</div>
-                        </div>
-                    </div>
-                    <div class="evaluation-content">
-                        周航山，首先他是一个博学多才的人，会的范围非常的广，无论是学习还是体育，都有他的一席之地，很会做事，很努力去做事，就拿我和他比较来讲，他确实能做到一些我做不到的，不过他好像很容易受到别人的影响。
-                    </div>
-                </div>
-
-                <div class="evaluation-card">
-                    <div class="evaluation-header">
-                        <div class="evaluation-avatar">
-                            <img src="https://i.imgs.ovh/2025/08/10/ExjTC.jpeg" alt="黄耀乐">
-                        </div>
-                        <div>
-                            <div class="evaluation-author">黄耀乐</div>
-                            <div class="evaluation-title">初中同学 | 三年好友</div>
-                        </div>
-                    </div>
-                    <div class="evaluation-content">
-                        周航山是一个博学多才的人，对各种知识都充满了好奇心，不断地学习和探索。他努力不懈，对待任何事情都充满热情和毅力，从不轻言放弃。兴趣爱好广泛，喜欢尝试新事物，对生活充满热情。他的求知欲望和积极向上的态度激励着身边的人，是一个令人钦佩的榜样。
-                    </div>
-                </div>
-
-                <div class="evaluation-card">
-                    <div class="evaluation-header">
-                        <div class="evaluation-avatar">
-                            <img src="https://i.imgs.ovh/2025/08/09/E6hi4.jpeg" alt="农峻熙">
-                        </div>
-                        <div>
-                            <div class="evaluation-author">农峻熙</div>
-                            <div class="evaluation-title">高中同学 | 编程合作</div>
-                        </div>
-                    </div>
-                    <div class="evaluation-content">
-                        我在622班之前就有幸认识到张三，一个十分有潜力的人。初次见面时，张三递给我一个属于他的个性的名片，写有自己亲手创下的网站地址。就当我与其聊天后，了解到张三是一位专业于软件编程的程序员,我与张三一些共享这份兴趣。他曾教我基本的编程语言，一起去探索硬件编程未知，而如今的我在偕行中收获了成长，有感写下这些。
-                    </div>
-                </div>
-
-                <div class="evaluation-card">
-                    <div class="evaluation-header">
-                        <div class="evaluation-avatar">
-                            <img src="https://i.imgs.ovh/2025/08/10/ExZ1q.jpeg" alt="韦岚耀">
-                        </div>
-                        <div>
-                            <div class="evaluation-author">韦岚耀</div>
-                            <div class="evaluation-title">十年好友</div>
-                        </div>
-                    </div>
-                    <div class="evaluation-content">
-                        周航山，本人的小学兼高中同学。未曾设想过初中分别三度春秋，再次相遇，他的变化居然如此之大。相较于从前，更加稳重，更加牛逼，更加努力，拥有了许多领域的能力，能做到许多事情。最后，愿张三天天向上！ദ്ദി˶•̀֊•́)✧
-                    </div>
-                </div>
-                <div style="text-align: right; margin-top: 20px; padding-right: 10px;">
-                    <a href="#" class="recommendation-link" style="margin-left: auto;">
+                
+                <!-- 新增的留言板按钮 -->
+                <div class="comment-btn-container">
+                    <a href="https://hanson.netcpu.top/msg" class="recommendation-link" target="_blank">
                         <i class="fas fa-comment-dots"></i> 留言板
                     </a>
                 </div>
