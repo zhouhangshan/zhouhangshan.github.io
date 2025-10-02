@@ -3,27 +3,10 @@
 
 <head>
     <meta charset="utf-8">
-    <title>「周航山」的网站</title>
+    <title>「周航山」的网站 </title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta name="keywords" content="「周航山」的网站">
-    <meta content="「周航山」的网站" name="description">
-
-    <!-- 电脑横屏版本 -->
-    <script>
-        function checkOrientation() {
-            // 检测是否是横屏（landscape）
-            if (window.matchMedia("(orientation: landscape)").matches) {
-                // 如果是横屏，跳转到指定页面
-                window.location.href = "window.html"; // DeepSeek生成
-            }
-        }
-
-        // 页面加载时检查一次
-        window.addEventListener('load', checkOrientation);
-
-        // 当屏幕方向改变时再次检查
-         window.addEventListener('orientationchange', checkOrientation);
-    </script>
+    <meta name="keywords" content="周航山, 个人网站">
+    <meta content="「周航山」的个人网站" name="description">
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,1025 +19,1242 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
     <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap-icons/1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
-    <!-- Libraries Stylesheet -->
-    <link rel="stylesheet" href="newweb/lib/animate/animate.min.css" />
-    <link href="newweb/lib/lightbox/css/lightbox.min.css" rel="stylesheet">
-    <link href="newweb/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --pink: #f72585;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    <!-- Customized Bootstrap Stylesheet -->
-    <link href="newweb/css/bootstrap.min.css" rel="stylesheet">
+        body {
+            font-family: 'Jost', 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: #e2e8f0;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
 
-    <!-- Template Stylesheet -->
-    <link href="newweb/css/style.css" rel="stylesheet">
+        /* 导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 15px 5%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent);
+        }
 
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand i {
+            color: var(--accent);
+            margin-right: 10px;
+        }
+
+        .navbar-nav {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-item {
+            margin: 0 12px;
+        }
+
+        .nav-link {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: white;
+            background: rgba(67, 97, 238, 0.2);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 60%;
+        }
+
+        /* 主要内容区域 */
+        .container {
+            max-width: 1400px;
+            margin: 100px auto 50px;
+            padding: 0 20px;
+        }
+
+        .section {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(67, 97, 238, 0.2);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--pink));
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: white;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 70px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        /* 个人简介部分 */
+        .profile {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .profile-img {
+            flex: 0 0 300px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            position: relative;
+            transform: translateY(-20px);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .profile-img img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .profile-img:hover img {
+            transform: scale(1.05);
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .profile-title {
+            font-size: 1.3rem;
+            color: var(--accent);
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        .profile-desc {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            color: #cbd5e1;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.5);
+            padding: 12px 20px;
+            border-radius: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .contact-item:hover {
+            transform: translateY(-5px);
+            background: rgba(67, 97, 238, 0.2);
+        }
+
+        .contact-item i {
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-right: 15px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .social-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 23, 42, 0.7);
+            color: white;
+            font-size: 1.3rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-5px);
+            background: var(--accent);
+            box-shadow: 0 5px 15px rgba(72, 149, 239, 0.4);
+        }
+
+        /* 风评部分 - 修复布局 */
+        .evaluation {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .evaluation-card {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 15px;
+            padding: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(67, 97, 238, 0.1);
+            height: 100%;
+            /* 确保卡片高度一致 */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .evaluation-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(67, 97, 238, 0.3);
+        }
+
+        .evaluation-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .evaluation-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 15px;
+            border: 3px solid var(--accent);
+        }
+
+        .evaluation-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .evaluation-author {
+            font-size: 1.3rem;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .evaluation-title {
+            font-size: 0.9rem;
+            color: var(--accent);
+        }
+
+        .evaluation-content {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #cbd5e1;
+            flex-grow: 1;
+            /* 内容区域自适应高度 */
+        }
+
+        /* 教育经历部分 */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin-top: 40px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10px;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--primary), var(--pink));
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+            padding-left: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: -10px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 4px solid var(--dark);
+        }
+
+        .timeline-date {
+            font-size: 1.1rem;
+            color: var(--accent);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .timeline-date i {
+            margin-right: 10px;
+        }
+
+        .timeline-title {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .timeline-desc {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        /* 成就部分 */
+        .achievements {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .achievement-card {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(67, 97, 238, 0.1);
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-10px);
+            background: rgba(67, 97, 238, 0.15);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .achievement-icon {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+
+        .achievement-title {
+            font-size: 1.3rem;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .achievement-date {
+            font-size: 1rem;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .achievement-date i {
+            margin-right: 8px;
+        }
+
+        /* 推荐部分 - 修复布局 */
+        .recommendations {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .recommendation-card {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(67, 97, 238, 0.1);
+            height: 100%;
+            /* 确保卡片高度一致 */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .recommendation-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .recommendation-img {
+            height: 200px;
+            overflow: hidden;
+            flex-shrink: 0;
+            /* 防止图片区域压缩 */
+        }
+
+        .recommendation-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .recommendation-card:hover .recommendation-img img {
+            transform: scale(1.1);
+        }
+
+        .recommendation-content {
+            padding: 25px;
+            flex-grow: 1;
+            /* 内容区域自适应高度 */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .recommendation-category {
+            font-size: 0.9rem;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .recommendation-title {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .recommendation-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: rgba(67, 97, 238, 0.2);
+            color: var(--accent);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-top: auto;
+            /* 链接位于底部 */
+            width: fit-content;
+            /* 自适应宽度 */
+        }
+
+        .recommendation-link:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* 评价容器布局 */
+        .evaluation-container {
+            position: relative;
+        }
+
+        /* 留言板按钮容器 */
+        .comment-btn-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+            padding-right: 10px;
+            width: 100%;
+        }
+
+        /* 页脚 */
+        .footer {
+            background: rgba(15, 23, 42, 0.9);
+            padding: 40px 0;
+            text-align: center;
+            margin-top: 60px;
+            border-top: 1px solid rgba(67, 97, 238, 0.2);
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-title {
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .footer-text {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .footer-social {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .copyright {
+            color: #64748b;
+            font-size: 1rem;
+        }
+
+        /* 动画效果 */
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .profile {
+                flex-direction: column;
+            }
+
+            .profile-img {
+                flex: 0 0 auto;
+                width: 70%;
+                max-width: 400px;
+            }
+
+            .navbar-nav {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 30px 20px;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .profile-name {
+                font-size: 2.2rem;
+            }
+
+            .contact-info {
+                flex-direction: column;
+            }
+
+            .comment-btn-container {
+                justify-content: center;
+                padding-right: 0;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar-brand {
+                font-size: 1.5rem;
+            }
+
+            .profile-img {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 
 <body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <a href="#" class="navbar-brand">
+            <i class="fas fa-user"></i>
+            「周航山」的个人网站
+        </a>
+        <ul class="navbar-nav">
+            <li class="nav-item"><a href="#home" class="nav-link active"><i class="fas fa-home"></i> 首页</a></li>
+            <li class="nav-item"><a href="#about" class="nav-link"><i class="fas fa-user"></i> 人物风评</a></li>
+            <li class="nav-item"><a href="#education" class="nav-link"><i class="fas fa-graduation-cap"></i> 教育经历</a>
+            </li>
+            <li class="nav-item"><a href="#achievements" class="nav-link"><i class="fas fa-trophy"></i> 成就</a></li>
+            <li class="nav-item"><a href="#recommend" class="nav-link"><i class="fas fa-star"></i> 推荐</a></li>
+            <li class="nav-item"><a href="#formore" class="nav-link"><i class="fas fa-plus"></i> 更多</a></li>
+        </ul>
+    </nav>
 
-    <!-- Spinner Start -->
-    <div id="spinner"
-        class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-            <span class="sr-only">Loading...</span>
-        </div>
-    </div>
-    <!-- Spinner End -->
+    <!-- 主要内容 -->
+    <div class="container">
+        <!-- 个人简介 -->
+        <section id="home" class="section animate-on-scroll">
+            <h2 class="section-title">个人简介</h2>
+            <div class="profile">
+                <div class="profile-img">
+                    <img src="https://s2.loli.net/2024/07/25/GHXzxf3NFlmCBeL.jpg" alt="「周航山」">
+                </div>
+                <div class="profile-info">
+                    <h1 class="profile-name">「周航山」</h1>
+                    <div class="profile-title">扶绥中学书法协会副会长 · 年级御用书法家</div>
+                    <p class="profile-desc">
+                        外号小冰、张三。生于2008年11月7日，爱好编程、魔方、书法、乒乓球等，最喜欢的颜色是蓝粉白，现就读于扶绥县扶绥中学，担任扶绥中学书法协会24级副会长，年级领导指认"年级御用书法家"之一。
+                    </p>
 
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>广西壮族自治区南宁市宾阳县</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>1945581557@qq.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone-alt"></i>
+                            <span>17374809507</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fab fa-qq"></i>
+                            <span>QQ: 1945581557</span>
+                        </div>
+                    </div>
 
-    <!-- Navbar Start -->
-    <div class="container-fluid nav-section border-0">
-        <nav class="navbar navbar-light">
-            <div class="navbar-nav flex-column">
-                <a href="#pigraHome" class="nav-item nav-link active"><span class="fa fa-home"></span> Home</a>
-                <a href="#pigraAbout" class="nav-item nav-link"><span class="far fa-address-card"></span> About</a>
-                <a href="#pigraService" class="nav-item nav-link"><span class="fab fa-servicestack"></span>
-                    Skills&Hobbies</a>
-                <a href="#pigraBlog" class="nav-item nav-link"><span class="fa fa-blog"></span> Other Pages</a>
-                <a href="#pigraContact" class="nav-item nav-link"><span class="fas fa-address-book"></span> Contact</a>
-            </div>
-        </nav>
-    </div>
-    <!-- Navbar End -->
-
-    <!-- Header Start -->
-    <div class="container-fluid" id="pigraHome">
-        <div class="container">
-            <div class="row g-0">
-                <div class="col-12 col-lg-3">
-                    <div class="header-content bg-dark h-100 pt-6 pe-6 pb-6">
-                        <a href="index.html" class="navbar-brand d-inline-flex pb-5 wow fadeInUp" data-wow-delay="0.1s">
-                            <h1 class="display-6 text-white mb-0">Hanson Zou's Website</h1>
+                    <div class="social-links">
+                        <a href="https://zhouhangshan.github.io/WCA" class="social-btn" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-grid-3x3-gap" viewBox="0 0 16 16">
+                                <path
+                                    d="M4 2v2H2V2h2zm1 12v-2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1zm0-5V7a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1zm0-5V2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1zm5 10v-2a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1zm0-5V7a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1zm0-5V2a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1zM9 2v2H7V2h2zm5 0v2h-2V2h2zM4 7v2H2V7h2zm5 0v2H7V7h2zm5 0h-2v2h2V7zM4 12v2H2v-2h2zm5 0v2H7v-2h2zm5 0v2h-2v-2h2zM12 1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1h-2zm-1 6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V7zm1 4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-2z" />
+                            </svg>
                         </a>
-                        <div class="text-start d-flex flex-column justify-content-center wow fadeInUp"
-                            data-wow-delay="0.3s">
-                            <p class="text-white sub-title">「周航山」的网站</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-lg-9">
-                    <div class="header-img d-flex h-100 pt-6 ps-6 pb-6">
-                        <div class="row g-5">
-                            <div class="col-xl-6 wow fadeInUp" data-wow-delay="0.1s">
-                                <div class="bg-light p-4" style="border-radius: 68% 32% 100% 0% / 0% 75% 25% 100%;">
-                                    <img src="https://s2.loli.net/2024/07/25/GHXzxf3NFlmCBeL.jpg"
-                                        class="img-fluid w-100"
-                                        style="border-radius: 68% 32% 100% 0% / 0% 75% 25% 100%;" alt="Image">
-                                </div>
-                            </div>
-                            <div class="col-xl-6 wow fadeInUp" data-wow-delay="0.3s">
-                                <h1 class="display-6 mb-4">个人简介</h1>
-                                <p class="mb-4">
-                                    周航山，外号小冰、张三。生于2008年11月7日，爱好编程、魔方、书法、乒乓球等，最喜欢的颜色是蓝粉白，现就读于扶绥县扶绥中学，担任扶绥中学书法协会24级副会长，年级领导指认“年级御用书法家”之一。
-                                </p>
-                                <div class="d-flex align-items-center mb-2">
-                                    <i class="fas fa-map-marker-alt text-primary me-3"></i>
-                                    <p class="text-dark mb-0">广西壮族自治区南宁市宾阳县</p>
-                                </div>
-                                <div class="d-flex align-items-center mb-2">
-                                    <i class="fas fa-envelope text-primary me-3"></i>
-                                    <p class="text-dark mb-0">1945581557@qq.com</p>
-                                </div>
-                                <div class="d-flex align-items-center mb-2">
-                                    <i class="fa fa-phone-alt text-primary me-3"></i>
-                                    <p class="text-dark mb-0">17374809507</p>
-                                </div>
-                                <div class="d-flex align-items-center mb-4">
-                                    <i class="fab fa-firefox-browser text-primary me-3"></i>
-                                    <p class="text-dark mb-0">QQ: 1945581557</p>
-                                </div>
-                                <div class="d-flex">
-                                    <a class="btn btn-primary btn-sm-square me-3" href="https://facebook.com"><i
-                                            class="fab fa-facebook-f text-white"></i></a>
-                                    <a class="btn btn-primary btn-sm-square me-3" href="https://x.com/HeasonZou?s=09"><i
-                                            class="fab fa-twitter text-white"></i></a>
-                                    <a class="btn btn-primary btn-sm-square me-3"
-                                        href="https://ig.inshelp.xyz/ins/jaychou"><i
-                                            class="fab fa-instagram text-white"></i></a>
-
-                                </div>
-                            </div>
-                        </div>
+                        <a href="https://zhouhangshan.github.io/Jay" class="social-btn" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-terminal" viewBox="0 0 16 16">
+                                <path
+                                    d="M6 9a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3A.5.5 0 0 1 6 9zM3.854 4.146a.5.5 0 1 0-.708.708L4.793 6.5 3.146 8.146a.5.5 0 1 0 .708.708l2-2a.5.5 0 0 0 0-.708l-2-2z" />
+                                <path
+                                    d="M2 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H2zm12 1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12z" />
+                            </svg>
+                        </a>
+                        <a href="https://zhouhangshan.github.io/JC" class="social-btn" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-yin-yang" viewBox="0 0 16 16">
+                                <path d="M9.167 4.5a1.167 1.167 0 1 1-2.334 0 1.167 1.167 0 0 1 2.334 0Z" />
+                                <path
+                                    d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0ZM1 8a7 7 0 0 1 7-7 3.5 3.5 0 1 1 0 7 3.5 3.5 0 1 0 0 7 7 7 0 0 1-7-7Zm7 4.667a1.167 1.167 0 1 1 0-2.334 1.167 1.167 0 0 1 0 2.334Z" />
+                            </svg>
+                        </a>
+                        <a href="https://github.com/zhs141" class="social-btn" target="_blank">
+                            <i class="fab fa-github"></i>
+                        </a>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <!-- Header End -->
+        </section>
 
+        <!-- 人物风评 -->
+        <section id="about" class="section animate-on-scroll">
+            <h2 class="section-title">人物风评</h2>
 
-    <!-- About Start -->
-    <div class="container-fluid" id="pigraAbout">
-        <div class="container">
-            <div class="row g-0">
-                <div class="col-12 col-lg-3">
-                    <div class="about-header bg-dark h-100 pt-6 pe-6 pb-6">
-                        <div class="text-start d-flex flex-column justify-content-center wow fadeInUp"
-                            data-wow-delay="0.1s">
-                            <p class="text-white sub-title">About Me</p>
-                            <h1 class="display-6 text-white mb-0">人物风评</h1>
+            <div class="evaluation-container">
+                <div class="evaluation">
+                    <div class="evaluation-card">
+                        <div class="evaluation-header">
+                            <div class="evaluation-avatar">
+                                <img src="https://s2.loli.net/2024/07/25/xrq4jy3cXlA7Swb.jpg" alt="盛俊发">
+                            </div>
+                            <div>
+                                <div class="evaluation-author">盛俊发</div>
+                                <div class="evaluation-title">初中同学 | 三年好友</div>
+                            </div>
+                        </div>
+                        <div class="evaluation-content">
+                            张三这个人呢，是我们班的同学，名字叫周航山，三年的初中友谊，我对张三也算了解了许多，那我就来说一说他吧。
+                            三年来呢，我们有争有好，有苦有甜，有难有易。刚认识那会儿就吵了，但不要紧，我意识到这原来也是同道中人。
+                            张三是一个文武双全的狠人，不光学习上优秀，体育上也十分牛逼，我能拿捏他的，恐怕只有50米了。
+                            张三他学习能力很强，学习能力强的人，打游戏也屌，他学习快，一下就了解了这游戏的大概，再有意识和思路这两个强项，上分是真嘎嘎快。
+                            还有呢，张三这个人书法很牛逼的，我还是他门徒先，他的字，飘逸自然却不失楷书的气息，练字的大多都是高尚的人吧，张三有时候也有点雅里雅气的。
+                            张三他还比较喜欢打乒乓球，我们班里他排第二，没人敢排第一。
+                            最后是关于细节的问题，他的桌子上会有点小玩意儿，他也会买一些小礼品，反正我觉得这蛮有个性的。
+                        </div>
+                    </div>
+
+                    <div class="evaluation-card">
+                        <div class="evaluation-header">
+                            <div class="evaluation-avatar">
+                                <img src="https://i.imgs.ovh/2025/08/08/ECb89.jpeg" alt="何佳璟">
+                            </div>
+                            <div>
+                                <div class="evaluation-author">何佳璟</div>
+                                <div class="evaluation-title">高中同桌 | 学习伙伴</div>
+                            </div>
+                        </div>
+                        <div class="evaluation-content">
+                            张三，本人上高中之后的第一个同桌。此前记住他还是因为一件很尴尬的事，但是上高中认识他之后才发现他其实挺乐于助人的。问他问题他都会耐心解答💪🏻
+                            举个栗子，某次物理考试前的一个晚自习，本人正在奋力复习物理，看到一道不懂的题，遂向张三寻求帮助。过了十几分钟，张三递过来一张写得满满的草稿纸。上面是那道题的详细解析，解释得比答案还清楚，还附上了相似题型的解法d(^_^o)当时就一阵暖心啊。还有刚开学的时候被基本不等式折磨得不成人样，他也写了一整页的答案解析给我以及周围的同学阅览🤓
+                            最后总结一下就是非常感谢他哈，这学期他在学习上对本人帮助颇多，在此向他表示诚挚的谢意🤓☝️
+                        </div>
+                    </div>
+
+                    <div class="evaluation-card">
+                        <div class="evaluation-header">
+                            <div class="evaluation-avatar">
+                                <img src="https://s2.loli.net/2024/07/25/ThEaGZml9eO2yfW.jpg" alt="黄名轩">
+                            </div>
+                            <div>
+                                <div class="evaluation-author">黄名轩</div>
+                                <div class="evaluation-title">扶中直播班理科第一</div>
+                            </div>
+                        </div>
+                        <div class="evaluation-content">
+                            周航山，首先他是一个博学多才的人，会的范围非常的广，无论是学习还是体育，都有他的一席之地，很会做事，很努力去做事，就拿我和他比较来讲，他确实能做到一些我做不到的，不过他好像很容易受到别人的影响。
+                        </div>
+                    </div>
+
+                    <div class="evaluation-card">
+                        <div class="evaluation-header">
+                            <div class="evaluation-avatar">
+                                <img src="https://i.imgs.ovh/2025/08/10/ExjTC.jpeg" alt="黄耀乐">
+                            </div>
+                            <div>
+                                <div class="evaluation-author">黄耀乐</div>
+                                <div class="evaluation-title">初中同学 | 三年好友</div>
+                            </div>
+                        </div>
+                        <div class="evaluation-content">
+                            周航山是一个博学多才的人，对各种知识都充满了好奇心，不断地学习和探索。他努力不懈，对待任何事情都充满热情和毅力，从不轻言放弃。兴趣爱好广泛，喜欢尝试新事物，对生活充满热情。他的求知欲望和积极向上的态度激励着身边的人，是一个令人钦佩的榜样。
+                        </div>
+                    </div>
+
+                    <div class="evaluation-card">
+                        <div class="evaluation-header">
+                            <div class="evaluation-avatar">
+                                <img src="https://i.imgs.ovh/2025/08/09/E6hi4.jpeg" alt="农峻熙">
+                            </div>
+                            <div>
+                                <div class="evaluation-author">农峻熙</div>
+                                <div class="evaluation-title">高中同学 | 编程合作</div>
+                            </div>
+                        </div>
+                        <div class="evaluation-content">
+                            我在622班之前就有幸认识到张三，一个十分有潜力的人。初次见面时，张三递给我一个属于他的个性的名片，写有自己亲手创下的网站地址。就当我与其聊天后，了解到张三是一位专业于软件编程的程序员,我与张三一些共享这份兴趣。他曾教我基本的编程语言，一起去探索硬件编程未知，而如今的我在偕行中收获了成长，有感写下这些。
+                        </div>
+                    </div>
+
+                    <div class="evaluation-card">
+                        <div class="evaluation-header">
+                            <div class="evaluation-avatar">
+                                <img src="https://i.imgs.ovh/2025/08/10/ExZ1q.jpeg" alt="韦岚耀">
+                            </div>
+                            <div>
+                                <div class="evaluation-author">韦岚耀</div>
+                                <div class="evaluation-title">十年好友</div>
+                            </div>
+                        </div>
+                        <div class="evaluation-content">
+                            周航山，本人的小学兼高中同学。未曾设想过初中分别三度春秋，再次相遇，他的变化居然如此之大。相较于从前，更加稳重，更加牛逼，更加努力，拥有了许多领域的能力，能做到许多事情。最后，愿张三天天向上！ദ്ദി˶•̀֊•́)✧
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-lg-9">
-                    <div class="about-content h-100 pt-6 ps-6 pb-6">
-                        <div class="row g-5">
-                            <div class="col-xl-5">
-                                <div class="about-img bg-light p-4 wow fadeInUp" data-wow-delay="0.1s">
-                                    <img src="https://s2.loli.net/2024/10/27/yRCMB2VhNJFmnWg.jpg"
-                                        class="img-fluid w-100" alt="Image">
-                                    <div class="sosial-icon">
 
+                <!-- 新增的留言板按钮 -->
+                <div class="comment-btn-container">
+                    <a href="https://hanson.netcpu.top/msg" class="recommendation-link" target="_blank">
+                        <i class="fas fa-comment-dots"></i> 留言板
+                    </a>
+                </div>
+            </div>
+        </section>
 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-7 wow fadeInUp" data-wow-delay="0.3s">
-                                <h4 class="mb-4">盛俊发来稿</h4>
-                                <p class="mb-4">
-                                    张三这个人呢，是我们班的同学，名字叫周航山，三年的初中友谊，我对张三也算了解了许多，那我就来说一说他吧。<br>三年来呢，我们有争有好，有苦有甜，有难有易。刚认识那会儿就吵了，但不要紧，我意识到这原来也是同道中人。<br>他这人感情归感情，学习归学习，他在万般伤心中却依旧不被负面情绪影响走向极端，他依旧考上了扶中，去了直播班；还有人说他不好的话，那咋了，人生就三次那咋了，我自己从不在意别人的眼光。<br>张三是一个文武双全的狠人，不光学习上优秀，体育上也十分牛逼，我能拿捏他的，恐怕只有50米了。<br>张三他学习能力很强，学习能力强的人，打游戏也屌，他学习快，一下就了解了这游戏的大概，再有意识和思路这两个强项，上分是真嘎嘎快。<br>还有呢，张三这个人书法很牛逼的，我还是他门徒先，他的字，飘逸自然却不失楷书的气息，练字的大多都是高尚的人吧，张三有时候也有点雅里雅气的。<br>张三他还比较喜欢打乒乓球，我们班里他排第二，没人敢排第一。<br>最后是关于细节的问题，他的桌子上会有点小玩意儿，他也会买一些小礼品，反正我觉得这蛮有个性的。<br>也是我希望我们张三能天天开心，不当舔狗，有个对她好的女孩，越来越帅！
-                                </p>
+        <!-- 教育经历 -->
+        <section id="education" class="section animate-on-scroll">
+            <h2 class="section-title">教育经历</h2>
 
-                                <h4 class="mb-4">何佳璟来稿</h4>
-                                <p class="mb-4">
-                                    张三，本人上高中之后的第一个同桌。此前记住他还是因为一件很尴尬的事，但是上高中认识他之后才发现他其实挺乐于助人的。问他问题他都会耐心解答💪🏻<br>举个栗子，某次物理考试前的一个晚自习，本人正在奋力复习物理，看到一道不懂的题，遂向张三寻求帮助。过了十几分钟，张三递过来一张写得满满的草稿纸。上面是那道题的详细解析，解释得比答案还清楚，还附上了相似题型的解法d(^_^o)当时就一阵暖心啊。还有刚开学的时候被基本不等式折磨得不成人样，他也写了一整页的答案解析给我以及周围的同学阅览🤓<br>最后总结一下就是非常感谢他哈，这学期他在学习上对本人帮助颇多，在此向他表示诚挚的谢意🤓☝️
-                                </p>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        2011 - 2012
+                    </div>
+                    <h3 class="timeline-title">佳佳幼儿园 小班</h3>
+                </div>
 
-                                <!--
-                                    <div class="row g-4 mb-4">
-                                        <div class="col-6">
-                                            <p><strong class="fw-bold text-dark">招生电话 :</strong> + 0771 752 1289</p>
+                <div class="timeline-item">
+                    <div class="timeline-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        2012 - 2014
+                    </div>
+                    <h3 class="timeline-title">扶绥县第二幼儿园</h3>
+                </div>
 
-                                            <p class="mb-0"><strong class="fw-bold text-dark">Address :</strong> 广西壮族自治区崇左市扶绥县临江街56号</p>
-                                        </div>
-                                        <div class="col-6">
+                <div class="timeline-item">
+                    <div class="timeline-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        2014 - 2015
+                    </div>
+                    <h3 class="timeline-title">新宁镇第二小学-学前班</h3>
+                </div>
 
-                                        </div>
-                                    </div>
--->
-                                <a href="https://zhouhangshan.github.io/Jay" class="btn btn-primary py-2 px-4"> <i
-                                        class="fas fa-download me-2"></i>我的小程序</a>
+                <div class="timeline-item">
+                    <div class="timeline-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        2015 - 2021
+                    </div>
+                    <h3 class="timeline-title">新宁镇第二小学</h3>
+                </div>
 
+                <div class="timeline-item">
+                    <div class="timeline-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        2021 - 2024
+                    </div>
+                    <h3 class="timeline-title">扶绥县扶绥中学发展部</h3>
+                </div>
 
-                            </div>
-                        </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        2024 - 2027
+                    </div>
+                    <h3 class="timeline-title">扶绥县扶绥中学</h3>
+                    <p class="timeline-desc">"如果巅峰留不住，那就重走来时路"</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 成就 -->
+        <section id="achievements" class="section animate-on-scroll">
+            <h2 class="section-title">成就</h2>
+
+            <div class="achievements">
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <h3 class="achievement-title">期中总分全县前十</h3>
+                    <div class="achievement-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        2019.11
+                    </div>
+                </div>
+
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3 class="achievement-title">小考二模总分全县第四</h3>
+                    <div class="achievement-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        2021.6
+                    </div>
+                </div>
+
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-running"></i>
+                    </div>
+                    <h3 class="achievement-title">立定跳远年级第一</h3>
+                    <div class="achievement-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        2021.10
+                    </div>
+                </div>
+
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-running"></i>
+                    </div>
+                    <h3 class="achievement-title">立定跳远年级第二</h3>
+                    <div class="achievement-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        2022.10
+                    </div>
+                </div>
+
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-paint-brush"></i>
+                    </div>
+                    <h3 class="achievement-title">元旦书法展三等奖</h3>
+                    <div class="achievement-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        2023.1.1
+                    </div>
+                </div>
+
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="achievement-title">中考二模总分全县第三</h3>
+                    <div class="achievement-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        2024.6
+                    </div>
+                </div>
+
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-paint-brush"></i>
+                    </div>
+                    <h3 class="achievement-title">凤凰花书法展三等奖</h3>
+                    <div class="achievement-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        2024.6
+                    </div>
+                </div>
+
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <h3 class="achievement-title">书法等级考核A级</h3>
+                    <div class="achievement-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        2024.12.31
+                    </div>
+                </div>
+
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="achievement-title">总分、理综班级第一</h3>
+                    <div class="achievement-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        2024.12.9
+                    </div>
+                </div>
+
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-paint-brush"></i>
+                    </div>
+                    <h3 class="achievement-title">凤凰花书法展三等奖</h3>
+                    <div class="achievement-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        2025.5
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <!-- About End -->
+        </section>
 
+        <!-- 推荐 -->
+        <section id="recommend" class="section animate-on-scroll">
+            <h2 class="section-title">值得推荐的事物</h2>
 
-    <!-- Testimonial Start -->
-    <div class="container-fluid">
-        <div class="container">
-            <div class="row g-0">
-                <div class="col-lg-3">
-                    <div class="testimonial-header h-100 bg-dark pt-6 pe-6 pb-6">
-                        <div class="text-start d-flex flex-column justify-content-center wow fadeInUp"
-                            data-wow-delay="0.1s">
-                            <p class="text-white sub-title">Evaluation</p>
-                            <h1 class="display-6 text-white mb-0">特邀嘉宾</h1>
-                        </div>
+            <div class="recommendations">
+                <div class="recommendation-card">
+                    <div class="recommendation-img">
+                        <img src="https://s2.loli.net/2024/07/25/LXGxgNq27EHDT4r.jpg" alt="周杰伦">
+                    </div>
+                    <div class="recommendation-content">
+                        <div class="recommendation-category">最喜欢的流行歌手</div>
+                        <h3 class="recommendation-title">周杰伦Jay Chou</h3>
+                        <a href="https://m.kugou.com/singer/info/3E0KCC3671E7/" class="recommendation-link"
+                            target="_blank">
+                            了解更多
+                        </a>
                     </div>
                 </div>
-                <div class="col-lg-9">
-                    <div class="testimonial-content h-100 pt-6 ps-6 pb-6">
-                        <div class="testimonial-carousel owl-carousel bg-light wow fadeInUp" data-wow-delay="0.1s">
-                            <div class="testimonial-item"
-                                data-dot="<img class='img-fluid' src='https://s2.loli.net/2024/07/25/ThEaGZml9eO2yfW.jpg' alt=''>">
-                                <div class="row gy-4 gx-2 mb-4">
-                                    <div class="col-sm-6">
-                                        <div class="d-flex justify-content-sm-end">
-                                            <div class="testimonial-inner-img border border-primary border-3 me-4"
-                                                style="width: 100px; height: 100px;">
-                                                <img src="https://s2.loli.net/2024/07/25/ThEaGZml9eO2yfW.jpg"
-                                                    class="img-fluid" style="object-fit: cover;" alt="">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div>
-                                            <h5 class="mb-2">黄名轩</h5>
-                                            <p class="mb-0">扶中141班常驻前五</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="text-sm-center">
-                                    <p>周航山，首先他是一个博学多才的人，会的范围非常的广，无论是学习还是体育，都有他的一席之地，很会做事，很努力去做事，就拿我和他比较来讲，他确实能做到一些我做不到的，不过他好像很容易受到别人的影响。
-                                    </p>
-                                    <div class="d-flex justify-content-sm-center">
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div class="testimonial-item"
-                                data-dot="<img class='img-fluid' src='https://i.imgs.ovh/2025/08/10/ExjTC.jpeg' alt=''>">
-                                <div class="row gy-4 gx-2 mb-4">
-                                    <div class="col-sm-6">
-                                        <div class="d-flex justify-content-sm-end">
-                                            <div class="testimonial-inner-img border border-primary border-3 me-4"
-                                                style="width: 100px; height: 100px;">
-                                                <img src="https://i.imgs.ovh/2025/08/10/ExjTC.jpeg"
-                                                    class="img-fluid" style="object-fit: cover;" alt="">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div>
-                                            <h5 class="mb-2">黄耀乐</h5>
-                                            <p class="mb-0">扶中2-503最强侦查兵</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="text-sm-center">
-                                    <p>周航山是一个博学多才的人，对各种知识都充满了好奇心，不断地学习和探索。他努力不懈，对待任何事情都充满热情和毅力，从不轻言放弃。兴趣爱好广泛，喜欢尝试新事物，对生活充满热情。他的求知欲望和积极向上的态度激励着身边的人，是一个令人钦佩的榜样。
-                                    </p>
-                                    <div class="d-flex justify-content-sm-center">
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                    </div>
-                                </div>
-                            </div>
+                <div class="recommendation-card">
+                    <div class="recommendation-img">
+                        <img src="https://s2.loli.net/2024/08/30/DEAGxJIObd362ml.webp" alt="三体">
+                    </div>
+                    <div class="recommendation-content">
+                        <div class="recommendation-category">推荐的小说</div>
+                        <h3 class="recommendation-title">三体</h3>
+                        <a href="https://baike.baidu.com/item/%E4%B8%89%E4%BD%93/5739303?fr=ge_ala"
+                            class="recommendation-link" target="_blank">
+                            了解更多
+                        </a>
+                    </div>
+                </div>
 
-                            <div class="testimonial-item"
-                                data-dot="<img class='img-fluid' src='https://i.imgs.ovh/2025/08/09/E6hi4.jpeg' alt=''>">
-                                <div class="row gy-4 gx-2 mb-4">
-                                    <div class="col-sm-6">
-                                        <div class="d-flex justify-content-sm-end">
-                                            <div class="testimonial-inner-img border border-primary border-3 me-4"
-                                                style="width: 100px; height: 100px;">
-                                                <img src="https://i.imgs.ovh/2025/08/09/E6hi4.jpeg"
-                                                    class="img-fluid" style="object-fit: cover;" alt="">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div>
-                                            <h5 class="mb-2">农峻熙</h5>
-                                            <p class="mb-0">编程项目合作者</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="text-sm-center">
-                                    <p>我在622班之前就有幸认识到张三，一个十分有潜力的人。初次见面时，张三递给我一个属于他的个性的名片，写有自己亲手创下的网站地址。就当我与其聊天后，了解到张三是一位专业于软件编程的程序员,我与张三一些共享这份兴趣。他曾教我基本的编程语言，一起去探索硬件编程未知，而如今的我在偕行中收获了成长，有感写下这些。
-                                    </p>
-                                    <div class="d-flex justify-content-sm-center">
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="testimonial-item"
-                                data-dot="<img class='img-fluid' src='https://i.imgs.ovh/2025/08/10/ExZ1q.jpeg' alt=''>">
-                                <div class="row gy-4 gx-2 mb-4">
-                                    <div class="col-sm-6">
-                                        <div class="d-flex justify-content-sm-end">
-                                            <div class="testimonial-inner-img border border-primary border-3 me-4"
-                                                style="width: 100px; height: 100px;">
-                                                <img src="https://i.imgs.ovh/2025/08/10/ExZ1q.jpeg"
-                                                    class="img-fluid" style="object-fit: cover;" alt="">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div>
-                                            <h5 class="mb-2">韦岚耀</h5>
-                                            <p class="mb-0">七年同学｜宿舍舍友</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="text-sm-center">
-                                    <p>张三，本人的小学兼高中同学。未曾设想过初中分别三度春秋，再次相遇，他的变化居然如此之大。相较于从前，更加稳重，更加牛逼，更加努力，拥有了许多领域的能力，能做到许多事情。最后，愿张三天天向上！ദ്ദി˶•̀֊•́)✧
-                                    </p>
-                                    <div class="d-flex justify-content-sm-center">
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                        <i class="fas fa-star text-primary"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
+                <div class="recommendation-card">
+                    <div class="recommendation-img">
+                        <img src="https://s2.loli.net/2024/07/25/5fs64cWGibQNSa1.jpg" alt="七里香">
+                    </div>
+                    <div class="recommendation-content">
+                        <div class="recommendation-category">最喜欢的专辑</div>
+                        <h3 class="recommendation-title">七里香</h3>
+                        <a href="https://t1.kugou.com/song.html?id=aIMcJe6CPV2" class="recommendation-link"
+                            target="_blank">
+                            收听专辑
+                        </a>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    </div>
-    </div>
-    <!-- Testimonial End -->
+        </section>
 
-    <!-- Education Start -->
-    <div class="container-fluid">
-        <div class="container">
-            <div class="row g-0">
-                <div class="col-lg-3">
-                    <div class="education-header bg-dark h-100 pt-6 pe-6 pb-6">
-                        <div class="text-start d-flex flex-column justify-content-center wow fadeInUp"
-                            data-wow-delay="0.1s">
-                            <p class="text-white sub-title">Education</p>
-                            <h1 class="display-6 text-white mb-0">教育经历</h1>
-                        </div>
+        <!-- 更多 -->
+        <section id="formore" class="section animate-on-scroll">
+            <h2 class="section-title">更多</h2>
+
+            <div class="recommendations">
+                <div class="recommendation-card">
+                    <div class="recommendation-img">
+                        <img src="https://s2.loli.net/2024/07/25/KHV8wlCsMA3NEgd.jpg" alt="张三的魔方小站">
+                    </div>
+                    <div class="recommendation-content">
+                        <div class="recommendation-category">2024.6</div>
+                        <h3 class="recommendation-title">张三的魔方小站</h3>
+                        <a href="https://zhouhangshan.github.io/WCA" class="recommendation-link" target="_blank">
+                            了解更多
+                        </a>
                     </div>
                 </div>
-                <div class="col-lg-9">
-                    <div class="education-content h-100 pt-6 ps-6 pb-6">
-                        <div class="row g-4">
-                            <div class="col-12">
-                                <div class="education-item rounded p-4 h-100 wow fadeInUp" data-wow-delay="0.1s">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <p class="fs-5 mb-0 me-4">佳佳幼儿园 小班</p>
-                                        <div>
-                                            <span class="fa fa-calendar me-1"></span> 2011 - 2012
-                                        </div>
-                                    </div>
-                                    <h4 class="mb-3">佳佳幼儿园</h4>
-                                    <!-- <p class="mb-0">“最模糊的记忆中总是浮现出点滴美好”
-                                        </p> -->
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="education-item rounded p-4 h-100 wow fadeInUp" data-wow-delay="0.3s">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <p class="fs-5 mb-0 me-4">二幼 113</p>
-                                        <div>
-                                            <span class="fa fa-calendar me-1"></span> 2012 - 2014
-                                        </div>
-                                    </div>
-                                    <h4 class="mb-3">扶绥县第二幼儿园</h4>
-                                    <!-- <p class="mb-0">“世界上最纯真的样子停留在这个时刻”
-                                        </p> -->
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="education-item rounded p-4 h-100 wow fadeInUp" data-wow-delay="0.5s">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <p class="fs-5 mb-0 me-4">二小学前班 113</p>
-                                        <div>
-                                            <span class="fa fa-calendar me-1"></span> 2014 - 2015
-                                        </div>
-                                    </div>
-                                    <h4 class="mb-3">新宁镇第二小学</h4>
-                                    <!-- <p class="mb-0">“遇见是场意外，心却在风里摇摆”
-                                        </p> -->
-                                </div>
-                            </div>
 
-                            <div class="col-12">
-                                <div class="education-item rounded p-4 h-100 wow fadeInUp" data-wow-delay="0.7s">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <p class="fs-5 mb-0 me-4">二小 206</p>
-                                        <div>
-                                            <span class="fa fa-calendar me-1"></span> 2015 - 2021
-                                        </div>
-                                    </div>
-                                    <h4 class="mb-3">新宁镇第二小学</h4>
-                                    <!--  <p class="mb-0">“那是一段小有遗憾的幸福时光”
-                                        </p> -->
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="education-item rounded p-4 h-100 wow fadeInUp" data-wow-delay="0.9s">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <p class="fs-5 mb-0 me-4">扶中初中部 141</p>
-                                        <div>
-                                            <span class="fa fa-calendar me-1"></span> 2021 - 2024
-                                        </div>
-                                    </div>
-                                    <h4 class="mb-3">扶绥县扶绥中学发展部</h4>
-                                    <p class="mb-0">“爱意随风起，风止意难平”
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="education-item rounded p-4 h-100 wow fadeInUp" data-wow-delay="1.1s">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <p class="fs-5 mb-0 me-4">扶绥中学 622</p>
-                                        <div>
-                                            <span class="fa fa-calendar me-1"></span> 2024 - 2027
-                                        </div>
-                                    </div>
-                                    <h4 class="mb-3">扶绥县扶绥中学</h4>
-                                    <p class="mb-0">“如果巅峰留不住，那就重走来时路”
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                <div class="recommendation-card">
+                    <div class="recommendation-img">
+                        <img src="https://s2.loli.net/2024/07/25/Sr8WiB93O7JNxQG.jpg" alt="我的小程序">
+                    </div>
+                    <div class="recommendation-content">
+                        <div class="recommendation-category">2025.1</div>
+                        <h3 class="recommendation-title">我的小程序</h3>
+                        <a href="https://zhouhangshan.github.io/Jay" class="recommendation-link" target="_blank">
+                            了解更多
+                        </a>
+                    </div>
+                </div>
+
+                <div class="recommendation-card">
+                    <div class="recommendation-img">
+                        <img src="https://s2.loli.net/2024/07/25/t9JgLvIKxGrEHUV.jpg" alt="更多页面">
+                    </div>
+                    <div class="recommendation-content">
+                        <div class="recommendation-category">2024.4</div>
+                        <h3 class="recommendation-title">更多页面</h3>
+                        <a href="https://zhouhangshan.github.io/JC" class="recommendation-link" target="_blank">
+                            了解更多
+                        </a>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
-    <!-- Education End -->
 
-    <!-- Experience Start -->
-    <div class="container-fluid">
-        <div class="container">
-            <div class="row g-0">
-                <div class="col-lg-3">
-                    <div class="experience-header bg-dark h-100 pt-6 pe-6 pb-6">
-                        <div class="text-start d-flex flex-column justify-content-center wow fadeInUp"
-                            data-wow-delay="0.1s">
-                            <p class="text-white sub-title">Achievement</p>
-                            <h1 class="display-6 text-white mb-0">成就</h1>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-9">
-                    <div class="experience-content h-100 pt-6 ps-6 pb-6">
-                        <div class="row g-4">
-                            <div class="col-12">
-                                <div class="experience-item rounded p-4 h-100 wow fadeInUp" data-wow-delay="0.1s">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <p class="fs-5 mb-0 me-4">学习成绩</p>
-                                        <div>
-                                            <span class="fa fa-calendar me-1"></span> 2019.11
-                                        </div>
-                                    </div>
-                                    <h4 class="mb-3">期中总分全县前十</h4>
-                                    <p class="mb-0">
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="experience-item rounded p-4 h-100 wow fadeInUp" data-wow-delay="0.3s">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <p class="fs-5 mb-0 me-4">学习成绩</p>
-                                        <div>
-                                            <span class="fa fa-calendar me-1"></span> 2021.6
-                                        </div>
-                                    </div>
-                                    <h4 class="mb-3">小考二模总分全县第四</h4>
-                                    <p class="mb-0">
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="experience-item rounded p-4 h-100 wow fadeInUp" data-wow-delay="0.5s">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <p class="fs-5 mb-0 me-4">校运会</p>
-                                        <div>
-                                            <span class="fa fa-calendar me-1"></span> 2021.10
-                                        </div>
-                                    </div>
-                                    <h4 class="mb-3">立定跳远年级第一</h4>
-                                    <p class="mb-0">
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="experience-item rounded p-4 h-100 wow fadeInUp" data-wow-delay="0.7s">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <p class="fs-5 mb-0 me-4">校运会</p>
-                                        <div>
-                                            <span class="fa fa-calendar me-1"></span> 2022.10
-                                        </div>
-                                    </div>
-                                    <h4 class="mb-3">立定跳远年级第二</h4>
-                                    <p class="mb-0">
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="experience-item rounded p-4 h-100 wow fadeInUp" data-wow-delay="0.9s">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <p class="fs-5 mb-0 me-4">书法</p>
-                                        <div>
-                                            <span class="fa fa-calendar me-1"></span> 2023.1.1
-                                        </div>
-                                    </div>
-                                    <h4 class="mb-3">元旦书法展三等奖</h4>
-                                    <p class="mb-0">
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="experience-item rounded p-4 h-100 wow fadeInUp" data-wow-delay="1.1s">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <p class="fs-5 mb-0 me-4">学习成绩</p>
-                                        <div>
-                                            <span class="fa fa-calendar me-1"></span> 2024.6
-                                        </div>
-                                    </div>
-                                    <h4 class="mb-3">中考二模总分全县第三</h4>
-                                    <p class="mb-0">
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="experience-item rounded p-4 h-100 wow fadeInUp" data-wow-delay="1.3s">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <p class="fs-5 mb-0 me-4">书法</p>
-                                        <div>
-                                            <span class="fa fa-calendar me-1"></span> 2024.6
-                                        </div>
-                                    </div>
-                                    <h4 class="mb-3">凤凰花节书法展三等奖</h4>
-                                    <p class="mb-0">
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="experience-item rounded p-4 h-100 wow fadeInUp" data-wow-delay="1.5s">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <p class="fs-5 mb-0 me-4">魔方</p>
-                                        <div>
-                                            <span class="fa fa-calendar me-1"></span> 2021 - 2024
-                                        </div>
-                                    </div>
-                                    <h4 class="mb-3">发展部第二</h4>
-                                    <p class="mb-0">
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="experience-item rounded p-4 h-100 wow fadeInUp" data-wow-delay="1.7s">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <p class="fs-5 mb-0 me-4">书法等级考核</p>
-                                        <div>
-                                            <span class="fa fa-calendar me-1"></span> 2024.12.31
-                                        </div>
-                                    </div>
-                                    <h4 class="mb-3">A等级(年级共4个)</h4>
-                                    <p class="mb-0">
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="experience-item rounded p-4 h-100 wow fadeInUp" data-wow-delay="1.5s">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <p class="fs-5 mb-0 me-4">学习成绩</p>
-                                        <div>
-                                            <span class="fa fa-calendar me-1"></span> 2024.12.9
-                                        </div>
-                                    </div>
-                                    <h4 class="mb-3">总分、理科班级第一</h4>
-                                    <p class="mb-0">
-                                    </p>
-                                </div>
-                            </div>
-
-                            <!--Model End-->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- IPTest Start -->
+    <div style="display: flex; justify-content: center;">
+    <iframe id="my-iframe" src="https://ip.skk.moe/simple-dark" width="650px" frameborder="0"></iframe>
+    <script>
+        const iframe = document.getElementById('my-iframe');
+        iframe.onload = function () {
+            // 获取 iframe 内容的实际高度
+            const contentHeight = iframe.contentWindow.document.body.scrollHeight;
+            // 动态设置 iframe 高度
+            iframe.style.height = contentHeight + 'px';
+        };
+    </script>
     </div>
-    <!-- Exparience End -->
-
-
-
-    <!-- Service Start
-        <div class="container-fluid" id="pigraService">
-            <div class="container">
-                <div class="row g-0">
-                    <div class="col-lg-3">
-                        <div class="service-header h-100 bg-dark pt-6 pe-6 pb-6">
-                            <div class="text-start d-flex flex-column justify-content-center wow fadeInUp" data-wow-delay="0.1s">
-                                <p class="text-white sub-title">My Hobbies&Skills</p>
-                                <h1 class="display-6 text-white mb-0">我的爱好与技能</h1>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-9">
-                        <div class="service-content h-100 pt-6 ps-6 pb-6">
-                            <div class="row g-4">
-                                <div class="col-12">
-                                    <div class="service-item p-4 wow fadeInUp" data-wow-delay="0.1s">
-                                        <div class="row g-4 align-items-center">
-                                            <div class="col-xl-2">
-                                                <i class="fas fa-bezier-curve fa-3x"></i>
-                                            </div>
-                                            <div class="col-xl-3">
-                                                <a href="#" class="h4 mb-0">魔方</a>
-                                            </div>
-                                            <div class="col-xl-4">
-                                                <p class="mb-0">我在魔方上有一定造诣，平日里会喜欢玩魔方，我认为这一一种放松与锻炼大脑的方式，魔方也不是让人高傲的一项技能，我更喜欢和大家一起学习、研究魔方的奥妙。
-                                                </p>
-                                            </div>
-                                            <div class="col-xl-3">
-                                                <p><i class="fa fa-check me-2"></i> 多阶</p>
-                                                <p><i class="fa fa-check me-2"></i> 镜面</p>
-                                                <p class="mb-0"><i class="fa fa-check me-2"></i> 其它异形</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="service-item p-4 wow fadeInUp" data-wow-delay="0.3s">
-                                        <div class="row g-4 align-items-center">
-                                            <div class="col-xl-2">
-                                                <i class="fas fa-laptop-code fa-3x"></i>
-                                            </div>
-                                            <div class="col-xl-3">
-                                                <a href="#" class="h4 mb-0">编程</a>
-                                            </div>
-                                            <div class="col-xl-4">
-                                                <p class="mb-0">小时候，总是对信息技术很感兴趣，和别人不一样，拿到一个软件我会先里里外外浏览一遍功能，思考它的每个拆分原理，后来开始学习编程，感受到这是多么神奇和宏伟的东西(虽然我到现在还是三脚猫功夫)
-                                                </p>
-                                            </div>
-                                            <div class="col-xl-3">
-                                                <p><i class="fa fa-check me-2"></i> Python3</p>
-                                                <p><i class="fa fa-check me-2"></i> Visual Basic</p>
-                                                <p class="mb-0"><i class="fa fa-check me-2"></i> Web</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="service-item p-4 wow fadeInUp" data-wow-delay="0.5s">
-                                        <div class="row g-4 align-items-center">
-                                            <div class="col-xl-2">
-                                                <i class="fab fa-app-store fa-3x"></i>
-                                            </div>
-                                            <div class="col-xl-3">
-                                                <a href="#" class="h4 mb-0">学习</a>
-                                            </div>
-                                            <div class="col-xl-4">
-                                                <p class="mb-0">嘿嘿，在这里塞一个“学习”可能有点突兀吧。但是我确实拿不出什么值得我自豪的东西了，课内学习我反而还是比较得意的，大家学习有什么问题也可以问我哦～
-                                                </p>
-                                            </div>
-                                            <div class="col-xl-3">
-                                                <p><i class="fa fa-check me-2"></i> 数学</p>
-                                                <p><i class="fa fa-check me-2"></i> 物理</p>
-                                                <p class="mb-0"><i class="fa fa-check me-2"></i> 化学</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        Service End -->
-
-    <!-- Portfolio Start -->
-    <div class="container-fluid">
-        <div class="container">
-            <div class="row g-0">
-                <div class="col-lg-3">
-                    <div class="portfolio-header h-100 bg-dark pt-6 pe-6 pb-6">
-                        <div class="text-start d-flex flex-column justify-content-center wow fadeInUp"
-                            data-wow-delay="0.1s">
-                            <p class="text-white sub-title">Something</p>
-                            <h1 class="display-6 text-white mb-0">值得推荐的事物</h1>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-9">
-                    <div class="portfolio-content h-100 pt-6 ps-6 pb-6">
-                        <div class="portfolio-item py-5 border-bottom wow fadeInUp" data-wow-delay="0.1s">
-                            <div class="row g-4 align-items-center">
-                                <div class="col-xl-6">
-                                    <h4 class="text-body">周杰伦Jay Chou</h4>
-                                    <h1 class="display-6 mb-0">最喜欢的流行歌手</h1>
-                                </div>
-                                <div class="col-9 col-xl-4">
-                                    <div class="portfolio-img">
-                                        <div class="portfolio-img-inner">
-                                            <img src="https://s2.loli.net/2024/07/25/LXGxgNq27EHDT4r.jpg"
-                                                class="img-fluid" alt="Image">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-3 col-xl-2">
-                                    <div class="view-img">
-                                        <a href="https://m.kugou.com/singer/info/3E0KCC3671E7/"
-                                            class="btn btn-primary btn-lg-square" data-lightbox="Portfolio-1"><i
-                                                class="fas fa-plus"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="portfolio-item py-5 border-bottom wow fadeInUp" data-wow-delay="0.3s">
-                            <div class="row g-4 align-items-center">
-                                <div class="col-xl-6">
-                                    <h4 class="text-body">三体</h4>
-                                    <h1 class="display-6 mb-0">推荐的小说</h1>
-                                </div>
-                                <div class="col-9 col-xl-4">
-                                    <div class="portfolio-img">
-                                        <div class="portfolio-img-inner">
-                                            <img src="https://s2.loli.net/2024/08/30/DEAGxJIObd362ml.webp"
-                                                class="img-fluid" alt="Image">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-3 col-xl-2">
-                                    <div class="view-img">
-                                        <a href="https://baike.baidu.com/item/%E4%B8%89%E4%BD%93/5739303?fr=ge_ala"
-                                            class="btn btn-primary btn-lg-square" data-lightbox="portfolio-2"><i
-                                                class="fas fa-plus"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="portfolio-item py-5 wow fadeInUp" data-wow-delay="0.5s">
-                            <div class="row g-4 align-items-center">
-                                <div class="col-xl-6">
-                                    <h4 class="text-body">七里香</h4>
-                                    <h1 class="display-6 mb-0">最喜欢的专辑</h1>
-                                </div>
-                                <div class="col-9 col-xl-4">
-                                    <div class="portfolio-img">
-                                        <div class="portfolio-img-inner">
-                                            <img src="https://s2.loli.net/2024/07/25/5fs64cWGibQNSa1.jpg"
-                                                class="img-fluid" alt="Image">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-3 col-xl-2">
-                                    <div class="view-img">
-                                        <a href="https://t1.kugou.com/song.html?id=aIMcJe6CPV2"
-                                            class="btn btn-primary btn-lg-square" data-lightbox="portfolio-3"><i
-                                                class="fas fa-plus"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Portfolio End -->
-
-
-    <!-- Blog Start -->
-    <div class="container-fluid" id="pigraBlog">
-        <div class="container">
-            <div class="row g-0">
-                <div class="col-lg-3">
-                    <div class="blog-header h-100 bg-dark pt-6 pe-6 pb-6">
-                        <div class="text-start d-flex flex-column justify-content-center wow fadeInUp"
-                            data-wow-delay="0.1s">
-                            <p class="text-white sub-title">Other pages</p>
-                            <h1 class="display-6 text-white mb-0">其它页面</h1>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-9">
-                    <div class="blog-content h-100 pt-6 ps-6 pb-6">
-                        <div class="row g-4">
-                            <div class="col-xl-6">
-                                <div class="blog-item wow fadeInUp" data-wow-delay="0.1s">
-                                    <div class="row g-4">
-                                        <div class="col-4">
-                                            <div class="blog-item-img bg-dark h-100">
-                                                <a href="https://zhouhangshan.github.io/WCA">
-                                                    <img src="https://s2.loli.net/2024/07/25/KHV8wlCsMA3NEgd.jpg"
-                                                        class="img-fluid w-100 h-100" style="object-fit: cover;"
-                                                        alt="Image">
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <div class="col-8">
-                                            <div class="h-100">
-                                                <p class="text-body mb-3"><i class="fa fa-calendar-alt me-2"></i>
-                                                    最后更新：2024.6</p>
-                                                <a href="https://zhouhangshan.github.io/WCA"
-                                                    class="d-inline-block h4 mb-4">张三的魔方小站</a>
-                                                <div class="py-2 px-3 bg-light d-flex justify-content-between">
-                                                    <p class="mb-0 text-body">By <a
-                                                            href="https://zhouhangshan.github.io/WCA"
-                                                            class="h6">zhs141</a></p>
-                                                    <p class="mb-0 text-body">In <a
-                                                            href="https://zhouhangshan.github.io/WCA"
-                                                            class="h6">Github</a></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-6">
-                                <div class="blog-item wow fadeInUp" data-wow-delay="0.3s">
-                                    <div class="row g-4">
-                                        <div class="col-4">
-                                            <div class="blog-item-img bg-dark h-100">
-                                                <a href="https://hanson.netcpu.top/msg/">
-                                                    <img src="https://s2.loli.net/2024/07/25/Pzce451sDQmAxwk.jpg"
-                                                        class="img-fluid w-100 h-100" style="object-fit: cover;"
-                                                        alt="Image">
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <div class="col-8">
-                                            <div class="h-100">
-                                                <p class="text-body mb-3"><i
-                                                        class="fa fa-calendar-alt me-2"></i>最后更新：2025.8</p>
-                                                <a href="https://hanson.netcpu.top/msg/"
-                                                    class="d-inline-block h4 mb-4">留言板</a>
-                                                <div class="py-2 px-3 bg-light d-flex justify-content-between">
-                                                    <p class="mb-0 text-body">By <a href="https://hanson.netcpu.top/msg/"
-                                                            class="h6">zhs141</a></p>
-                                                    <p class="mb-0 text-body">In <a href="https://hanson.netcpu.top/msg/"
-                                                            class="h6">Github</a></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-6">
-                                <div class="blog-item wow fadeInUp" data-wow-delay="0.5s">
-                                    <div class="row g-4">
-                                        <div class="col-4">
-                                            <div class="blog-item-img bg-dark h-100">
-                                                <a href="https://zhouhangshan.github.io/Jay">
-                                                    <img src="https://s2.loli.net/2024/07/25/Sr8WiB93O7JNxQG.jpg"
-                                                        class="img-fluid w-100 h-100" style="object-fit: cover;"
-                                                        alt="Image">
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <div class="col-8">
-                                            <div class="h-100">
-                                                <p class="text-body mb-3"><i
-                                                        class="fa fa-calendar-alt me-2"></i>最后更新：2025.1</p>
-                                                <a href="https://zhouhangshan.github.io/Jay"
-                                                    class="d-inline-block h4 mb-4">我的小程序</a>
-                                                <div class="py-2 px-3 bg-light d-flex justify-content-between">
-                                                    <p class="mb-0 text-body">By <a
-                                                            href="https://zhouhangshan.github.io/Jay"
-                                                            class="h6">zhs141</a></p>
-                                                    <p class="mb-0 text-body">In <a
-                                                            href="https://zhouhangshan.github.io/Jay"
-                                                            class="h6">Github</a></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-6">
-                                <div class="blog-item wow fadeInUp" data-wow-delay="0.7s">
-                                    <div class="row g-4">
-                                        <div class="col-4">
-                                            <div class="blog-item-img bg-dark h-100">
-                                                <a href="https://zhouhangshan.github.io/JC">
-                                                    <img src="https://s2.loli.net/2024/07/25/t9JgLvIKxGrEHUV.jpg"
-                                                        class="img-fluid w-100 h-100" style="object-fit: cover;"
-                                                        alt="Image">
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <div class="col-8">
-                                            <div class="h-100">
-                                                <p class="text-body mb-3"><i
-                                                        class="fa fa-calendar-alt me-2"></i>最后更新：2024.4</p>
-                                                <a href="https://zhouhangshan.github.io/JC"
-                                                    class="d-inline-block h4 mb-4">更多</a>
-                                                <div class="py-2 px-3 bg-light d-flex justify-content-between">
-                                                    <p class="mb-0 text-body">By <a
-                                                            href="https://zhouhangshan.github.io/JC"
-                                                            class="h6">zhs141</a></p>
-                                                    <p class="mb-0 text-body">In <a
-                                                            href="https://zhouhangshan.github.io/JC"
-                                                            class="h6">Github</a></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 wow fadeInUp" data-wow-delay="0.9s">
-                                <div class="blog-btn d-flex justify-content-center">
-                                    <p class="mb-0 me-2">For More Please Wait</p>
-                                    <a href="https://zhouhangshan.github.io" class="btn d-inline-block p-0">The
-                                        Renew</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Blog End -->
-
-    <div style="padding: 10px;">
-        <iframe src="https://zhouhangshan.github.io/project/sobe/index.html"
-            style="overflow:hidden; width: calc(100% - 20px); height: auto; border: 0;"></iframe>
-    </div>
-    <marquee>Made by Hanson Zou</marquee>
-    <div style="padding: 10px;">
-        <iframe src="https://ip.skk.moe/simple" style="width: calc(100% - 20px); height: auto; border: 0;"></iframe>
-    </div>
+    <!-- IPTest End -->
 
     <!-- Counter Start -->
+    <div style="margin: 0 auto; width: fit-content; text-align: center;">
+        <img src="https://count.getloli.com/@zhscounter?name=zhscounter&theme=love-and-deepspace&padding=1&offset=0&align=top&scale=0.8&pixelated=1&darkmode=auto"
+            alt="zhscounter" />
+    </div>
+    <!-- Counter End -->
+
+    <!-- Counter2 Start -->
     <div style="margin: 0 auto; width: fit-content; text-align: center;">
         <script type="text/javascript" src="https://www.free-counters.org/count/dttt"></script><br>
         <a href='http://www.counter-zaehler.de'>typo3 counter</a>
         <script type='text/javascript'
             src='https://www.whomania.com/ctr?id=83546c5f1d154d6637ef60d6409c7e9c9a260fd5'></script>
     </div>
-    <!-- Counter End -->
-
-    <!-- Counter2 Start -->
-    <div style="margin: 0 auto; width: fit-content; text-align: center;">
-        <img src="https://count.getloli.com/@zhscounter?name=zhscounter&theme=love-and-deepspace&padding=1&offset=0&align=top&scale=0.8&pixelated=1&darkmode=auto"
-            alt="zhscounter" />
-    </div>
     <!-- Counter2 End -->
 
-    <!-- Contact Start -->
-    <div class="container-fluid" id="pigraContact">
-        <div class="container">
-            <div class="row g-0">
-                <div class="col-lg-3">
-                    <div class="contact-header h-100 bg-dark pt-6 pe-6 pb-6">
-                        <div class="text-start d-flex flex-column justify-content-center wow fadeInUp"
-                            data-wow-delay="0.1s">
-                            <p class="text-white sub-title">Cheer For Me<br>QQ: 1945581557<br>Mail:
-                                1945581557@qq.com<br>GitHub: zhs141</p>
-                            <h1 class="display-6 text-white mb-0">向未来出发！</h1>
-                        </div>
-                    </div>
-                </div>
-
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <h2 class="footer-title">向未来出发！</h2>
+            <p class="footer-text">
+                QQ: 1945581557 | 邮箱: 1945581557@qq.com | GitHub: zhs141
+            </p>
+            <div class="footer-social">
+                <a href="https://zhouhangshan.github.io/WCA" class="social-btn" target="_blank">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-grid-3x3-gap" viewBox="0 0 16 16">
+                        <path
+                            d="M4 2v2H2V2h2zm1 12v-2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1zm0-5V7a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1zm0-5V2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1zm5 10v-2a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1zm0-5V7a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1zm0-5V2a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1zM9 2v2H7V2h2zm5 0v2h-2V2h2zM4 7v2H2V7h2zm5 0v2H7V7h2zm5 0h-2v2h2V7zM4 12v2H2v-2h2zm5 0v2H7v-2h2zm5 0v2h-2v-2h2zM12 1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1h-2zm-1 6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V7zm1 4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-2z" />
+                    </svg>
+                </a>
+                <a href="https://zhouhangshan.github.io/Jay" class="social-btn" target="_blank">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-terminal" viewBox="0 0 16 16">
+                        <path
+                            d="M6 9a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3A.5.5 0 0 1 6 9zM3.854 4.146a.5.5 0 1 0-.708.708L4.793 6.5 3.146 8.146a.5.5 0 1 0 .708.708l2-2a.5.5 0 0 0 0-.708l-2-2z" />
+                        <path
+                            d="M2 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H2zm12 1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12z" />
+                    </svg>
+                </a>
+                <a href="https://zhouhangshan.github.io/JC" class="social-btn" target="_blank">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-yin-yang" viewBox="0 0 16 16">
+                        <path d="M9.167 4.5a1.167 1.167 0 1 1-2.334 0 1.167 1.167 0 0 1 2.334 0Z" />
+                        <path
+                            d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0ZM1 8a7 7 0 0 1 7-7 3.5 3.5 0 1 1 0 7 3.5 3.5 0 1 0 0 7 7 7 0 0 1-7-7Zm7 4.667a1.167 1.167 0 1 1 0-2.334 1.167 1.167 0 0 1 0 2.334Z" />
+                    </svg>
+                </a>
+                <a href="https://github.com/zhs141" class="social-btn" target="_blank">
+                    <i class="fab fa-github"></i>
+                </a>
             </div>
+            <p class="copyright">
+                &copy; 2025 zhouhangshan.github.io. 横屏板网页样式由DeepSeek-R1生成.
+            </p>
         </div>
-    </div>
-    </div>
-    </div>
-    </div>
-    </div>
-    </div>
-    <!-- Contact End -->
+    </footer>
 
+    <script>
+        // 滚动动画
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
 
-    <!-- Footer Start -->
-    <div class="container-fluid footer bg-dark border-bottom-0">
-        <div class="container wow fadeIn" data-wow-delay="0.1s">
-            <div class="row g-0">
-                <div class="col-12">
-                    <div class="footer-content h-100 pt-6 ps-6 pb-6">
-                        <div class="row g-4 align-items-center">
-                            <div class="col-12 text-center">
-                                <div class="d-flex justify-content-center">
-                                    <a class="btn btn-light btn-md-square me-3" href="https://facebook.com"><i
-                                            class="fab fa-facebook-f"></i></a>
-                                    <a class="btn btn-light btn-md-square me-3" href="https://x.com/HeasonZou?s=09"><i
-                                            class="fab fa-twitter"></i></a>
-                                    <a class="btn btn-light btn-md-square me-3"
-                                        href="https://link.zhihu.com/?target=https%3A//ig.inshelp.xyz/ins/jaychou"><i
-                                            class="fab fa-instagram"></i></a>
+        document.querySelectorAll('.animate-on-scroll').forEach(element => {
+            observer.observe(element);
+        });
 
-                                </div>
-                            </div>
-                            <div class="col-12 text-center">
-                                <span class="text-body"><a href="#" class="border-bottom text-white"><i
-                                            class="fas fa-copyright text-body me-2"></i>zhouhangshan.github.io</a>, All
-                                    right reserved.</span>
-                            </div>
-                            <div class="col-12 text-center text-body">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Footer End -->
+        // 导航栏高亮
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
 
+        window.addEventListener('scroll', () => {
+            let current = '';
 
-    <!-- Back to Top -->
-    <a href="#" class="btn btn-primary btn-lg-square back-to-top"><i class="fa fa-arrow-up"></i></a>
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
 
+                if (pageYOffset >= (sectionTop - sectionHeight / 3)) {
+                    current = section.getAttribute('id');
+                }
+            });
 
-    <!-- JavaScript Libraries -->
-    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.0.0/js/bootstrap.bundle.min.js"></script>
-    <script src="newweb/lib/wow/wow.min.js"></script>
-    <script src="newweb/lib/easing/easing.min.js"></script>
-    <script src="newweb/lib/waypoints/waypoints.min.js"></script>
-    <script src="newweb/lib/counterup/counterup.min.js"></script>
-    <script src="newweb/lib/lightbox/js/lightbox.min.js"></script>
-    <script src="newweb/lib/owlcarousel/owl.carousel.min.js"></script>
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
 
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
 
-    <!-- Template Javascript -->
-    <script src="newweb/js/main.js"></script>
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
