@@ -1,37 +1,1629 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>病毒生成器</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0e15">
+  <title>魔方计时器 · CubeTimer</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧊</text></svg>">
+<style>
+/* styles.css — CubeTimer 现代渐变 + 毛玻璃 UI（深/浅双主题） */
+
+:root {
+  /* 深色主题（默认） */
+  --bg: #0b0e15;
+  --bg-glow-1: rgba(78, 205, 255, 0.13);
+  --bg-glow-2: rgba(140, 120, 255, 0.12);
+  --bg-glow-3: rgba(62, 207, 177, 0.08);
+  --glass: rgba(255, 255, 255, 0.055);
+  --glass-strong: rgba(255, 255, 255, 0.1);
+  --border: rgba(255, 255, 255, 0.11);
+  --border-strong: rgba(255, 255, 255, 0.22);
+  --text: #eef2f8;
+  --muted: #98a4b8;
+  --accent: #2ee6a8;
+  --accent2: #5aa9ff;
+  --accent3: #b48cff;
+  --accent4: #ff8fb3;
+  --accent5: #4ad6ff;
+  --accent-grad: linear-gradient(135deg, #2ee6a8, #5aa9ff);
+  --accent-soft: rgba(46, 230, 168, 0.14);
+  --warn: #ffb454;
+  --danger: #ff7a6b;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --header-bg: rgba(11, 14, 21, 0.66);
+  --timer-size: clamp(4.2rem, 19vw, 9rem);
+  --radius: 18px;
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --bg: #eef1f7;
+  --bg-glow-1: rgba(90, 169, 255, 0.16);
+  --bg-glow-2: rgba(140, 120, 255, 0.12);
+  --bg-glow-3: rgba(46, 230, 168, 0.14);
+  --glass: rgba(255, 255, 255, 0.62);
+  --glass-strong: rgba(255, 255, 255, 0.85);
+  --border: rgba(24, 36, 60, 0.1);
+  --border-strong: rgba(24, 36, 60, 0.2);
+  --text: #1b2434;
+  --muted: #5d6b83;
+  --accent: #0e9d76;
+  --accent2: #2f7fe0;
+  --accent3: #7a55d8;
+  --accent4: #d4597f;
+  --accent5: #1f8fc4;
+  --accent-grad: linear-gradient(135deg, #0e9d76, #2f7fe0);
+  --accent-soft: rgba(14, 157, 118, 0.13);
+  --warn: #c97a2c;
+  --danger: #d64a3a;
+  --shadow: 0 12px 32px rgba(30, 45, 80, 0.12);
+  --header-bg: rgba(238, 241, 247, 0.72);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+  font-family: var(--app-font, "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif);
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.35s, color 0.35s;
+  overflow-x: hidden;
+}
+
+/* 背景渐变光晕（translateZ 强制合成层，修复滚动时颜色闪烁） */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  transform: translateZ(0);
+  will-change: transform;
+  background:
+    radial-gradient(55% 45% at 12% -5%, var(--bg-glow-1), transparent 62%),
+    radial-gradient(50% 42% at 92% 6%, var(--bg-glow-2), transparent 60%),
+    radial-gradient(70% 55% at 50% 108%, var(--bg-glow-3), transparent 65%);
+}
+
+/* ---------- 头部 ---------- */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  padding: 12px 20px;
+  background: var(--header-bg);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand { display: flex; align-items: center; gap: 9px; flex: 1; min-width: 0; }
+
+.brand .logo {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: var(--accent-grad);
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  box-shadow: 0 4px 14px rgba(46, 230, 168, 0.35);
+}
+
+.brand h1 { font-size: 16px; font-weight: 700; letter-spacing: 0.4px; }
+
+/* 顶部居中页切换 */
+.page-tabs {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.page-tabs button {
+  padding: 7px 18px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.page-tabs button:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+  background: var(--glass);
+}
+.page-tabs button.active {
+  background: var(--accent-grad);
+  border-color: transparent;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(46, 230, 168, 0.3);
+}
+
+/* 计时页内的魔方类型标签（居中） */
+.puzzle-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.puzzle-tabs button {
+  padding: 6px 13px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.puzzle-tabs button:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+  background: var(--glass);
+}
+
+.puzzle-tabs button.active {
+  background: var(--accent-grad);
+  border-color: transparent;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(46, 230, 168, 0.3);
+}
+
+.toolbar { display: flex; gap: 8px; flex: 1; justify-content: flex-end; min-width: 0; }
+
+.tool {
+  min-width: 44px;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--glass);
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.tool:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+.tool:active { transform: translateY(0); }
+
+/* ---------- 主体 ---------- */
+main {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 24px 18px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 三页容器 */
+.page { display: none; flex-direction: column; gap: 20px; }
+body[data-page="timer"] .page-timer,
+body[data-page="solves"] .page-solves,
+body[data-page="settings"] .page-settings {
+  display: flex;
+}
+
+main > * { animation: fadeUp 0.5s both; }
+main > *:nth-child(2) { animation-delay: 0.05s; }
+main > *:nth-child(3) { animation-delay: 0.1s; }
+main > *:nth-child(4) { animation-delay: 0.15s; }
+main > *:nth-child(5) { animation-delay: 0.2s; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* 毛玻璃卡片 */
+.card {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  box-shadow: var(--shadow);
+}
+
+/* ---------- 打乱 ---------- */
+.scramble-box {
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.scramble-label {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid rgba(46, 230, 168, 0.28);
+  padding: 4px 9px;
+  border-radius: 999px;
+}
+
+.scramble {
+  flex: 1;
+  font-size: 17px;
+  line-height: 1.7;
+  letter-spacing: 0.4px;
+  min-height: 1.7em;
+  user-select: text;
+}
+
+.scramble-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+.ghost {
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--glass);
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.18s;
+}
+.ghost:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+.ghost.small { padding: 4px 9px; font-size: 12px; }
+.ghost.icon { padding: 7px 10px; font-size: 15px; line-height: 1; }
+.ghost.danger:hover { color: var(--danger); border-color: var(--danger); background: rgba(255, 122, 107, 0.1); }
+
+/* ---------- 计时器 ---------- */
+.timer-area {
+  text-align: center;
+  padding: 30px 0 14px;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  touch-action: manipulation;
+  border-radius: var(--radius);
+  transition: background 0.25s;
+}
+.timer-area:hover { background: var(--glass); }
+.timer-area:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+.timer {
+  font-size: calc(var(--timer-size) * var(--timer-scale, 1));
+  font-weight: 200;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 2px;
+  background: linear-gradient(180deg, var(--timer-c1, #ffffff), var(--timer-c2, #9aa8bd));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transition: 0.2s;
+}
+
+[data-theme="light"] .timer { background: linear-gradient(180deg, var(--timer-c1, #1b2434), var(--timer-c2, #5d6b83)); -webkit-background-clip: text; background-clip: text; }
+
+.timer-area[data-state="ready"] .timer { background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; }
+.timer-area[data-state="running"] .timer {
+  background: linear-gradient(180deg, #ffd9a0, #ff9d5c);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.timer-area[data-state="stopped"] .timer { background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; }
+
+.hint {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--muted);
+  min-height: 1.4em;
+  transition: color 0.2s;
+}
+.timer-area[data-state="ready"] .hint { color: var(--accent); }
+.timer-area[data-state="running"] .hint { color: var(--warn); }
+.timer-area[data-state="stopped"] .hint { color: var(--accent); }
+
+/* ---------- 统计 ---------- */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  gap: 12px;
+}
+
+.stat {
+  padding: 13px 14px;
+  text-align: center;
+  transition: transform 0.2s, border-color 0.2s;
+}
+.stat:hover { transform: translateY(-3px); border-color: var(--border-strong); }
+
+.stat .label { font-size: 11px; color: var(--muted); letter-spacing: 0.6px; }
+.stat .value { font-size: 20px; font-weight: 700; margin-top: 4px; font-variant-numeric: tabular-nums; }
+.stat .value .sub { display: block; font-size: 11px; color: var(--muted); font-weight: 400; margin-top: 2px; }
+.stat .value.dnf { color: var(--danger); }
+.stat .value .sub.pb { color: var(--accent); }
+
+/* ---------- 趋势图 ---------- */
+.chart-card { padding: 16px 18px 12px; }
+
+.chart-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.chart-head h2 { font-size: 15px; }
+.chart-note { font-size: 11px; color: var(--muted); }
+
+.chart svg { width: 100%; height: auto; display: block; }
+.chart .empty-chart {
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 30px 0;
+}
+
+/* ---------- 历史 ---------- */
+.history-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding: 0 4px;
+}
+.history-head h2 { font-size: 16px; }
+.history-tools { display: flex; align-items: center; gap: 10px; }
+.history-count { font-size: 12px; color: var(--muted); }
+
+.solve-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.solve-item {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 9px 14px;
+  cursor: pointer;
+  transition: border-color 0.18s, transform 0.18s, box-shadow 0.18s;
+}
+.solve-item:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+.solve-item.open {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(46, 230, 168, 0.25), 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.solve-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.solve-time {
+  font-size: 16px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  min-width: 92px;
+}
+.solve-time .pen { font-size: 12px; color: var(--warn); font-weight: 600; margin-left: 2px; }
+.solve-time.best { color: var(--accent); }
+.solve-time.worst { color: var(--danger); }
+.solve-time.dnf { color: var(--danger); }
+
+.solve-scramble {
+  flex: 1;
+  font-size: 13px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.solve-date { font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+.solve-delete {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 8px;
+  border-radius: 8px;
+  transition: all 0.15s;
+}
+.solve-delete:hover { color: var(--danger); background: rgba(255, 122, 107, 0.12); }
+
+/* 展开区（grid-rows 动画） */
+.solve-expand { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.32s ease; }
+.solve-item.open .solve-expand { grid-template-rows: 1fr; }
+.expand-inner { overflow: hidden; min-height: 0; }
+
+.expand-scramble {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--glass);
+  border: 1px dashed var(--border);
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--text);
+  word-break: break-all;
+}
+
+.expand-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+  flex-wrap: wrap;
+}
+
+.expand-actions button {
+  padding: 5px 13px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.16s;
+}
+.expand-actions button:hover { color: var(--text); border-color: var(--border-strong); }
+.expand-actions button.active-plus2 { color: var(--warn); border-color: var(--warn); background: rgba(255, 180, 84, 0.1); }
+.expand-actions button.active-dnf { color: var(--danger); border-color: var(--danger); background: rgba(255, 122, 107, 0.1); }
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 28px 0;
+  font-size: 14px;
+  background: var(--glass);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+}
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 30px;
+  transform: translate(-50%, 18px);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: min(92vw, 480px);
+  background: var(--glass-strong);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  padding: 11px 20px;
+  font-size: 13px;
+  color: var(--text);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s, transform 0.28s;
+  z-index: 100;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+
+.toast button {
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 2px 4px;
+  flex-shrink: 0;
+}
+.toast button:hover { text-decoration: underline; }
+
+/* ---------- 小屏适配 ---------- */
+@media (max-width: 640px) {
+  header { flex-direction: column; align-items: stretch; gap: 8px; }
+  .brand { justify-content: space-between; }
+  .toolbar { justify-content: flex-end; }
+  .scramble { font-size: 15px; }
+  .scramble-box { flex-direction: column; align-items: stretch; }
+  .scramble-actions { justify-content: flex-end; }
+  .solve-date { display: none; }
+}
+
+/* ================= 新增：背景预设 / 设置弹窗 / 分组 / 图例 / 观察 ================= */
+
+[hidden] { display: none !important; }
+
+/* ---------- 背景预设（覆盖 body 底色，光晕仍叠加） ---------- */
+body[data-bg="ocean"] { background: linear-gradient(160deg, #0b1e2d, #123247 45%, #1b4a5f); }
+body[data-bg="sunset"] { background: linear-gradient(160deg, #2a1147, #6b3464 50%, #c26d5c); }
+body[data-bg="forest"] { background: linear-gradient(160deg, #0d1f16, #1d3a26 50%, #2f5d3a); }
+body[data-bg="midnight"] { background: linear-gradient(160deg, #05060c, #101530 50%, #1c2350); }
+
+/* 浅色主题对应的浅色预制配色 */
+[data-theme="light"] body[data-bg="ocean"] { background: linear-gradient(160deg, #e3f2fa, #c7e4f0 50%, #b3d6e6); }
+[data-theme="light"] body[data-bg="sunset"] { background: linear-gradient(160deg, #f6e7f7, #f3d3c8 50%, #f0b9a8); }
+[data-theme="light"] body[data-bg="forest"] { background: linear-gradient(160deg, #e6f3e8, #cfe5d4 50%, #bcd9c4); }
+[data-theme="light"] body[data-bg="midnight"] { background: linear-gradient(160deg, #eef0f9, #dde1f0 50%, #cdd2e8); }
+
+/* ---------- WCA 观察状态（倒计时红色，长按 0.3s 后变绿） ---------- */
+.timer-area[data-state="inspection"] .timer {
+  background: linear-gradient(180deg, #ff9d9d, #ff5f4f);
+  -webkit-background-clip: text;
+  background-clip: text;
+  font-weight: 500;
+}
+.timer-area[data-state="inspection"] .hint { color: var(--danger); }
+.timer-area[data-holdready="1"] .timer {
+  background: var(--accent-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.timer-area[data-holdready="1"] .hint { color: var(--accent); }
+.timer-area[data-inspect-warn="1"] .timer {
+  animation: pulse 1s infinite;
+}
+.timer-area[data-inspect-warn="1"] .hint { color: var(--danger); }
+
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+/* ---------- 图表图例 ---------- */
+.chart-meta { display: flex; align-items: center; gap: 12px; }
+.chart-legend { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
+.lg-dot { display: inline-block; margin-left: 5px; }
+.lg-dot.single { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
+.lg-dot.ao5 { width: 9px; height: 9px; border-radius: 2px; background: var(--warn); }
+.lg-dot.ao12 { width: 9px; height: 9px; border-radius: 50%; background: var(--accent3); }
+.lg-dot.ao100 { width: 9px; height: 9px; border-radius: 2px; transform: rotate(45deg); background: var(--accent4); }
+
+/* ---------- 分组选择器 ---------- */
+.group-bar { display: flex; align-items: center; gap: 6px; }
+.group-bar select {
+  max-width: 150px;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--glass);
+  color: var(--text);
+  font-size: 12px;
+  outline: none;
+  cursor: pointer;
+}
+.group-bar select:focus { border-color: var(--accent); }
+
+/* ---------- 设置弹窗 ---------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(4, 7, 13, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s;
+}
+
+.modal {
+  width: min(92vw, 500px);
+  max-height: 86vh;
+  overflow: auto;
+  background: var(--glass-strong);
+  border: 1px solid var(--border-strong);
+  border-radius: 22px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(26px) saturate(160%);
+  -webkit-backdrop-filter: blur(26px) saturate(160%);
+  animation: pop 0.25s;
+}
+
+@keyframes fadeIn { from { opacity: 0; } }
+@keyframes pop { from { opacity: 0; transform: scale(0.96) translateY(10px); } }
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.modal-head h2 { font-size: 17px; }
+
+.modal-close {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 22px;
+  line-height: 1;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.modal-close:hover { color: var(--text); background: var(--glass); }
+
+.modal-body { padding: 4px 20px 22px; }
+
+.settings-section {
+  padding: 16px 0;
+  border-bottom: 1px dashed var(--border);
+}
+.settings-section:last-child { border-bottom: none; }
+.settings-section h3 {
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  margin-bottom: 13px;
+  text-transform: uppercase;
+}
+
+/* 开关 */
+.switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.switch-text b { display: block; font-size: 14px; }
+.switch-text small { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+.switch { position: relative; width: 48px; height: 28px; flex-shrink: 0; }
+.switch input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 1;
+}
+.switch .slider {
+  position: absolute;
+  inset: 0;
+  background: var(--border-strong);
+  border-radius: 999px;
+  transition: background 0.25s;
+}
+.switch .slider::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  transition: transform 0.25s;
+}
+.switch input:checked + .slider { background: var(--accent-grad); }
+.switch input:checked + .slider::before { transform: translateX(20px); }
+
+/* 背景预设色板 */
+.bg-presets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(82px, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.bg-preset {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.bg-preset:hover { border-color: var(--border-strong); color: var(--text); }
+.bg-preset.active { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+.swatch {
+  display: block;
+  width: 100%;
+  height: 42px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+.swatch-default { background: linear-gradient(135deg, #0b0e15, #1b2028); }
+.swatch-ocean { background: linear-gradient(135deg, #0b1e2d, #1b4a5f); }
+.swatch-sunset { background: linear-gradient(135deg, #2a1147, #c26d5c); }
+.swatch-forest { background: linear-gradient(135deg, #0d1f16, #2f5d3a); }
+.swatch-midnight { background: linear-gradient(135deg, #05060c, #1c2350); }
+
+.bg-custom { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.bg-custom input[type="text"] {
+  flex: 1;
+  min-width: 170px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--glass);
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.bg-custom input[type="text"]:focus { border-color: var(--accent); }
+
+@media (max-width: 560px) {
+  .group-bar { flex-wrap: wrap; }
+}
+
+/* ================= 新增：专注模式 / 快捷键帮助 / 加载更多 / 外观设置 ================= */
+
+/* ---------- 专注模式（保留打乱，隐藏预览与其他页） ---------- */
+body.focus-mode .page-timer .preview-row,
+body.focus-mode .page-solves,
+body.focus-mode .page-settings { display: none; }
+
+body.focus-mode .scramble-box { box-shadow: 0 0 0 1px var(--accent), var(--shadow); }
+
+body.focus-mode main {
+  max-width: 1100px;
+  justify-content: center;
+  min-height: calc(100vh - 64px);
+  padding-bottom: 20px;
+}
+body.focus-mode .timer-area { padding: 6vh 0; }
+body.focus-mode .timer {
+  font-size: calc(var(--timer-size) * var(--timer-scale, 1) * 1.6);
+}
+
+/* ---------- 历史加载更多 ---------- */
+.load-more { text-align: center; padding: 4px 0; }
+.load-more button { color: var(--accent); }
+
+/* ---------- 快捷键帮助 ---------- */
+.modal.modal-sm { width: min(92vw, 420px); }
+
+.keys-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.keys-list li { display: flex; align-items: center; gap: 12px; font-size: 13px; }
+.keys-list span { color: var(--muted); }
+
+kbd {
+  display: inline-block;
+  min-width: 44px;
+  text-align: center;
+  padding: 4px 10px;
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 3px;
+  border-radius: 7px;
+  background: var(--glass);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.keys-tip {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ---------- 外观设置 ---------- */
+.sub-head {
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  color: var(--muted);
+  margin: 18px 0 12px;
+  text-transform: uppercase;
+}
+.sub-head:first-child { margin-top: 0; }
+
+.range-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+
+.range-row input[type="range"] {
+  flex: 1;
+  max-width: 200px;
+  appearance: none;
+  -webkit-appearance: none;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--border-strong);
+  outline: none;
+  cursor: pointer;
+}
+.range-row input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent-grad);
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  cursor: grab;
+}
+.range-row input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent-grad);
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  cursor: grab;
+}
+
+/* ================= 三页布局：预览区 / 筛选 / 设置页 ================= */
+
+/* ---------- 计时页预览区（3D 左 + 展开图右） ---------- */
+.preview-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.preview-box { padding: 14px 16px; }
+.preview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.preview-head h3 { font-size: 14px; }
+.preview-tip { font-size: 11px; color: var(--muted); }
+
+#cube3dCanvas {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.15);
+  touch-action: none;
+  cursor: grab;
+}
+#cube3dCanvas:active { cursor: grabbing; }
+
+.preview-placeholder {
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 60px 0;
+}
+
+/* ---------- 展开图（3 行 × 4 列，标准展开） ---------- */
+.cube-net {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, auto);
+  gap: 6px;
+  max-width: 420px;
+  margin: 0 auto;
+}
+.net-face {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  aspect-ratio: 1;
+  gap: 2px;
+  padding: 4px;
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 6px;
+}
+.net-u { grid-column: 2; grid-row: 1; }
+.net-l { grid-column: 1; grid-row: 2; }
+.net-f { grid-column: 2; grid-row: 2; }
+.net-r { grid-column: 3; grid-row: 2; }
+.net-b { grid-column: 4; grid-row: 2; }
+.net-d { grid-column: 2; grid-row: 3; }
+
+.cell { border-radius: 3px; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18); }
+.c-U { background: #f2f5f9; }
+.c-D { background: #ffd23f; }
+.c-F { background: #3ad97c; }
+.c-B { background: #4c8dff; }
+.c-R { background: #ff5f52; }
+.c-L { background: #ff9f43; }
+
+/* ---------- 日期筛选 ---------- */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+.chip {
+  padding: 4px 13px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.chip:hover { color: var(--text); border-color: var(--border-strong); }
+.chip.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+
+.filter-sep { flex: 1; }
+.filter-bar input[type="date"] {
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--glass);
+  color: var(--text);
+  font-size: 12px;
+  color-scheme: inherit;
+  outline: none;
+}
+.filter-tilde { color: var(--muted); font-size: 12px; }
+
+/* ---------- 设置页 ---------- */
+.settings-page {
+  max-width: 640px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.settings-page .settings-section {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+
+.set-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.switch-row + .set-row { margin-top: 14px; }
+.set-row:last-child { margin-bottom: 0; }
+
+.btn-group {
+  display: flex;
+  gap: 4px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 3px;
+  flex-shrink: 0;
+}
+.seg {
+  padding: 5px 15px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.seg:hover { color: var(--text); }
+.seg.active { background: var(--accent-grad); color: #fff; font-weight: 600; }
+
+.lang-select {
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--glass);
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  min-width: 220px;
+  cursor: pointer;
+}
+.lang-select:focus { border-color: var(--accent); }
+
+.data-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* ---------- 小屏适配补充 ---------- */
+@media (max-width: 640px) {
+  .page-tabs { order: 3; width: 100%; justify-content: center; }
+  .preview-row { grid-template-columns: 1fr; }
+}
+
+/* ================= 计时页首屏压缩 + 调色盘 ================= */
+
+/* 压缩间距，保证一屏可见：打乱 + 计时 + 预览 */
+main { padding-top: 14px; }
+.page-timer { gap: 12px; }
+.page-timer .scramble-box { padding: 12px 14px; }
+.page-timer .scramble { font-size: 15px; line-height: 1.6; }
+.page-timer .timer-area { padding: 12px 0 6px; }
+.preview-row { gap: 12px; }
+.preview-box { padding: 10px 12px; }
+.preview-head { margin-bottom: 6px; }
+#cube3dCanvas { max-height: 220px; width: auto; max-width: 100%; margin: 0 auto; }
+.cube-net { max-width: 300px; gap: 4px; }
+.net-face { padding: 3px; gap: 1.5px; }
+.preview-placeholder { padding: 44px 0; }
+
+/* 颜色调色盘 */
+.color-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.color-chip {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 2px solid var(--border);
+  cursor: pointer;
+  padding: 0;
+  font-size: 11px;
+  color: var(--muted);
+  transition: all 0.15s;
+  background: linear-gradient(135deg, var(--cc1, var(--glass)), var(--cc2, var(--glass)));
+}
+.color-chip:hover { transform: scale(1.08); }
+.color-chip.active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+.color-chip[data-color="default"] { width: auto; padding: 0 10px; background: var(--glass); }
+#timerColorInput {
+  width: 34px;
+  height: 34px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  padding: 2px;
+}
+
+@media (max-height: 820px) {
+  #cube3dCanvas { max-height: 150px; }
+  .cube-net { max-width: 200px; }
+  .net-face { padding: 2px; }
+  .page-timer .timer-area { padding: 4px 0; }
+}
+
+/* ================= 批量处理 / 排序 / 图表点击 / 字体导入 / select 修复 / 移动端 ================= */
+
+/* ---------- select 配色修复（深色主题下白底白字 / 跟随自定义字体） ---------- */
+select { font-family: var(--app-font, inherit); color-scheme: inherit; }
+select option {
+  background-color: var(--card);
+  color: var(--text);
+}
+.lang-select, .group-bar select, .sort-select {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 12px;
+  padding: 6px 9px;
+  outline: none;
+  cursor: pointer;
+}
+.lang-select:focus, .group-bar select:focus, .sort-select:focus { border-color: var(--accent); }
+
+/* ---------- 列表工具条（排序 + 批量） ---------- */
+.list-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.batch-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent-soft);
+}
+.batch-bar button { color: var(--accent); }
+
+/* ---------- 历史条目：复选框 / 序号 / AO5 ---------- */
+.solve-check {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.solve-num {
+  font-size: 11px;
+  color: var(--muted);
+  min-width: 34px;
+  font-variant-numeric: tabular-nums;
+}
+.solve-ao5 {
+  font-size: 11px;
+  color: var(--muted);
+  min-width: 64px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.solve-time { min-width: 78px; }
+
+/* 编辑打乱态 */
+.expand-scramble.editing {
+  outline: 2px dashed var(--accent);
+  outline-offset: 2px;
+  background: var(--glass);
+}
+.expand-actions button.act-primary { color: var(--accent); border-color: var(--accent); }
+
+/* ---------- 图表点击详情 ---------- */
+.chart-card { position: relative; }
+.chart .pt { cursor: pointer; }
+.chart .pt:hover circle,
+.chart .pt:hover rect,
+.chart .pt:hover polygon { stroke: var(--text); stroke-width: 1.5; }
+.chart-tooltip {
+  position: absolute;
+  left: 12px;
+  bottom: 10px;
+  max-width: 340px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--glass-strong);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  font-size: 12px;
+  z-index: 3;
+  animation: pop 0.18s;
+}
+.chart-tooltip .tt-title { font-weight: 700; font-size: 13px; margin-bottom: 4px; color: var(--accent); }
+.chart-tooltip .tt-row { color: var(--muted); }
+.chart-tooltip .tt-scr {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border);
+  word-break: break-all;
+  color: var(--text);
+}
+
+/* ---------- 字体导入 ---------- */
+.font-import {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.font-name { font-size: 12px; color: var(--accent); }
+.font-import-desc { font-size: 11px; color: var(--muted); display: block; width: 100%; }
+
+/* ---------- 专注模式：页切换禁用 ---------- */
+body.focus-mode .page-tabs button {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* ---------- 图例 AO50 ---------- */
+.lg-dot.ao50 {
+  width: 9px; height: 9px;
+  background: var(--accent5);
+  transform: rotate(45deg);
+  border-radius: 1px;
+}
+
+/* ---------- 手机版自适应 ---------- */
+@media (max-width: 480px) {
+  header { padding: 10px 12px; gap: 6px; }
+  .brand h1 { font-size: 14px; }
+  .page-tabs button { padding: 5px 12px; font-size: 12px; }
+  .toolbar .tool { min-width: 36px; padding: 6px 9px; font-size: 12px; }
+  main { padding: 14px 12px 60px; gap: 14px; }
+  .stats { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .stat { padding: 10px 8px; }
+  .stat .value { font-size: 17px; }
+  .scramble { font-size: 13px; }
+  .filter-bar { overflow-x: auto; flex-wrap: nowrap; }
+  .filter-bar input[type="date"] { display: none; }
+  .history-tools { flex-wrap: wrap; }
+  .solve-scramble { max-width: 90px; }
+  .solve-ao5 { display: none; }
+  .preview-row { grid-template-columns: 1fr; }
+  #cube3dCanvas { max-height: 170px; }
+  .cube-net { max-width: 230px; }
+  .page-timer .timer-area { padding: 10px 0 4px; }
+}
+
+</style>
 </head>
 <body>
+  <header>
+    <div class="brand">
+      <span class="logo" aria-hidden="true">🧊</span>
+      <h1>CubeTimer</h1>
+    </div>
+    <nav class="page-tabs" id="pageTabs" role="tablist" aria-label="页面">
+      <button data-page="timer" class="active" role="tab" aria-selected="true" data-i18n="tab.timer">计时</button>
+      <button data-page="solves" role="tab" aria-selected="false" data-i18n="tab.solves">成绩</button>
+      <button data-page="settings" role="tab" aria-selected="false" data-i18n="tab.settings">设置</button>
+    </nav>
+    <div class="toolbar">
+      <button id="themeBtn" class="tool" title="切换主题" aria-label="切换主题"></button>
+      <button id="helpBtn" class="tool" title="快捷键帮助（?）" aria-label="快捷键帮助">？</button>
+    </div>
+  </header>
 
-<!-- 创建一个下载链接 -->
-<a href="#" id="download-link">Download</a>
+  <main>
+    <!-- ============ 第一页：计时 ============ -->
+    <section class="page page-timer" id="pageTimer">
+      <div class="puzzle-tabs" id="puzzleTabs" role="tablist" aria-label="魔方类型"></div>
+
+      <section class="scramble-box card">
+        <span class="scramble-label" id="scrambleLabel" data-i18n="scramble.label">打乱</span>
+        <div class="scramble" id="scramble" aria-live="polite"></div>
+        <div class="scramble-actions">
+          <button id="copyScrambleBtn" class="ghost icon" title="复制打乱序列">⧉</button>
+          <button id="newScrambleBtn" class="ghost" title="生成新打乱">⟳</button>
+        </div>
+      </section>
+
+      <section class="timer-area" id="timerArea" tabindex="0">
+        <div class="timer" id="timer">0.00</div>
+        <div class="hint" id="hint" data-i18n="hint.idle">按空格键开始计时</div>
+      </section>
+
+      <div class="preview-row">
+        <section class="preview-box card" id="cube3dBox">
+          <div class="preview-head">
+            <h3 data-i18n="cube.title3d">3D 预览</h3>
+            <span class="preview-tip" data-i18n="cube.dragTip">拖动旋转</span>
+          </div>
+          <canvas id="cube3dCanvas" width="280" height="280"></canvas>
+          <div class="preview-placeholder" id="cube3dPlaceholder" hidden data-i18n="cube.unsupported">仅 3×3 支持 3D 预览</div>
+        </section>
+        <section class="preview-box card" id="cubeNetBox">
+          <div class="preview-head">
+            <h3 data-i18n="cube.titleNet">展开图</h3>
+            <span class="preview-tip" data-i18n="cube.scrambleState">当前打乱状态</span>
+          </div>
+          <div class="cube-net" id="cubeNet"></div>
+          <div class="preview-placeholder" id="cubeNetPlaceholder" hidden data-i18n="cube.unsupportedNet">仅 3×3 支持展开图预览</div>
+        </section>
+      </div>
+    </section>
+
+    <!-- ============ 第二页：成绩 ============ -->
+    <section class="page page-solves" id="pageSolves">
+      <section class="stats" id="stats"></section>
+
+      <section class="chart-card card">
+        <div class="chart-head">
+          <h2 data-i18n="chart.title">趋势</h2>
+          <div class="chart-meta">
+            <span class="chart-note" id="chartNote"></span>
+            <span class="chart-legend">
+              <i class="lg-dot single"></i><span data-i18n="chart.legendSingle">单次</span>
+              <i class="lg-dot ao5"></i><span data-i18n="chart.legendAo5">AO5</span>
+              <i class="lg-dot ao12"></i><span data-i18n="chart.legendAo12">AO12</span>
+              <i class="lg-dot ao50"></i><span data-i18n="chart.legendAo50">AO50</span>
+              <i class="lg-dot ao100"></i><span data-i18n="chart.legendAo100">AO100</span>
+            </span>
+          </div>
+        </div>
+        <div class="chart" id="chart"></div>
+        <div class="chart-tooltip" id="chartTooltip" hidden></div>
+      </section>
+
+      <section class="history">
+        <div class="filter-bar" id="filterBar">
+          <button data-filter="all" class="chip active" data-i18n="filter.all">全部</button>
+          <button data-filter="today" class="chip" data-i18n="filter.today">今天</button>
+          <button data-filter="7d" class="chip" data-i18n="filter.d7">近 7 天</button>
+          <button data-filter="30d" class="chip" data-i18n="filter.d30">近 30 天</button>
+          <span class="filter-sep"></span>
+          <input type="date" id="filterFrom" title="开始日期">
+          <span class="filter-tilde">~</span>
+          <input type="date" id="filterTo" title="结束日期">
+          <button id="filterClearBtn" class="ghost small" data-i18n="filter.clear">清除筛选</button>
+        </div>
+
+        <div class="list-toolbar">
+          <select id="sortSelect" class="sort-select" title="排序">
+            <option value="time" data-i18n="sort.time">按时间</option>
+            <option value="fast" data-i18n="sort.fast">由快到慢</option>
+            <option value="slow" data-i18n="sort.slow">由慢到快</option>
+          </select>
+          <div class="batch-bar" id="batchBar" hidden>
+            <button id="batchSelectAllBtn" class="ghost small" data-i18n="batch.selectAll">全选</button>
+            <button id="batchPlus2Btn" class="ghost small">+2</button>
+            <button id="batchDnfBtn" class="ghost small">DNF</button>
+            <button id="batchRestoreBtn" class="ghost small" data-i18n="batch.restore">恢复</button>
+            <button id="batchDeleteBtn" class="ghost small danger" data-i18n="batch.delete">删除</button>
+            <button id="batchCancelBtn" class="ghost small" data-i18n="batch.cancel">取消</button>
+          </div>
+        </div>
+
+        <div class="history-head">
+          <h2 data-i18n="history.title">历史记录</h2>
+          <div class="history-tools">
+            <div class="group-bar">
+              <select id="groupSelect" title="成绩分组"></select>
+              <button id="groupAddBtn" class="ghost small" title="新建分组">＋</button>
+              <button id="groupRenameBtn" class="ghost small" title="重命名分组">✎</button>
+              <button id="groupDelBtn" class="ghost small danger" title="删除分组">×</button>
+            </div>
+            <button id="exportCsvBtn" class="ghost small" title="导出当前成绩为 CSV">CSV</button>
+            <span class="history-count" id="historyCount"></span>
+            <button id="clearBtn" class="ghost small danger" data-i18n="history.clear">清空</button>
+          </div>
+        </div>
+        <ol class="solve-list" id="solveList"></ol>
+      </section>
+    </section>
+
+    <!-- ============ 第三页：设置 ============ -->
+    <section class="page page-settings" id="pageSettings">
+      <div class="settings-page">
+        <section class="settings-section">
+          <h3 data-i18n="settings.timer">计时</h3>
+          <div class="set-row">
+            <span class="switch-text"><b data-i18n="settings.mode">计时模式</b></span>
+            <div class="btn-group">
+              <button id="modeTapBtn" class="seg" data-mode="tap" data-i18n="mode.tap">点按</button>
+              <button id="modeHoldBtn" class="seg" data-mode="hold" data-i18n="mode.hold">长按</button>
+            </div>
+          </div>
+          <label class="switch-row">
+            <span class="switch-text">
+              <b data-i18n="settings.wca">WCA 观察</b>
+              <small data-i18n="settings.wcaDesc">15 秒观察，15–17 秒内开始 +2，超过 17 秒 DNF</small>
+            </span>
+            <span class="switch">
+              <input type="checkbox" id="inspectionToggle">
+              <span class="slider"></span>
+            </span>
+          </label>
+          <label class="switch-row">
+            <span class="switch-text">
+              <b data-i18n="settings.sound">声音反馈</b>
+              <small data-i18n="settings.soundDesc">开始/停止提示音与观察倒计时提醒</small>
+            </span>
+            <span class="switch">
+              <input type="checkbox" id="soundToggle">
+              <span class="slider"></span>
+            </span>
+          </label>
+          <label class="switch-row">
+            <span class="switch-text">
+              <b data-i18n="settings.inspectionSound">观察音效</b>
+              <small data-i18n="settings.inspectionSoundDesc">观察倒计时与超时提醒</small>
+            </span>
+            <span class="switch">
+              <input type="checkbox" id="inspectionSoundToggle">
+              <span class="slider"></span>
+            </span>
+          </label>
+        </section>
+
+        <section class="settings-section">
+          <h3 data-i18n="settings.lang">语言 / Language</h3>
+          <select id="langSelect" class="lang-select">
+            <option value="auto">自动（Auto）</option>
+            <option value="zh-CN">简体中文</option>
+            <option value="en">English</option>
+          </select>
+        </section>
+
+        <section class="settings-section">
+          <h3 data-i18n="settings.appearance">外观</h3>
+          <div class="set-row">
+            <span class="switch-text"><b data-i18n="settings.theme">主题</b></span>
+            <div class="btn-group" id="themeGroup">
+              <button class="seg" data-theme="dark" data-i18n="theme.dark">深色</button>
+              <button class="seg" data-theme="light" data-i18n="theme.light">浅色</button>
+              <button class="seg" data-theme="auto" data-i18n="theme.auto">自动</button>
+            </div>
+          </div>
+          <div class="set-row">
+            <span class="switch-text"><b data-i18n="settings.font">字体</b></span>
+            <select id="fontSelect" class="lang-select">
+              <option value="default" data-i18n="font.default">默认</option>
+              <option value="mono" data-i18n="font.mono">等宽数字</option>
+              <option value="rounded" data-i18n="font.rounded">圆体</option>
+              <option value="serif" data-i18n="font.serif">衬线</option>
+              <option value="cursive" data-i18n="font.cursive">手写</option>
+              <option value="custom" data-i18n="font.custom">自定义</option>
+            </select>
+          </div>
+          <div class="font-import">
+            <button id="fontImportBtn" class="ghost small" data-i18n="settings.fontImport">导入字体</button>
+            <input type="file" id="fontFile" accept=".ttf,.otf,.woff,.woff2" hidden>
+            <span class="font-name" id="fontName"></span>
+            <small class="font-import-desc" data-i18n="settings.fontImportDesc">支持 ttf / otf / woff / woff2，≤3MB</small>
+          </div>
+          <div class="set-row">
+            <span class="switch-text"><b data-i18n="settings.timerColor">计时器颜色</b></span>
+          </div>
+          <div class="color-presets" id="timerColorPresets"></div>
+          <div class="range-row">
+            <span class="switch-text">
+              <b data-i18n="settings.timerSize">计时器大小</b>
+              <small id="timerScaleVal">100%</small>
+            </span>
+            <input type="range" id="timerScaleInput" min="60" max="150" step="5" value="100">
+          </div>
+          <h4 class="sub-head" data-i18n="settings.background">背景</h4>
+          <div class="bg-presets" id="bgPresets"></div>
+          <div class="bg-custom">
+            <button id="bgUploadBtn" class="ghost small" data-i18n="settings.upload">上传图片</button>
+            <input type="file" id="bgFile" accept="image/*" hidden>
+            <input type="text" id="bgUrlInput" data-i18n-ph="settings.urlPlaceholder" placeholder="或粘贴图片 URL，回车应用">
+            <button id="bgResetBtn" class="ghost small danger" data-i18n="settings.reset">重置默认</button>
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <h3 data-i18n="settings.data">数据</h3>
+          <div class="data-actions">
+            <button id="exportBtn" class="ghost" data-i18n="settings.export">导出备份（JSON）</button>
+            <button id="importBtn" class="ghost" data-i18n="settings.import">导入备份</button>
+            <input type="file" id="importFile" accept=".json,application/json" hidden>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <!-- 快捷键帮助弹窗 -->
+  <div class="modal-overlay" id="helpModal" hidden>
+    <div class="modal modal-sm">
+      <div class="modal-head">
+        <h2 data-i18n="help.title">快捷键</h2>
+        <button class="modal-close" id="helpClose" title="关闭" aria-label="关闭">×</button>
+      </div>
+      <div class="modal-body">
+        <ul class="keys-list">
+          <li><kbd>空格</kbd><span data-i18n="help.space">开始 / 停止计时</span></li>
+          <li><kbd>Esc</kbd><span data-i18n="help.esc">取消计时 · 关闭弹窗 · 退出专注模式</span></li>
+          <li><kbd>N</kbd><span data-i18n="help.n">生成新打乱</span></li>
+          <li><kbd>C</kbd><span data-i18n="help.c">复制打乱序列</span></li>
+          <li><kbd>?</kbd><span data-i18n="help.q">打开本帮助</span></li>
+          <li><kbd>1 / 2 / 3</kbd><span data-i18n="help.pages">切换 计时 / 成绩 / 设置 页</span></li>
+          <li><kbd data-i18n="help.dbl">双击计时区</kbd><span data-i18n="help.dblDesc">进入 / 退出专注模式</span></li>
+        </ul>
+        <p class="keys-tip" data-i18n="help.tip">历史条目点击展开可标记 +2 / DNF；输入框聚焦时快捷键自动暂停。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  var content = ":start\nstart cmd\ngoto start"; // 这里是文件的内容，可以是任何字符串或者Blob对象
-  
-  // 创建一个Blob对象，这里示例使用纯文本
-  var blob = new Blob([content], { type: 'text/plain' });
+/**
+ * cube-model.js — 3×3 魔方状态模拟器（贴纸跟随法）
+ * 用于展开图与 3D 预览。兼容浏览器 (window.CubeModel) 与 Node (module.exports)。
+ *
+ * 坐标系：cubie 中心坐标为整数 p ∈ {-1,0,1}³（边长 2），法向 n 为单位轴向量。
+ * 每个 move 旋转 (p, n) 即可得到打乱后的贴纸位置。
+ */
+(function (root) {
+  'use strict';
 
-  // 创建一个临时URL，用于文件下载
-  var url = URL.createObjectURL(blob);
+  var FACES = ['U', 'D', 'F', 'B', 'R', 'L'];
 
-  // 获取下载链接元素
-  var downloadLink = document.getElementById('download-link');
+  var NORMAL_FACE = {
+    '0,1,0': 'U', '0,-1,0': 'D',
+    '0,0,1': 'F', '0,0,-1': 'B',
+    '1,0,0': 'R', '-1,0,0': 'L'
+  };
 
-  // 设置下载链接的href属性为临时URL，设置download属性为文件名（可选）
-  downloadLink.href = url;
-  downloadLink.download = 'main.bat'; // 这里可以设置文件名
+  /** 绕轴旋转（a: 1 = +90°, -1 = -90°, 2 = 180°），右手定则。 */
+  function rot(v, axis, a) {
+    var x = v[0], y = v[1], z = v[2];
+    if (a === 2) {
+      if (axis === 0) return [x, -y, -z];
+      if (axis === 1) return [-x, y, -z];
+      return [-x, -y, z];
+    }
+    if (axis === 0) return a === 1 ? [x, -z, y] : [x, z, -y];
+    if (axis === 1) return a === 1 ? [z, y, -x] : [-z, y, x];
+    return a === 1 ? [-y, x, z] : [y, -x, z];
+  }
 
-  // 可选：当不再需要临时URL时，释放它以节省内存
-  // 注意：浏览器会在下载完成后自动释放临时URL
-  // URL.revokeObjectURL(url);
-});
-</script>
+  /** move 定义：axis(0=x,1=y,2=z)、layer（该轴坐标）、ang 旋转方向。 */
+  var MOVE_DEF = {
+    U: { axis: 1, layer: 1, ang: 1 },
+    D: { axis: 1, layer: -1, ang: -1 },
+    R: { axis: 0, layer: 1, ang: 1 },
+    L: { axis: 0, layer: -1, ang: -1 },
+    F: { axis: 2, layer: 1, ang: -1 },
+    B: { axis: 2, layer: -1, ang: 1 }
+  };
 
-</body>
-</html>
+  /** 每面 (r,c) 对应的贴纸 cubie 中心与法向（r 顶行 0，c 左列 0）。 */
+  function facePos(face, r, c) {
+    switch (face) {
+      case 'U': return { p: [c - 1, 1, 1 - r], n: [0, 1, 0] };
+      case 'D': return { p: [c - 1, -1, r - 1], n: [0, -1, 0] };
+      case 'F': return { p: [c - 1, 1 - r, 1], n: [0, 0, 1] };
+      case 'B': return { p: [c - 1, 1 - r, -1], n: [0, 0, -1] };
+      case 'R': return { p: [1, 1 - r, 1 - c], n: [1, 0, 0] };
+      default:  return { p: [-1, 1 - r, c - 1], n: [-1, 0, 0] };
+    }
+  }
+
+  function create() {
+    var stickers = [];
+    FACES.forEach(function (face) {
+      for (var i = 0; i < 9; i++) {
+        var r = Math.floor(i / 3), c = i % 3;
+        var pn = facePos(face, r, c);
+        stickers.push({ p: pn.p, n: pn.n, color: face });
+      }
+    });
+
+    function applyMove(face, ang) {
+      var def = MOVE_DEF[face];
+      if (!def) return;
+      stickers.forEach(function (s) {
+        if (s.p[def.axis] === def.layer) {
+          s.p = rot(s.p, def.axis, ang);
+          s.n = rot(s.n, def.axis, ang);
+        }
+      });
+    }
+
+    return {
+      /** 应用整段打乱（空格分隔，支持 ' 与 2 后缀）。 */
+      apply: function (movesStr) {
+        var tokens = typeof movesStr === 'string' ? movesStr.trim().split(/\s+/) : [];
+        tokens.forEach(function (tok) {
+          if (!tok) return;
+          var face = tok.charAt(0);
+          var suff = tok.slice(1);
+          var ang = suff === "'" ? -1 : (suff === '2' ? 2 : 1);
+          applyMove(face, ang);
+        });
+        return this;
+      },
+      /** 每个面 9 个贴纸颜色（row-major）。 */
+      getState: function () {
+        var state = { U: [], D: [], F: [], B: [], R: [], L: [] };
+        stickers.forEach(function (s) {
+          var face = NORMAL_FACE[s.n.join(',')];
+          if (!face) return;
+          var p = s.p, r, c;
+          if (face === 'U') { r = 1 - p[2]; c = p[0] + 1; }
+          else if (face === 'D') { r = p[2] + 1; c = p[0] + 1; }
+          else if (face === 'F') { r = 1 - p[1]; c = p[0] + 1; }
+          else if (face === 'B') { r = 1 - p[1]; c = p[0] + 1; }
+          else if (face === 'R') { r = 1 - p[1]; c = 1 - p[2]; }
+          else { r = 1 - p[1]; c = p[2] + 1; }
+          state[face][r * 3 + c] = s.color;
+        });
+        return state;
+      },
+      /** 是否已还原（每面同色）。 */
+      isSolved: function () {
+        var state = this.getState();
+        return FACES.every(f
