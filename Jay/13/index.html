@@ -2,865 +2,2260 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>星际纪元 | 科幻策略游戏</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>手机版我的世界</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
-
-        :root {
-            --primary: #6a11cb;
-            --secondary: #2575fc;
-            --accent: #ff2d75;
-            --dark: #0f0c29;
-            --darker: #08061a;
-            --light: #f5f9ff;
-            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
+        html,
         body {
-            font-family: 'Roboto', sans-serif;
-            background: linear-gradient(135deg, var(--darker), var(--dark));
-            color: var(--light);
-            line-height: 1.6;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        body::before {
-            content: '';
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+            touch-action: none;
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+CiAgPHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiBmaWxsPSIjMDgwNjFhIi8+CiAgPHBhdGggZD0iTTAgMEg1MFY1MEgwWiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTExIiBzdHJva2Utd2lkdGg9IjEiLz4KPC9zdmc+');
-            opacity: 0.2;
-            z-index: -2;
         }
-
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
-
-        .particle {
+        #gameCanvas {
             position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
-            box-shadow: 0 0 10px rgba(106, 17, 203, 0.7), 0 0 20px rgba(37, 117, 252, 0.5);
-        }
-
-        h1, h2, h3, h4, .nav-links a, .btn {
-            font-family: 'Orbitron', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-        }
-
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* 导航栏样式 */
-        header {
-            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            z-index: 1000;
-            padding: 20px 0;
-            transition: var(--transition);
-            backdrop-filter: blur(10px);
-            background: rgba(15, 12, 41, 0.8);
-            border-bottom: 1px solid rgba(106, 17, 203, 0.3);
+            height: 100%;
+            display: block;
+            z-index: 1;
+            touch-action: none;
         }
-
-        header.scrolled {
-            padding: 10px 0;
-            background: rgba(8, 6, 26, 0.95);
+        #crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            pointer-events: none;
+            filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.8));
         }
-
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: var(--light);
-            text-decoration: none;
-        }
-
-        .logo span {
-            color: var(--accent);
-        }
-
-        .logo i {
-            margin-right: 10px;
-            color: var(--secondary);
-            font-size: 2.2rem;
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-        }
-
-        .nav-links li {
-            margin-left: 30px;
-        }
-
-        .nav-links a {
-            position: relative;
-            color: var(--light);
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            padding: 5px 0;
-            transition: var(--transition);
-        }
-
-        .nav-links a::after {
+        #crosshair::before,
+        #crosshair::after {
             content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.5);
+        }
+        #crosshair::before {
+            width: 20px;
+            height: 2px;
+            top: -1px;
+            left: -10px;
+        }
+        #crosshair::after {
+            width: 2px;
+            height: 20px;
+            top: -10px;
+            left: -1px;
+        }
+        #hotbar {
+            position: absolute;
+            bottom: calc(10px + env(safe-area-inset-bottom));
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+            z-index: 20;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 6px 8px;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            pointer-events: auto;
+        }
+        .hotbar-slot {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(0, 0, 0, 0.5);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .hotbar-slot.active {
+            border-color: #fff;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+            transform: scale(1.1);
+        }
+        .hotbar-slot img {
+            width: 36px;
+            height: 36px;
+            image-rendering: pixelated;
+            pointer-events: none;
+        }
+        .hotbar-slot .slot-number {
+            position: absolute;
+            top: 2px;
+            left: 4px;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            pointer-events: none;
+            font-weight: bold;
+        }
+        #joystick-zone {
             position: absolute;
             bottom: 0;
             left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--accent);
-            transition: var(--transition);
+            width: 45%;
+            height: 70%;
+            z-index: 5;
+            pointer-events: auto;
+            touch-action: none;
         }
-
-        .nav-links a:hover {
-            color: var(--accent);
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 12px 30px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            color: white;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 700;
-            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.4);
-            transition: var(--transition);
-            border: none;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-size: 0.9rem;
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(106, 17, 203, 0.6);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            border: 2px solid var(--secondary);
-            box-shadow: none;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(37, 117, 252, 0.1);
-        }
-
-        /* 英雄区域 */
-        .hero {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-content {
-            max-width: 650px;
-            z-index: 2;
-        }
-
-        .hero h1 {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            line-height: 1.1;
-            text-shadow: 0 0 20px rgba(106, 17, 203, 0.7);
-            background: linear-gradient(to right, #f5f9ff, #a1c4fd);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            max-width: 600px;
-            opacity: 0.9;
-        }
-
-        .hero-btns {
-            display: flex;
-            gap: 20px;
-        }
-
-        .hero-image {
+        #joystick-base {
             position: absolute;
-            right: -50px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 50%;
-            max-width: 700px;
-            z-index: 1;
-            opacity: 0.9;
-            filter: drop-shadow(0 0 30px rgba(106, 17, 203, 0.5));
-            animation: float 6s ease-in-out infinite;
-        }
-
-        /* 游戏特色区域 */
-        .features {
-            padding: 100px 0;
-            position: relative;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 70px;
-            position: relative;
-        }
-
-        .section-title h2 {
-            font-size: 2.5rem;
-            display: inline-block;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background: var(--accent);
-            border-radius: 2px;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-        }
-
-        .feature-card {
-            background: rgba(25, 22, 56, 0.6);
-            border-radius: 15px;
-            padding: 40px 30px;
-            text-align: center;
-            transition: var(--transition);
-            border: 1px solid rgba(106, 17, 203, 0.3);
-            backdrop-filter: blur(10px);
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-            border-color: rgba(37, 117, 252, 0.5);
-        }
-
-        .feature-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 110px;
+            height: 110px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            font-size: 2.5rem;
-            color: white;
+            background: rgba(255, 255, 255, 0.12);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            display: none;
+            pointer-events: none;
+            z-index: 6;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
         }
-
-        .feature-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            color: var(--light);
+        #joystick-knob {
+            position: absolute;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.35);
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            pointer-events: none;
+            z-index: 7;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: none;
         }
-
-        .feature-card p {
-            color: rgba(255, 255, 255, 0.8);
+        /* 跳跃按钮独立容器，放在左侧摇杆上方 */
+        #jump-container {
+            position: absolute;
+            bottom: calc(60px + env(safe-area-inset-bottom));
+            left: 20px;
+            z-index: 15;
+            pointer-events: auto;
+            touch-action: none;
         }
-
-        /* 游戏截图区域 */
-        .screenshots {
-            padding: 100px 0;
-            background: rgba(15, 12, 41, 0.5);
-        }
-
-        .screenshots-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-top: 50px;
-        }
-
-        .screenshot {
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-            height: 250px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-            transition: var(--transition);
-        }
-
-        .screenshot:hover {
-            transform: scale(1.03);
-        }
-
-        .screenshot img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: var(--transition);
-        }
-
-        .screenshot:hover img {
-            transform: scale(1.1);
-        }
-
-        /* 下载区域 */
-        .download {
-            padding: 100px 0;
-            text-align: center;
-        }
-
-        .download-content {
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        .download h2 {
-            font-size: 2.8rem;
-            margin-bottom: 20px;
-            background: linear-gradient(to right, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .download p {
-            font-size: 1.2rem;
-            margin-bottom: 40px;
-            opacity: 0.9;
-        }
-
-        .platforms {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-top: 40px;
-        }
-
-        .platform {
-            background: rgba(25, 22, 56, 0.6);
-            border: 1px solid rgba(106, 17, 203, 0.3);
-            border-radius: 10px;
-            padding: 25px;
-            width: 160px;
-            transition: var(--transition);
-        }
-
-        .platform:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent);
-        }
-
-        .platform i {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            color: var(--secondary);
-        }
-
-        /* 页脚区域 */
-        footer {
-            background: rgba(8, 6, 26, 0.95);
-            padding: 60px 0 30px;
-            border-top: 1px solid rgba(106, 17, 203, 0.3);
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-            margin-bottom: 50px;
-        }
-
-        .footer-logo {
-            font-size: 2rem;
-            font-weight: 900;
-            margin-bottom: 20px;
-            color: var(--light);
-        }
-
-        .footer-logo span {
-            color: var(--accent);
-        }
-
-        .footer-about p {
-            margin-bottom: 20px;
-            opacity: 0.8;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 15px;
-        }
-
-        .social-links a {
+        #jump-btn {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            background: rgba(0, 100, 200, 0.5);
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+            touch-action: none;
+            letter-spacing: 1px;
+        }
+        #jump-btn:active {
+            transform: scale(0.88);
+            background: rgba(255, 255, 255, 0.25);
+            border-color: #fff;
+        }
+        #action-buttons {
+            position: absolute;
+            bottom: calc(70px + env(safe-area-inset-bottom));
+            right: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 15;
+            pointer-events: auto;
+            touch-action: none;
+        }
+        .action-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+            pointer-events: auto;
+            touch-action: none;
+            letter-spacing: 1px;
+        }
+        .action-btn:active {
+            transform: scale(0.88);
+            background: rgba(255, 255, 255, 0.25);
+            border-color: #fff;
+        }
+        #place-btn {
+            background: rgba(0, 150, 50, 0.5);
+            border-color: rgba(100, 255, 150, 0.6);
+        }
+        #break-btn {
+            background: rgba(200, 50, 0, 0.5);
+            border-color: rgba(255, 150, 100, 0.6);
+        }
+        /* 全屏按钮 */
+        #fullscreen-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 30;
             width: 40px;
             height: 40px;
-            border-radius: 50%;
-            background: rgba(106, 17, 203, 0.2);
-            color: var(--light);
-            transition: var(--transition);
-            font-size: 1.2rem;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: #fff;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            pointer-events: auto;
+            touch-action: none;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
         }
-
-        .social-links a:hover {
-            background: var(--accent);
-            transform: translateY(-3px);
-        }
-
-        .footer-heading {
-            font-size: 1.3rem;
-            margin-bottom: 25px;
-            position: relative;
-            display: inline-block;
-        }
-
-        .footer-heading::after {
-            content: '';
+        /* 退出全屏按钮 */
+        #exit-fullscreen-btn {
             position: absolute;
-            bottom: -8px;
-            left: 0;
+            top: 10px;
+            left: 10px;
+            z-index: 30;
             width: 40px;
-            height: 3px;
-            background: var(--accent);
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: #fff;
+            font-size: 24px;
+            line-height: 1;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            pointer-events: auto;
+            touch-action: none;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
         }
-
-        .footer-links {
-            list-style: none;
+        #fps-counter {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 30;
+            color: #fff;
+            font-size: 12px;
+            font-family: monospace;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 4px 8px;
+            border-radius: 4px;
+            pointer-events: none;
+            display: none;
         }
-
-        .footer-links li {
-            margin-bottom: 12px;
+        #debug-info {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 30;
+            color: #fff;
+            font-size: 11px;
+            font-family: monospace;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 4px 8px;
+            border-radius: 4px;
+            pointer-events: none;
+            display: none;
         }
-
-        .footer-links a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .footer-links a:hover {
-            color: var(--accent);
-            padding-left: 5px;
-        }
-
-        .copyright {
+        /* 竖屏提示层 */
+        #orientation-hint {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 18px;
             text-align: center;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.9rem;
+            pointer-events: auto;
+            touch-action: none;
+            line-height: 1.8;
         }
-
-        /* 动画效果 */
-        @keyframes float {
-            0% {
-                transform: translateY(-50%) translateX(0);
+        #orientation-hint .rotate-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            animation: rotate 2s infinite linear;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        #orientation-hint button {
+            margin-top: 20px;
+            padding: 12px 30px;
+            border-radius: 30px;
+            border: 2px solid #fff;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            pointer-events: auto;
+            touch-action: none;
+        }
+        #loading-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a1a2e;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 20px;
+            transition: opacity 0.5s ease;
+        }
+        #loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        #loading-bar-container {
+            width: 200px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            margin-top: 16px;
+            overflow: hidden;
+        }
+        #loading-bar {
+            width: 0%;
+            height: 100%;
+            background: #4CAF50;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        #loading-text {
+            font-size: 14px;
+            margin-top: 8px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        #touch-hint {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 50;
+            color: #fff;
+            font-size: 14px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 12px 20px;
+            border-radius: 10px;
+            pointer-events: none;
+            text-align: center;
+            transition: opacity 1s ease;
+            line-height: 1.6;
+        }
+        #touch-hint.hidden {
+            opacity: 0;
+        }
+        @media (max-width: 400px) {
+            .hotbar-slot {
+                width: 38px;
+                height: 38px;
             }
-            50% {
-                transform: translateY(-53%) translateX(10px);
+            .hotbar-slot img {
+                width: 28px;
+                height: 28px;
             }
-            100% {
-                transform: translateY(-50%) translateX(0);
+            .action-btn {
+                width: 46px;
+                height: 46px;
+                font-size: 10px;
+            }
+            #jump-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 12px;
+            }
+            #joystick-base {
+                width: 90px;
+                height: 90px;
+            }
+            #joystick-knob {
+                width: 36px;
+                height: 36px;
             }
         }
-
-        /* 响应式设计 */
-        @media (max-width: 992px) {
-            .hero h1 {
-                font-size: 3.2rem;
+        @media (orientation: landscape) {
+            #action-buttons {
+                bottom: calc(65px + env(safe-area-inset-bottom));
+                right: 20px;
             }
-            .hero-image {
-                opacity: 0.4;
-                right: -100px;
+            #hotbar {
+                bottom: calc(8px + env(safe-area-inset-bottom));
             }
-        }
-
-        @media (max-width: 768px) {
-            .navbar {
-                flex-direction: column;
-                gap: 20px;
+            .hotbar-slot {
+                width: 44px;
+                height: 44px;
             }
-            .nav-links li {
-                margin: 0 15px;
+            .hotbar-slot img {
+                width: 32px;
+                height: 32px;
             }
-            .hero {
-                text-align: center;
+            #action-buttons {
+                gap: 8px;
             }
-            .hero-content {
-                margin: 0 auto;
-                padding-top: 100px;
-            }
-            .hero-btns {
-                justify-content: center;
-            }
-            .hero-image {
-                display: none;
-            }
-            .section-title h2 {
-                font-size: 2rem;
-            }
-            .download h2 {
-                font-size: 2.2rem;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            .hero-btns {
-                flex-direction: column;
-                align-items: center;
-            }
-            .nav-links {
-                flex-wrap: wrap;
-                justify-content: center;
+            #jump-container {
+                bottom: calc(30px + env(safe-area-inset-bottom));
+                left: 30px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 粒子背景 -->
-    <div class="particles" id="particles"></div>
+    <div id="gameCanvas"></div>
 
-    <!-- 导航栏 -->
-    <header id="header">
-        <div class="container">
-            <nav class="navbar">
-                <a href="#" class="logo">
-                    <i class="fas fa-rocket"></i>
-                    STAR<span>COMMAND</span>
-                </a>
-                <ul class="nav-links">
-                    <li><a href="#features">特色</a></li>
-                    <li><a href="#screenshots">截图</a></li>
-                    <li><a href="#download">下载</a></li>
-                    <li><a href="#about">关于</a></li>
-                </ul>
-                <a href="#download" class="btn">立即游玩</a>
-            </nav>
-        </div>
-    </header>
+    <div id="crosshair"></div>
 
-    <!-- 英雄区域 -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1>探索无尽宇宙的奥秘</h1>
-                <p>在《星际纪元》中，您将指挥自己的星际舰队，探索未知星系，建立星际帝国，与其他玩家争夺宇宙霸权。体验前所未有的太空策略游戏！</p>
-                <div class="hero-btns">
-                    <a href="#download" class="btn">开始征程</a>
-                    <a href="#features" class="btn btn-secondary">了解更多</a>
-                </div>
-            </div>
-        </div>
-        <div class="hero-image">
-            <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
-                <path fill="#6a11cb" d="M250,100 C320,80 380,120 400,200 C420,280 380,340 300,380 C220,420 150,400 100,330 C50,260 80,180 150,130 C180,110 220,100 250,100 Z" opacity="0.6"/>
-                <circle cx="250" cy="250" r="80" fill="#2575fc" opacity="0.7"/>
-                <circle cx="350" cy="200" r="40" fill="#ff2d75" opacity="0.8"/>
-                <circle cx="180" cy="300" r="30" fill="#6a11cb" opacity="0.8"/>
-            </svg>
-        </div>
-    </section>
+    <div id="hotbar"></div>
 
-    <!-- 游戏特色 -->
-    <section class="features" id="features">
-        <div class="container">
-            <div class="section-title">
-                <h2>游戏特色</h2>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-globe-americas"></i>
-                    </div>
-                    <h3>浩瀚宇宙</h3>
-                    <p>探索超过1000个独特的星系，每个星系都有不同的行星、资源和挑战，等待您的发现。</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-ship"></i>
-                    </div>
-                    <h3>舰队定制</h3>
-                    <p>设计并建造您独特的星际舰队，数百种模块和武器组合，打造属于您的无敌舰队。</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h3>多人策略</h3>
-                    <p>与其他玩家组建联盟，进行史诗级的太空战斗，或通过外交手段建立强大的星际帝国。</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-city"></i>
-                    </div>
-                    <h3>行星建设</h3>
-                    <p>在您征服的行星上建立繁荣的殖民地，发展科技树，建设强大的经济基础。</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-vr-cardboard"></i>
-                    </div>
-                    <h3>沉浸体验</h3>
-                    <p>惊艳的视觉效果，震撼的太空音效，以及引人入胜的故事线，带来身临其境的太空体验。</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <h3>AI技术</h3>
-                    <p>先进的AI系统，无论是盟友还是敌人，都会根据您的策略做出智能反应，保持游戏挑战性。</p>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div id="joystick-zone"></div>
+    <div id="joystick-base">
+        <div id="joystick-knob"></div>
+    </div>
 
-    <!-- 游戏截图 -->
-    <section class="screenshots" id="screenshots">
-        <div class="container">
-            <div class="section-title">
-                <h2>游戏截图</h2>
-            </div>
-            <div class="screenshots-container">
-                <div class="screenshot">
-                    <div style="background: linear-gradient(45deg, #6a11cb, #2575fc); height: 100%;"></div>
-                </div>
-                <div class="screenshot">
-                    <div style="background: linear-gradient(45deg, #ff2d75, #ff8e53); height: 100%;"></div>
-                </div>
-                <div class="screenshot">
-                    <div style="background: linear-gradient(45deg, #2575fc, #2af598); height: 100%;"></div>
-                </div>
-                <div class="screenshot">
-                    <div style="background: linear-gradient(45deg, #6a11cb, #ff2d75); height: 100%;"></div>
-                </div>
-                <div class="screenshot">
-                    <div style="background: linear-gradient(45deg, #08aeea, #2af598); height: 100%;"></div>
-                </div>
-                <div class="screenshot">
-                    <div style="background: linear-gradient(45deg, #ff2d75, #f9d423); height: 100%;"></div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div id="jump-container">
+        <button id="jump-btn">跳跃</button>
+    </div>
 
-    <!-- 下载区域 -->
-    <section class="download" id="download">
-        <div class="container">
-            <div class="download-content">
-                <h2>开启星际征程</h2>
-                <p>立即下载游戏，免费开始您的宇宙征服之旅！支持Windows、macOS、iOS和Android平台。</p>
-                <a href="#" class="btn">免费下载</a>
-                
-                <div class="platforms">
-                    <div class="platform">
-                        <i class="fab fa-windows"></i>
-                        <h4>Windows</h4>
-                    </div>
-                    <div class="platform">
-                        <i class="fab fa-apple"></i>
-                        <h4>macOS</h4>
-                    </div>
-                    <div class="platform">
-                        <i class="fab fa-android"></i>
-                        <h4>Android</h4>
-                    </div>
-                    <div class="platform">
-                        <i class="fab fa-app-store-ios"></i>
-                        <h4>iOS</h4>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div id="action-buttons">
+        <button class="action-btn" id="break-btn">破坏</button>
+        <button class="action-btn" id="place-btn">放置</button>
+    </div>
 
-    <!-- 页脚 -->
-    <footer id="about">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-about">
-                    <div class="footer-logo">STAR<span>COMMAND</span></div>
-                    <p>《星际纪元》是由独立游戏工作室Nebula Games开发的太空策略游戏，我们的目标是带给玩家最真实、最震撼的宇宙探索体验。</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-discord"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                        <a href="#"><i class="fab fa-reddit"></i></a>
-                    </div>
-                </div>
-                
-                <div class="footer-links-container">
-                    <h3 class="footer-heading">快速链接</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">首页</a></li>
-                        <li><a href="#features">游戏特色</a></li>
-                        <li><a href="#screenshots">游戏截图</a></li>
-                        <li><a href="#download">下载游戏</a></li>
-                        <li><a href="#">开发日志</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-links-container">
-                    <h3 class="footer-heading">支持</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">常见问题</a></li>
-                        <li><a href="#">用户指南</a></li>
-                        <li><a href="#">问题反馈</a></li>
-                        <li><a href="#">社区论坛</a></li>
-                        <li><a href="#">联系我们</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-links-container">
-                    <h3 class="footer-heading">法律信息</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">服务条款</a></li>
-                        <li><a href="#">隐私政策</a></li>
-                        <li><a href="#">版权声明</a></li>
-                        <li><a href="#">Cookie政策</a></li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="copyright">
-                &copy; 2023 Nebula Games. 保留所有权利。STARCOMMAND是Nebula Games的注册商标。
-            </div>
-        </div>
-    </footer>
+    <button id="fullscreen-btn">⛶</button>
+    <button id="exit-fullscreen-btn">✕</button>
 
+    <div id="fps-counter">FPS: 0</div>
+    <div id="debug-info"></div>
+
+    <div id="loading-screen">
+        <div style="font-size:32px;margin-bottom:8px;">⛏️</div>
+        <div>我的世界 · 手机版</div>
+        <div id="loading-bar-container">
+            <div id="loading-bar"></div>
+        </div>
+        <div id="loading-text">正在生成世界...</div>
+    </div>
+
+    <div id="touch-hint">
+        👆 左侧摇杆移动<br>
+        🖱️ 右侧滑动旋转视角<br>
+        🟢 放置 | 🔴 破坏<br>
+        ⬆️ 跳跃按钮
+    </div>
+
+    <div id="orientation-hint" style="display:none;">
+        <div class="rotate-icon">📱</div>
+        <div>请旋转设备至横屏<br>以获得最佳游戏体验</div>
+        <button id="rotate-btn">我已旋转</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js">
+    </script>
     <script>
-        // 粒子背景生成
-        function createParticles() {
-            const particlesContainer = document.getElementById('particles');
-            const particleCount = 50;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                
-                // 随机大小
-                const size = Math.random() * 5 + 2;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                
-                // 随机位置
-                const posX = Math.random() * 100;
-                const posY = Math.random() * 100;
-                particle.style.left = `${posX}%`;
-                particle.style.top = `${posY}%`;
-                
-                // 随机动画
-                const animationDuration = Math.random() * 20 + 10;
-                particle.style.animation = `float ${animationDuration}s infinite ease-in-out`;
-                particle.style.animationDelay = `${Math.random() * 5}s`;
-                
-                // 随机透明度
-                particle.style.opacity = Math.random() * 0.5 + 0.1;
-                
-                particlesContainer.appendChild(particle);
-            }
-        }
-        
-        // 导航栏滚动效果
-        function setupNavbar() {
-            const header = document.getElementById('header');
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 100) {
-                    header.classList.add('scrolled');
-                } else {
-                    header.classList.remove('scrolled');
-                }
-            });
-        }
-        
-        // 平滑滚动
-        function setupSmoothScroll() {
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href');
-                    if (targetId === '#') return;
-                    
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        window.scrollTo({
-                            top: targetElement.offsetTop - 80,
-                            behavior: 'smooth'
-                        });
+        (function() {
+            'use strict';
+
+            // ==================== 常量定义 ====================
+            const CHUNK_SIZE = 16;
+            const CHUNK_HEIGHT = 64;
+            const WORLD_HEIGHT = 64;
+            const SEA_LEVEL = 28;
+            const RENDER_DISTANCE = 3;
+            const MAX_PLACE_DISTANCE = 6;
+            const PLAYER_WIDTH = 0.6;
+            const PLAYER_HEIGHT = 1.8;
+            const PLAYER_EYE_HEIGHT = 1.62;
+            const GRAVITY = -24;
+            const JUMP_SPEED = 8.5;
+            const WALK_SPEED = 4.3;
+            const FLY_SPEED = 8;
+            const MOUSE_SENSITIVITY = 0.003;
+            const TOUCH_SENSITIVITY = 0.004;
+            const BREAK_TIME = 0.35;
+
+            // 方块ID
+            const BLOCK = {
+                AIR: 0,
+                GRASS: 1,
+                DIRT: 2,
+                STONE: 3,
+                LOG: 4,
+                LEAVES: 5,
+                SAND: 6,
+                WATER: 7,
+                GLASS: 8,
+                BRICK: 9,
+                PLANK: 10,
+                BEDROCK: 11,
+            };
+
+            // 方块名称
+            const BLOCK_NAMES = {
+                [BLOCK.AIR]: '空气',
+                [BLOCK.GRASS]: '草方块',
+                [BLOCK.DIRT]: '泥土',
+                [BLOCK.STONE]: '石头',
+                [BLOCK.LOG]: '橡木原木',
+                [BLOCK.LEAVES]: '树叶',
+                [BLOCK.SAND]: '沙子',
+                [BLOCK.WATER]: '水',
+                [BLOCK.GLASS]: '玻璃',
+                [BLOCK.BRICK]: '砖块',
+                [BLOCK.PLANK]: '木板',
+                [BLOCK.BEDROCK]: '基岩',
+            };
+
+            // 可放置方块列表
+            const PLACEABLE_BLOCKS = [
+                BLOCK.GRASS, BLOCK.DIRT, BLOCK.STONE, BLOCK.LOG,
+                BLOCK.LEAVES, BLOCK.SAND, BLOCK.GLASS, BLOCK.BRICK, BLOCK.PLANK
+            ];
+
+            // 透明方块
+            const TRANSPARENT_BLOCKS = new Set([BLOCK.WATER, BLOCK.GLASS, BLOCK.LEAVES, BLOCK.AIR]);
+
+            // 固体方块（用于碰撞检测）
+            const SOLID_BLOCKS = new Set([
+                BLOCK.GRASS, BLOCK.DIRT, BLOCK.STONE, BLOCK.LOG,
+                BLOCK.LEAVES, BLOCK.SAND, BLOCK.BRICK, BLOCK.PLANK, BLOCK.BEDROCK
+            ]);
+
+            // 纹理索引
+            const TEX = {
+                GRASS_TOP: 0,
+                GRASS_SIDE: 1,
+                DIRT: 2,
+                STONE: 3,
+                LOG_SIDE: 4,
+                LOG_TOP: 5,
+                LEAVES: 6,
+                SAND: 7,
+                WATER: 8,
+                GLASS: 9,
+                BRICK: 10,
+                PLANK: 11,
+                BEDROCK: 12,
+                GRASS_BOTTOM: 2,
+            };
+
+            // 每个方块的6个面的纹理索引 [右,左,上,下,前,后]
+            const BLOCK_FACES = {
+                [BLOCK.GRASS]: { px: TEX.GRASS_SIDE, nx: TEX.GRASS_SIDE, py: TEX.GRASS_TOP, ny: TEX.DIRT,
+                    pz: TEX.GRASS_SIDE, nz: TEX.GRASS_SIDE },
+                [BLOCK.DIRT]: { px: TEX.DIRT, nx: TEX.DIRT, py: TEX.DIRT, ny: TEX.DIRT, pz: TEX.DIRT, nz: TEX.DIRT },
+                [BLOCK.STONE]: { px: TEX.STONE, nx: TEX.STONE, py: TEX.STONE, ny: TEX.STONE, pz: TEX.STONE,
+                    nz: TEX.STONE },
+                [BLOCK.LOG]: { px: TEX.LOG_SIDE, nx: TEX.LOG_SIDE, py: TEX.LOG_TOP, ny: TEX.LOG_TOP, pz: TEX.LOG_SIDE,
+                    nz: TEX.LOG_SIDE },
+                [BLOCK.LEAVES]: { px: TEX.LEAVES, nx: TEX.LEAVES, py: TEX.LEAVES, ny: TEX.LEAVES, pz: TEX.LEAVES,
+                    nz: TEX.LEAVES },
+                [BLOCK.SAND]: { px: TEX.SAND, nx: TEX.SAND, py: TEX.SAND, ny: TEX.SAND, pz: TEX.SAND, nz: TEX.SAND },
+                [BLOCK.WATER]: { px: TEX.WATER, nx: TEX.WATER, py: TEX.WATER, ny: TEX.WATER, pz: TEX.WATER,
+                    nz: TEX.WATER },
+                [BLOCK.GLASS]: { px: TEX.GLASS, nx: TEX.GLASS, py: TEX.GLASS, ny: TEX.GLASS, pz: TEX.GLASS,
+                    nz: TEX.GLASS },
+                [BLOCK.BRICK]: { px: TEX.BRICK, nx: TEX.BRICK, py: TEX.BRICK, ny: TEX.BRICK, pz: TEX.BRICK,
+                    nz: TEX.BRICK },
+                [BLOCK.PLANK]: { px: TEX.PLANK, nx: TEX.PLANK, py: TEX.PLANK, ny: TEX.PLANK, pz: TEX.PLANK,
+                    nz: TEX.PLANK },
+                [BLOCK.BEDROCK]: { px: TEX.BEDROCK, nx: TEX.BEDROCK, py: TEX.BEDROCK, ny: TEX.BEDROCK, pz: TEX.BEDROCK,
+                    nz: TEX.BEDROCK },
+            };
+
+            // ==================== 噪声函数 ====================
+            class PerlinNoise {
+                constructor(seed) {
+                    this.seed = seed;
+                    this.perm = new Uint8Array(512);
+                    const p = new Uint8Array(256);
+                    let s = seed;
+                    for (let i = 0; i < 256; i++) {
+                        s = (s * 1103515245 + 12345) & 0x7fffffff;
+                        p[i] = (s >> 8) & 255;
                     }
-                });
+                    for (let i = 0; i < 512; i++) {
+                        this.perm[i] = p[i & 255];
+                    }
+                }
+                fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+                lerp(a, b, t) { return a + t * (b - a); }
+                grad(hash, x, y) {
+                    const h = hash & 3;
+                    const u = h < 2 ? x : y;
+                    const v = h < 2 ? y : x;
+                    return ((h & 1) ? -u : u) + ((h & 2) ? -v : v);
+                }
+                noise2D(x, y) {
+                    const X = Math.floor(x) & 255;
+                    const Y = Math.floor(y) & 255;
+                    const xf = x - Math.floor(x);
+                    const yf = y - Math.floor(y);
+                    const u = this.fade(xf);
+                    const v = this.fade(yf);
+                    const A = this.perm[X] + Y;
+                    const B = this.perm[X + 1] + Y;
+                    const AA = this.perm[A] & 255;
+                    const BA = this.perm[B] & 255;
+                    const AB = this.perm[A + 1] & 255;
+                    const BB = this.perm[B + 1] & 255;
+                    const val = this.lerp(
+                        this.lerp(this.grad(this.perm[AA], xf, yf), this.grad(this.perm[BA], xf - 1, yf), u),
+                        this.lerp(this.grad(this.perm[AB], xf, yf - 1), this.grad(this.perm[BB], xf - 1, yf - 1), u),
+                        v
+                    );
+                    return (val + 1) / 2;
+                }
+                fbm(x, y, octaves = 4, persistence = 0.5) {
+                    let total = 0;
+                    let amplitude = 1;
+                    let frequency = 1;
+                    let maxVal = 0;
+                    for (let i = 0; i < octaves; i++) {
+                        total += this.noise2D(x * frequency, y * frequency) * amplitude;
+                        maxVal += amplitude;
+                        amplitude *= persistence;
+                        frequency *= 2;
+                    }
+                    return total / maxVal;
+                }
+            }
+
+            // ==================== 纹理图集生成 ====================
+            class TextureAtlas {
+                constructor() {
+                    this.size = 256;
+                    this.texSize = 16;
+                    this.cols = this.size / this.texSize;
+                    this.canvas = document.createElement('canvas');
+                    this.canvas.width = this.size;
+                    this.canvas.height = this.size;
+                    this.ctx = this.canvas.getContext('2d');
+                    this.generateTextures();
+                    this.texture = new THREE.CanvasTexture(this.canvas);
+                    this.texture.magFilter = THREE.NearestFilter;
+                    this.texture.minFilter = THREE.NearestFilter;
+                    this.texture.wrapS = THREE.ClampToEdgeWrapping;
+                    this.texture.wrapT = THREE.ClampToEdgeWrapping;
+                }
+
+                getUV(texIndex, u, v) {
+                    const col = texIndex % this.cols;
+                    const row = Math.floor(texIndex / this.cols);
+                    const u0 = (col + u) / this.cols;
+                    const v0 = 1 - (row + 1 - v) / this.cols;
+                    return [u0, v0];
+                }
+
+                drawPixel(texIndex, px, py, color) {
+                    const col = texIndex % this.cols;
+                    const row = Math.floor(texIndex / this.cols);
+                    this.ctx.fillStyle = color;
+                    this.ctx.fillRect(col * this.texSize + px, row * this.texSize + py, 1, 1);
+                }
+
+                generateTextures() {
+                    // 0: 草顶部
+                    this.generateGrassTop(TEX.GRASS_TOP);
+                    // 1: 草侧面
+                    this.generateGrassSide(TEX.GRASS_SIDE);
+                    // 2: 泥土
+                    this.generateDirt(TEX.DIRT);
+                    // 3: 石头
+                    this.generateStone(TEX.STONE);
+                    // 4: 木头侧面
+                    this.generateLogSide(TEX.LOG_SIDE);
+                    // 5: 木头顶部
+                    this.generateLogTop(TEX.LOG_TOP);
+                    // 6: 树叶
+                    this.generateLeaves(TEX.LEAVES);
+                    // 7: 沙子
+                    this.generateSand(TEX.SAND);
+                    // 8: 水
+                    this.generateWater(TEX.WATER);
+                    // 9: 玻璃
+                    this.generateGlass(TEX.GLASS);
+                    // 10: 砖块
+                    this.generateBrick(TEX.BRICK);
+                    // 11: 木板
+                    this.generatePlank(TEX.PLANK);
+                    // 12: 基岩
+                    this.generateBedrock(TEX.BEDROCK);
+                }
+
+                generateGrassTop(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const noise = Math.random() * 20;
+                            const g = 90 + noise;
+                            const r = 60 + noise * 0.5;
+                            const b = 35 + noise * 0.3;
+                            this.drawPixel(tex, x, y, `rgb(${r|0},${g|0},${b|0})`);
+                        }
+                    }
+                }
+                generateGrassSide(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            if (y < 4) {
+                                const noise = Math.random() * 25;
+                                this.drawPixel(tex, x, y, `rgb(${55+noise|0},${85+noise|0},${30+noise*0.3|0})`);
+                            } else {
+                                const noise = Math.random() * 30;
+                                this.drawPixel(tex, x, y, `rgb(${130+noise|0},${95+noise*0.7|0},${60+noise*0.4|0})`);
+                            }
+                        }
+                    }
+                }
+                generateDirt(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const noise = Math.random() * 35;
+                            this.drawPixel(tex, x, y, `rgb(${125+noise|0},${90+noise*0.8|0},${55+noise*0.5|0})`);
+                        }
+                    }
+                }
+                generateStone(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const noise = Math.random() * 30;
+                            const v = 120 + noise;
+                            this.drawPixel(tex, x, y, `rgb(${v|0},${v|0},${(v+5)|0})`);
+                        }
+                    }
+                }
+                generateLogSide(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const stripe = (x + y) % 5;
+                            const noise = Math.random() * 18;
+                            if (stripe < 2) {
+                                this.drawPixel(tex, x, y, `rgb(${70+noise|0},${45+noise*0.6|0},${25+noise*0.3|0})`);
+                            } else {
+                                this.drawPixel(tex, x, y, `rgb(${110+noise|0},${75+noise*0.6|0},${40+noise*0.3|0})`);
+                            }
+                        }
+                    }
+                }
+                generateLogTop(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const dist = Math.sqrt((x - 7.5) ** 2 + (y - 7.5) ** 2);
+                            const ring = Math.floor(dist / 2.5);
+                            const noise = Math.random() * 15;
+                            if (ring % 2 === 0) {
+                                this.drawPixel(tex, x, y, `rgb(${130+noise|0},${90+noise*0.6|0},${45+noise*0.3|0})`);
+                            } else {
+                                this.drawPixel(tex, x, y, `rgb(${95+noise|0},${65+noise*0.6|0},${35+noise*0.3|0})`);
+                            }
+                        }
+                    }
+                }
+                generateLeaves(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const noise = Math.random() * 30;
+                            if (Math.random() < 0.15) {
+                                this.drawPixel(tex, x, y, `rgb(${30+noise|0},${70+noise|0},${20+noise*0.3|0})`);
+                            } else {
+                                this.drawPixel(tex, x, y, `rgb(${45+noise|0},${95+noise|0},${25+noise*0.4|0})`);
+                            }
+                        }
+                    }
+                }
+                generateSand(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const noise = Math.random() * 30;
+                            this.drawPixel(tex, x, y, `rgb(${210+noise|0},${195+noise|0},${150+noise*0.7|0})`);
+                        }
+                    }
+                }
+                generateWater(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const noise = Math.random() * 20;
+                            this.drawPixel(tex, x, y, `rgba(${40+noise|0},${90+noise|0},${200+noise|0},0.7)`);
+                        }
+                    }
+                }
+                generateGlass(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const isBorder = x === 0 || x === 15 || y === 0 || y === 15;
+                            if (isBorder) {
+                                this.drawPixel(tex, x, y, 'rgba(220,230,240,0.8)');
+                            } else if (Math.random() < 0.08) {
+                                this.drawPixel(tex, x, y, 'rgba(200,220,240,0.5)');
+                            } else {
+                                this.drawPixel(tex, x, y, 'rgba(180,200,220,0.25)');
+                            }
+                        }
+                    }
+                }
+                generateBrick(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const brickRow = Math.floor(y / 4);
+                            const offset = brickRow % 2 === 0 ? 0 : 4;
+                            const bx = (x + offset) % 8;
+                            const isMortar = (y % 4 === 3) || bx === 7;
+                            const noise = Math.random() * 20;
+                            if (isMortar) {
+                                this.drawPixel(tex, x, y, `rgb(${180+noise*0.3|0},${170+noise*0.3|0},${165+noise*0.3|0})`);
+                            } else {
+                                this.drawPixel(tex, x, y, `rgb(${140+noise|0},${50+noise*0.4|0},${35+noise*0.3|0})`);
+                            }
+                        }
+                    }
+                }
+                generatePlank(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const plankRow = Math.floor(y / 4);
+                            const offset = plankRow % 2 === 0 ? 0 : 6;
+                            const bx = (x + offset) % 8;
+                            const isGap = (y % 4 === 3) || bx === 7;
+                            const noise = Math.random() * 22;
+                            if (isGap) {
+                                this.drawPixel(tex, x, y, `rgb(${100+noise*0.4|0},${75+noise*0.3|0},${45+noise*0.2|0})`);
+                            } else {
+                                this.drawPixel(tex, x, y, `rgb(${175+noise|0},${140+noise*0.7|0},${90+noise*0.4|0})`);
+                            }
+                        }
+                    }
+                }
+                generateBedrock(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const noise = Math.random() * 40;
+                            const v = 50 + noise;
+                            this.drawPixel(tex, x, y, `rgb(${v|0},${v|0},${(v+8)|0})`);
+                        }
+                    }
+                }
+            }
+
+            // ==================== 世界数据 ====================
+            class World {
+                constructor(seed) {
+                    this.chunks = new Map();
+                    this.noise = new PerlinNoise(seed);
+                    this.treeNoise = new PerlinNoise(seed ^ 0x12345678);
+                }
+
+                getChunkKey(cx, cz) { return cx + ',' + cz; }
+
+                getChunk(cx, cz) {
+                    return this.chunks.get(this.getChunkKey(cx, cz)) || null;
+                }
+
+                getOrCreateChunk(cx, cz) {
+                    const key = this.getChunkKey(cx, cz);
+                    let chunk = this.chunks.get(key);
+                    if (!chunk) {
+                        chunk = this.generateChunk(cx, cz);
+                        this.chunks.set(key, chunk);
+                    }
+                    return chunk;
+                }
+
+                generateChunk(cx, cz) {
+                    const blocks = new Uint8Array(CHUNK_SIZE * CHUNK_SIZE * CHUNK_HEIGHT);
+                    const heightMap = new Uint8Array(CHUNK_SIZE * CHUNK_SIZE);
+                    const worldX = cx * CHUNK_SIZE;
+                    const worldZ = cz * CHUNK_SIZE;
+
+                    // 生成高度图
+                    for (let lx = 0; lx < CHUNK_SIZE; lx++) {
+                        for (let lz = 0; lz < CHUNK_SIZE; lz++) {
+                            const wx = worldX + lx;
+                            const wz = worldZ + lz;
+                            const n1 = this.noise.fbm(wx * 0.025, wz * 0.025, 4, 0.5);
+                            const n2 = this.noise.fbm(wx * 0.08 + 100, wz * 0.08 + 100, 3, 0.5);
+                            let height = Math.floor(20 + n1 * 40 + n2 * 8);
+                            if (height < 3) height = 3;
+                            if (height > CHUNK_HEIGHT - 3) height = CHUNK_HEIGHT - 3;
+                            heightMap[lx * CHUNK_SIZE + lz] = height;
+                        }
+                    }
+
+                    // 填充方块
+                    for (let lx = 0; lx < CHUNK_SIZE; lx++) {
+                        for (let lz = 0; lz < CHUNK_SIZE; lz++) {
+                            const height = heightMap[lx * CHUNK_SIZE + lz];
+                            const wx = worldX + lx;
+                            const wz = worldZ + lz;
+                            const idx = (lx * CHUNK_SIZE + lz) * CHUNK_HEIGHT;
+
+                            // 基岩
+                            blocks[idx] = BLOCK.BEDROCK;
+
+                            const treeThreshold = this.treeNoise.fbm(wx * 0.03 + 500, wz * 0.03 + 500, 3, 0.5);
+
+                            for (let y = 1; y <= height; y++) {
+                                let blockType;
+                                if (y === height) {
+                                    if (height <= SEA_LEVEL + 1) {
+                                        blockType = BLOCK.SAND;
+                                    } else {
+                                        blockType = BLOCK.GRASS;
+                                    }
+                                } else if (y >= height - 3) {
+                                    blockType = (height <= SEA_LEVEL + 1) ? BLOCK.SAND : BLOCK.DIRT;
+                                } else {
+                                    blockType = BLOCK.STONE;
+                                }
+                                blocks[idx + y] = blockType;
+                            }
+
+                            // 水
+                            if (height < SEA_LEVEL) {
+                                for (let y = height + 1; y <= SEA_LEVEL; y++) {
+                                    blocks[idx + y] = BLOCK.WATER;
+                                }
+                            }
+
+                            // 树木
+                            if (height > SEA_LEVEL + 2 && height < CHUNK_HEIGHT - 8 && treeThreshold > 0.62 &&
+                                blocks[idx + height] === BLOCK.GRASS) {
+                                const treeHeight = 4 + Math.floor(Math.random() * 3);
+                                // 树干
+                                for (let ty = 1; ty <= treeHeight; ty++) {
+                                    const by = height + ty;
+                                    if (by < CHUNK_HEIGHT) blocks[idx + by] = BLOCK.LOG;
+                                }
+                                // 树叶
+                                const leafTop = height + treeHeight;
+                                for (let ly = -2; ly <= 1; ly++) {
+                                    const by = leafTop + ly;
+                                    if (by < CHUNK_HEIGHT && by > 0) {
+                                        const radius = ly >= -1 ? 2 : 1;
+                                        for (let lx2 = -radius; lx2 <= radius; lx2++) {
+                                            for (let lz2 = -radius; lz2 <= radius; lz2++) {
+                                                if (Math.abs(lx2) === radius && Math.abs(lz2) === radius && Math.random() <
+                                                    0.4) continue;
+                                                const nx = lx + lx2;
+                                                const nz = lz + lz2;
+                                                if (nx >= 0 && nx < CHUNK_SIZE && nz >= 0 && nz < CHUNK_SIZE) {
+                                                    const nIdx = (nx * CHUNK_SIZE + nz) * CHUNK_HEIGHT + by;
+                                                    if (blocks[nIdx] === BLOCK.AIR || blocks[nIdx] === BLOCK.WATER) {
+                                                        blocks[nIdx] = BLOCK.LEAVES;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                // 顶部树叶
+                                const by = leafTop + 1;
+                                if (by < CHUNK_HEIGHT) {
+                                    for (let lx2 = -1; lx2 <= 1; lx2++) {
+                                        for (let lz2 = -1; lz2 <= 1; lz2++) {
+                                            const nx = lx + lx2;
+                                            const nz = lz + lz2;
+                                            if (nx >= 0 && nx < CHUNK_SIZE && nz >= 0 && nz < CHUNK_SIZE) {
+                                                const nIdx = (nx * CHUNK_SIZE + nz) * CHUNK_HEIGHT + by;
+                                                if (blocks[nIdx] === BLOCK.AIR || blocks[nIdx] === BLOCK.WATER) {
+                                                    blocks[nIdx] = BLOCK.LEAVES;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    return {
+                        cx,
+                        cz,
+                        blocks,
+                        heightMap,
+                        mesh: null,
+                        waterMesh: null,
+                        dirty: true,
+                    };
+                }
+
+                getBlock(wx, wy, wz) {
+                    if (wy < 0 || wy >= CHUNK_HEIGHT) return BLOCK.AIR;
+                    const cx = Math.floor(wx / CHUNK_SIZE);
+                    const cz = Math.floor(wz / CHUNK_SIZE);
+                    const chunk = this.getChunk(cx, cz);
+                    if (!chunk) return BLOCK.AIR;
+                    const lx = ((wx % CHUNK_SIZE) + CHUNK_SIZE) % CHUNK_SIZE;
+                    const lz = ((wz % CHUNK_SIZE) + CHUNK_SIZE) % CHUNK_SIZE;
+                    return chunk.blocks[(lx * CHUNK_SIZE + lz) * CHUNK_HEIGHT + wy];
+                }
+
+                setBlock(wx, wy, wz, blockId) {
+                    if (wy < 0 || wy >= CHUNK_HEIGHT) return;
+                    const cx = Math.floor(wx / CHUNK_SIZE);
+                    const cz = Math.floor(wz / CHUNK_SIZE);
+                    const chunk = this.getChunk(cx, cz);
+                    if (!chunk) return;
+                    const lx = ((wx % CHUNK_SIZE) + CHUNK_SIZE) % CHUNK_SIZE;
+                    const lz = ((wz % CHUNK_SIZE) + CHUNK_SIZE) % CHUNK_SIZE;
+                    chunk.blocks[(lx * CHUNK_SIZE + lz) * CHUNK_HEIGHT + wy] = blockId;
+                    chunk.dirty = true;
+                    // 标记相邻区块
+                    if (lx === 0) this.markDirty(cx - 1, cz);
+                    if (lx === CHUNK_SIZE - 1) this.markDirty(cx + 1, cz);
+                    if (lz === 0) this.markDirty(cx, cz - 1);
+                    if (lz === CHUNK_SIZE - 1) this.markDirty(cx, cz + 1);
+                }
+
+                markDirty(cx, cz) {
+                    const chunk = this.getChunk(cx, cz);
+                    if (chunk) chunk.dirty = true;
+                }
+
+                isSolid(wx, wy, wz) {
+                    return SOLID_BLOCKS.has(this.getBlock(wx, wy, wz));
+                }
+
+                isTransparent(wx, wy, wz) {
+                    return TRANSPARENT_BLOCKS.has(this.getBlock(wx, wy, wz));
+                }
+            }
+
+            // ==================== 区块网格构建 ====================
+            class ChunkMeshBuilder {
+                constructor(world, atlas) {
+                    this.world = world;
+                    this.atlas = atlas;
+                }
+
+                buildMesh(chunk) {
+                    const positions = [];
+                    const normals = [];
+                    const uvs = [];
+                    const indices = [];
+                    const waterPositions = [];
+                    const waterNormals = [];
+                    const waterUvs = [];
+                    const waterIndices = [];
+
+                    const blocks = chunk.blocks;
+                    const startX = chunk.cx * CHUNK_SIZE;
+                    const startZ = chunk.cz * CHUNK_SIZE;
+
+                    for (let lx = 0; lx < CHUNK_SIZE; lx++) {
+                        for (let lz = 0; lz < CHUNK_SIZE; lz++) {
+                            for (let ly = 0; ly < CHUNK_HEIGHT; ly++) {
+                                const blockId = blocks[(lx * CHUNK_SIZE + lz) * CHUNK_HEIGHT + ly];
+                                if (blockId === BLOCK.AIR) continue;
+
+                                const wx = startX + lx;
+                                const wy = ly;
+                                const wz = startZ + lz;
+                                const faces = BLOCK_FACES[blockId];
+                                if (!faces) continue;
+
+                                const isWater = blockId === BLOCK.WATER;
+                                const isGlass = blockId === BLOCK.GLASS;
+                                const isLeaves = blockId === BLOCK.LEAVES;
+                                const isTransparentBlock = isWater || isGlass || isLeaves;
+
+                                // 6个面: [px, nx, py, ny, pz, nz]
+                                const faceDefs = [
+                                    { dir: [1, 0, 0], tex: faces.px, nx: 1, ny: 0, nz: 0, corners: [
+                                            [1, 0, 1],
+                                            [1, 0, 0],
+                                            [1, 1, 0],
+                                            [1, 1, 1]
+                                        ] },
+                                    { dir: [-1, 0, 0], tex: faces.nx, nx: -1, ny: 0, nz: 0, corners: [
+                                            [0, 0, 0],
+                                            [0, 0, 1],
+                                            [0, 1, 1],
+                                            [0, 1, 0]
+                                        ] },
+                                    { dir: [0, 1, 0], tex: faces.py, nx: 0, ny: 1, nz: 0, corners: [
+                                            [0, 1, 1],
+                                            [1, 1, 1],
+                                            [1, 1, 0],
+                                            [0, 1, 0]
+                                        ] },
+                                    { dir: [0, -1, 0], tex: faces.ny, nx: 0, ny: -1, nz: 0, corners: [
+                                            [0, 0, 0],
+                                            [1, 0, 0],
+                                            [1, 0, 1],
+                                            [0, 0, 1]
+                                        ] },
+                                    { dir: [0, 0, 1], tex: faces.pz, nx: 0, ny: 0, nz: 1, corners: [
+                                            [1, 0, 1],
+                                            [0, 0, 1],
+                                            [0, 1, 1],
+                                            [1, 1, 1]
+                                        ] },
+                                    { dir: [0, 0, -1], tex: faces.nz, nx: 0, ny: 0, nz: -1, corners: [
+                                            [0, 0, 0],
+                                            [1, 0, 0],
+                                            [1, 1, 0],
+                                            [0, 1, 0]
+                                        ] },
+                                ];
+
+                                for (const face of faceDefs) {
+                                    const neighborBlock = this.world.getBlock(wx + face.dir[0], wy + face.dir[1], wz + face
+                                        .dir[2]);
+                                    const neighborTransparent = TRANSPARENT_BLOCKS.has(neighborBlock);
+
+                                    let shouldRender = false;
+                                    if (isTransparentBlock) {
+                                        if (neighborBlock === BLOCK.AIR) shouldRender = true;
+                                        else if (neighborBlock !== blockId && neighborTransparent) shouldRender = true;
+                                        else if (!neighborTransparent) shouldRender = false;
+                                    } else {
+                                        shouldRender = neighborBlock === BLOCK.AIR || neighborTransparent;
+                                    }
+
+                                    if (!shouldRender) continue;
+
+                                    const texIndex = face.tex;
+                                    const isWaterFace = isWater;
+                                    const target = isWaterFace ? waterPositions : positions;
+                                    const targetNorms = isWaterFace ? waterNormals : normals;
+                                    const targetUVs = isWaterFace ? waterUvs : uvs;
+                                    const targetIndices = isWaterFace ? waterIndices : indices;
+                                    const baseIndex = target.length / 3;
+
+                                    for (const corner of face.corners) {
+                                        const px = wx + corner[0];
+                                        const py = wy + corner[1];
+                                        const pz = wz + corner[2];
+                                        target.push(px, py, pz);
+                                        targetNorms.push(face.nx, face.ny, face.nz);
+                                        const uv = this.atlas.getUV(texIndex, corner[0] === 1 ? 1 : corner[0] === 0 ?
+                                            0 : (corner[2] || corner[1] || 0), corner[1] === 1 ? 1 : corner[1] === 0 ?
+                                            0 : (corner[2] || 1));
+                                        targetUVs.push(uv[0], uv[1]);
+                                    }
+
+                                    // UV修正：对于侧面使用正确的纹理坐标
+                                    const uvStart = targetUVs.length - 8;
+                                    const cornerUVs = this.getCornerUVs(face, texIndex);
+                                    for (let i = 0; i < 4; i++) {
+                                        targetUVs[uvStart + i * 2] = cornerUVs[i][0];
+                                        targetUVs[uvStart + i * 2 + 1] = cornerUVs[i][1];
+                                    }
+
+                                    targetIndices.push(baseIndex, baseIndex + 1, baseIndex + 2);
+                                    targetIndices.push(baseIndex, baseIndex + 2, baseIndex + 3);
+                                }
+                            }
+                        }
+                    }
+
+                    return {
+                        solid: { positions, normals, uvs, indices },
+                        water: { positions: waterPositions, normals: waterNormals, uvs: waterUvs,
+                        indices: waterIndices },
+                    };
+                }
+
+                getCornerUVs(face, texIndex) {
+                    const atlas = this.atlas;
+                    const col = texIndex % atlas.cols;
+                    const row = Math.floor(texIndex / atlas.cols);
+                    const u0 = col / atlas.cols;
+                    const v0 = 1 - (row + 1) / atlas.cols;
+                    const u1 = (col + 1) / atlas.cols;
+                    const v1 = 1 - row / atlas.cols;
+
+                    const isTop = face.dir[1] === 1;
+                    const isBottom = face.dir[1] === -1;
+                    const isSide = face.dir[0] !== 0 || face.dir[2] !== 0;
+
+                    if (isTop || isBottom) {
+                        return [
+                            [u0, v0],
+                            [u1, v0],
+                            [u1, v1],
+                            [u0, v1]
+                        ];
+                    }
+                    if (isSide) {
+                        return [
+                            [u0, v0],
+                            [u1, v0],
+                            [u1, v1],
+                            [u0, v1]
+                        ];
+                    }
+                    return [
+                        [u0, v0],
+                        [u1, v0],
+                        [u1, v1],
+                        [u0, v1]
+                    ];
+                }
+            }
+
+            // ==================== 3D体素射线检测 ====================
+            function raycastVoxel(world, origin, direction, maxDist) {
+                let x = Math.floor(origin.x);
+                let y = Math.floor(origin.y);
+                let z = Math.floor(origin.z);
+
+                const stepX = direction.x > 0 ? 1 : -1;
+                const stepY = direction.y > 0 ? 1 : -1;
+                const stepZ = direction.z > 0 ? 1 : -1;
+
+                const tDeltaX = Math.abs(1 / (direction.x || 0.0001));
+                const tDeltaY = Math.abs(1 / (direction.y || 0.0001));
+                const tDeltaZ = Math.abs(1 / (direction.z || 0.0001));
+
+                let tMaxX = direction.x > 0 ?
+                    (x + 1 - origin.x) / direction.x :
+                    direction.x < 0 ? (x - origin.x) / direction.x : Infinity;
+                let tMaxY = direction.y > 0 ?
+                    (y + 1 - origin.y) / direction.y :
+                    direction.y < 0 ? (y - origin.y) / direction.y : Infinity;
+                let tMaxZ = direction.z > 0 ?
+                    (z + 1 - origin.z) / direction.z :
+                    direction.z < 0 ? (z - origin.z) / direction.z : Infinity;
+
+                let face = [0, 0, 0];
+                let t = 0;
+
+                for (let i = 0; i < 100; i++) {
+                    const blockId = world.getBlock(x, y, z);
+                    if (blockId !== BLOCK.AIR && blockId !== BLOCK.WATER) {
+                        return { x, y, z, blockId, face, distance: t };
+                    }
+
+                    if (tMaxX < tMaxY && tMaxX < tMaxZ) {
+                        x += stepX;
+                        t = tMaxX;
+                        tMaxX += tDeltaX;
+                        face = [-stepX, 0, 0];
+                    } else if (tMaxY < tMaxZ) {
+                        y += stepY;
+                        t = tMaxY;
+                        tMaxY += tDeltaY;
+                        face = [0, -stepY, 0];
+                    } else {
+                        z += stepZ;
+                        t = tMaxZ;
+                        tMaxZ += tDeltaZ;
+                        face = [0, 0, -stepZ];
+                    }
+
+                    if (t > maxDist) break;
+                    if (y < 0 || y >= CHUNK_HEIGHT) break;
+                }
+
+                return null;
+            }
+
+            // ==================== 游戏主类 ====================
+            class MinecraftMobile {
+                constructor() {
+                    this.canvasContainer = document.getElementById('gameCanvas');
+                    this.scene = new THREE.Scene();
+                    this.scene.background = new THREE.Color(0x87CEEB);
+                    this.scene.fog = new THREE.Fog(0x87CEEB, 30, 60);
+
+                    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 200);
+                    this.renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
+                    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                    this.renderer.setSize(window.innerWidth, window.innerHeight);
+                    this.renderer.shadowMap.enabled = false;
+                    this.canvasContainer.appendChild(this.renderer.domElement);
+
+                    // 光照
+                    const ambientLight = new THREE.AmbientLight(0xffffff, 0.55);
+                    this.scene.add(ambientLight);
+                    const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+                    dirLight.position.set(50, 100, 30);
+                    dirLight.target.position.set(0, 0, 0);
+                    this.scene.add(dirLight);
+                    this.scene.add(dirLight.target);
+
+                    // 纹理图集
+                    this.atlas = new TextureAtlas();
+                    this.textureAtlas = this.atlas.texture;
+
+                    // 世界
+                    const seed = Math.floor(Math.random() * 1000000);
+                    this.world = new World(seed);
+                    this.meshBuilder = new ChunkMeshBuilder(this.world, this.atlas);
+
+                    // 材质
+                    this.solidMaterial = new THREE.MeshLambertMaterial({
+                        map: this.textureAtlas,
+                        vertexColors: false,
+                        side: THREE.FrontSide,
+                    });
+                    this.waterMaterial = new THREE.MeshLambertMaterial({
+                        map: this.textureAtlas,
+                        transparent: true,
+                        opacity: 0.65,
+                        side: THREE.DoubleSide,
+                        depthWrite: false,
+                    });
+
+                    // 玩家状态
+                    this.playerPosition = new THREE.Vector3(8, 40, 8);
+                    this.playerVelocity = new THREE.Vector3(0, 0, 0);
+                    this.playerYaw = 0;
+                    this.playerPitch = 0;
+                    this.isOnGround = false;
+                    this.isFlying = false;
+                    this.selectedSlot = 0;
+                    this.breakProgress = 0;
+                    this.isBreaking = false;
+
+                    // 触摸状态
+                    this.touchState = {
+                        joystick: null,
+                        lookTouch: null,
+                        jumpPressed: false,
+                    };
+                    this.moveInput = { x: 0, y: 0 };
+                    this.lookDelta = { x: 0, y: 0 };
+
+                    // 高亮方块
+                    this.highlightMesh = null;
+                    this.createHighlightMesh();
+
+                    // 粒子系统
+                    this.particles = [];
+                    this.particleGeo = new THREE.BufferGeometry();
+                    this.particleMaterial = new THREE.PointsMaterial({
+                        color: 0xcccccc,
+                        size: 0.08,
+                        transparent: true,
+                        opacity: 0.8,
+                        sizeAttenuation: true,
+                    });
+                    this.particleSystem = new THREE.Points(this.particleGeo, this.particleMaterial);
+                    this.scene.add(this.particleSystem);
+
+                    // 云朵
+                    this.createClouds();
+
+                    // 初始化UI
+                    this.initUI();
+                    this.initTouchControls();
+                    this.initResizeHandler();
+                    this.initFullscreenAndOrientation();
+
+                    // 生成初始区块
+                    this.generateInitialChunks();
+
+                    // 启动游戏循环
+                    this.lastTime = performance.now();
+                    this.fpsCounter = 0;
+                    this.fpsTime = 0;
+                    this.fpsDisplay = 0;
+                    this.raycastResult = null;
+                    this.gameLoop();
+                }
+
+                createHighlightMesh() {
+                    const geo = new THREE.BoxGeometry(1.01, 1.01, 1.01);
+                    const edges = new THREE.EdgesGeometry(geo);
+                    const mat = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 2, transparent: true,
+                        opacity: 0.8 });
+                    this.highlightMesh = new THREE.LineSegments(edges, mat);
+                    this.highlightMesh.visible = false;
+                    this.scene.add(this.highlightMesh);
+                }
+
+                createClouds() {
+                    const cloudGroup = new THREE.Group();
+                    const cloudMat = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.8,
+                        side: THREE.DoubleSide });
+                    for (let i = 0; i < 12; i++) {
+                        const cloudGeo = new THREE.PlaneGeometry(8 + Math.random() * 12, 3 + Math.random() * 4);
+                        const cloud = new THREE.Mesh(cloudGeo, cloudMat);
+                        cloud.position.set(
+                            (Math.random() - 0.5) * 80,
+                            45 + Math.random() * 10,
+                            (Math.random() - 0.5) * 80
+                        );
+                        cloud.rotation.x = -Math.PI / 2;
+                        cloud.rotation.z = Math.random() * Math.PI;
+                        cloudGroup.add(cloud);
+                    }
+                    this.scene.add(cloudGroup);
+                    this.cloudGroup = cloudGroup;
+                }
+
+                generateInitialChunks() {
+                    const px = Math.floor(this.playerPosition.x / CHUNK_SIZE);
+                    const pz = Math.floor(this.playerPosition.z / CHUNK_SIZE);
+                    const totalChunks = (RENDER_DISTANCE * 2 + 1) ** 2;
+                    let loaded = 0;
+                    const loadingBar = document.getElementById('loading-bar');
+                    const loadingText = document.getElementById('loading-text');
+
+                    for (let dx = -RENDER_DISTANCE; dx <= RENDER_DISTANCE; dx++) {
+                        for (let dz = -RENDER_DISTANCE; dz <= RENDER_DISTANCE; dz++) {
+                            this.world.getOrCreateChunk(px + dx, pz + dz);
+                            loaded++;
+                            loadingBar.style.width = Math.min(80, (loaded / totalChunks) * 80) + '%';
+                            loadingText.textContent = `生成区块 ${loaded}/${totalChunks}...`;
+                        }
+                    }
+
+                    // 构建网格
+                    for (let dx = -RENDER_DISTANCE; dx <= RENDER_DISTANCE; dx++) {
+                        for (let dz = -RENDER_DISTANCE; dz <= RENDER_DISTANCE; dz++) {
+                            this.buildChunkMesh(px + dx, pz + dz);
+                        }
+                    }
+
+                    loadingBar.style.width = '100%';
+                    loadingText.textContent = '完成！';
+                    setTimeout(() => {
+                        document.getElementById('loading-screen').classList.add('hidden');
+                        setTimeout(() => {
+                            document.getElementById('touch-hint').classList.add('hidden');
+                        }, 3000);
+                    }, 300);
+
+                    // 设置玩家初始位置在地面上
+                    const groundY = this.findGroundHeight(px * CHUNK_SIZE + 8, pz * CHUNK_SIZE + 8);
+                    this.playerPosition.y = groundY + 0.1;
+                }
+
+                findGroundHeight(wx, wz) {
+                    for (let y = CHUNK_HEIGHT - 1; y >= 0; y--) {
+                        const block = this.world.getBlock(Math.floor(wx), y, Math.floor(wz));
+                        if (SOLID_BLOCKS.has(block)) {
+                            return y + 1;
+                        }
+                    }
+                    return SEA_LEVEL + 1;
+                }
+
+                buildChunkMesh(cx, cz) {
+                    const chunk = this.world.getOrCreateChunk(cx, cz);
+                    const result = this.meshBuilder.buildMesh(chunk);
+
+                    // 移除旧mesh
+                    if (chunk.mesh) {
+                        this.scene.remove(chunk.mesh);
+                        chunk.mesh.geometry.dispose();
+                    }
+                    if (chunk.waterMesh) {
+                        this.scene.remove(chunk.waterMesh);
+                        chunk.waterMesh.geometry.dispose();
+                    }
+
+                    // 创建solid mesh
+                    if (result.solid.positions.length > 0) {
+                        const geo = new THREE.BufferGeometry();
+                        geo.setAttribute('position', new THREE.Float32BufferAttribute(result.solid.positions, 3));
+                        geo.setAttribute('normal', new THREE.Float32BufferAttribute(result.solid.normals, 3));
+                        geo.setAttribute('uv', new THREE.Float32BufferAttribute(result.solid.uvs, 2));
+                        geo.setIndex(result.solid.indices);
+                        const mesh = new THREE.Mesh(geo, this.solidMaterial);
+                        mesh.position.set(0, 0, 0);
+                        this.scene.add(mesh);
+                        chunk.mesh = mesh;
+                    } else {
+                        chunk.mesh = null;
+                    }
+
+                    // 创建water mesh
+                    if (result.water.positions.length > 0) {
+                        const geo = new THREE.BufferGeometry();
+                        geo.setAttribute('position', new THREE.Float32BufferAttribute(result.water.positions, 3));
+                        geo.setAttribute('normal', new THREE.Float32BufferAttribute(result.water.normals, 3));
+                        geo.setAttribute('uv', new THREE.Float32BufferAttribute(result.water.uvs, 2));
+                        geo.setIndex(result.water.indices);
+                        const mesh = new THREE.Mesh(geo, this.waterMaterial);
+                        mesh.renderOrder = 1;
+                        this.scene.add(mesh);
+                        chunk.waterMesh = mesh;
+                    } else {
+                        chunk.waterMesh = null;
+                    }
+
+                    chunk.dirty = false;
+                }
+
+                updateChunks() {
+                    const px = Math.floor(this.playerPosition.x / CHUNK_SIZE);
+                    const pz = Math.floor(this.playerPosition.z / CHUNK_SIZE);
+
+                    // 重建dirty区块
+                    for (const chunk of this.world.chunks.values()) {
+                        if (chunk.dirty) {
+                            const dist = Math.max(Math.abs(chunk.cx - px), Math.abs(chunk.cz - pz));
+                            if (dist <= RENDER_DISTANCE + 1) {
+                                this.buildChunkMesh(chunk.cx, chunk.cz);
+                            }
+                        }
+                    }
+
+                    // 移除远距离区块的mesh
+                    for (const chunk of this.world.chunks.values()) {
+                        const dist = Math.max(Math.abs(chunk.cx - px), Math.abs(chunk.cz - pz));
+                        if (dist > RENDER_DISTANCE + 1) {
+                            if (chunk.mesh) {
+                                this.scene.remove(chunk.mesh);
+                                chunk.mesh.geometry.dispose();
+                                chunk.mesh = null;
+                            }
+                            if (chunk.waterMesh) {
+                                this.scene.remove(chunk.waterMesh);
+                                chunk.waterMesh.geometry.dispose();
+                                chunk.waterMesh = null;
+                            }
+                        } else if (dist <= RENDER_DISTANCE && !chunk.mesh && chunk.dirty === false) {
+                            if (!chunk.mesh && !chunk.waterMesh) {
+                                this.buildChunkMesh(chunk.cx, chunk.cz);
+                            }
+                        }
+                    }
+
+                    // 加载新区块
+                    for (let dx = -RENDER_DISTANCE; dx <= RENDER_DISTANCE; dx++) {
+                        for (let dz = -RENDER_DISTANCE; dz <= RENDER_DISTANCE; dz++) {
+                            const chunk = this.world.getChunk(px + dx, pz + dz);
+                            if (!chunk) {
+                                this.world.getOrCreateChunk(px + dx, pz + dz);
+                                this.buildChunkMesh(px + dx, pz + dz);
+                            }
+                        }
+                    }
+                }
+
+                initUI() {
+                    const hotbar = document.getElementById('hotbar');
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 16;
+                    canvas.height = 16;
+                    const ctx = canvas.getContext('2d');
+                    const atlasCanvas = this.atlas.canvas;
+
+                    PLACEABLE_BLOCKS.forEach((blockId, index) => {
+                        const slot = document.createElement('div');
+                        slot.className = 'hotbar-slot' + (index === this.selectedSlot ? ' active' : '');
+                        slot.dataset.index = index;
+
+                        const texIndex = this.getBlockIconTexture(blockId);
+                        const col = texIndex % this.atlas.cols;
+                        const row = Math.floor(texIndex / this.atlas.cols);
+                        ctx.clearRect(0, 0, 16, 16);
+                        ctx.drawImage(atlasCanvas, col * 16, row * 16, 16, 16, 0, 0, 16, 16);
+                        const img = document.createElement('img');
+                        img.src = canvas.toDataURL();
+                        img.alt = BLOCK_NAMES[blockId] || '方块';
+                        slot.appendChild(img);
+
+                        const numSpan = document.createElement('span');
+                        numSpan.className = 'slot-number';
+                        numSpan.textContent = index + 1;
+                        slot.appendChild(numSpan);
+
+                        slot.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            this.selectSlot(index);
+                        });
+                        slot.addEventListener('touchstart', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            this.selectSlot(index);
+                        }, { passive: false });
+
+                        hotbar.appendChild(slot);
+                    });
+                }
+
+                getBlockIconTexture(blockId) {
+                    const faces = BLOCK_FACES[blockId];
+                    if (!faces) return TEX.STONE;
+                    if (blockId === BLOCK.GRASS) return TEX.GRASS_SIDE;
+                    if (blockId === BLOCK.LOG) return TEX.LOG_SIDE;
+                    if (blockId === BLOCK.PLANK) return TEX.PLANK;
+                    if (blockId === BLOCK.BRICK) return TEX.BRICK;
+                    if (blockId === BLOCK.GLASS) return TEX.GLASS;
+                    if (blockId === BLOCK.LEAVES) return TEX.LEAVES;
+                    if (blockId === BLOCK.SAND) return TEX.SAND;
+                    if (blockId === BLOCK.DIRT) return TEX.DIRT;
+                    if (blockId === BLOCK.STONE) return TEX.STONE;
+                    return faces.py || TEX.STONE;
+                }
+
+                selectSlot(index) {
+                    this.selectedSlot = index;
+                    const slots = document.querySelectorAll('.hotbar-slot');
+                    slots.forEach((slot, i) => {
+                        slot.classList.toggle('active', i === index);
+                    });
+                }
+
+                initResizeHandler() {
+                    window.addEventListener('resize', () => {
+                        this.camera.aspect = window.innerWidth / window.innerHeight;
+                        this.camera.updateProjectionMatrix();
+                        this.renderer.setSize(window.innerWidth, window.innerHeight);
+                    });
+                    window.addEventListener('orientationchange', () => {
+                        setTimeout(() => {
+                            this.camera.aspect = window.innerWidth / window.innerHeight;
+                            this.camera.updateProjectionMatrix();
+                            this.renderer.setSize(window.innerWidth, window.innerHeight);
+                            this.checkOrientation();
+                        }, 300);
+                    });
+                }
+
+                initFullscreenAndOrientation() {
+                    const fullscreenBtn = document.getElementById('fullscreen-btn');
+                    const exitFullscreenBtn = document.getElementById('exit-fullscreen-btn');
+                    const orientationHint = document.getElementById('orientation-hint');
+                    const rotateBtn = document.getElementById('rotate-btn');
+
+                    fullscreenBtn.addEventListener('click', () => {
+                        try {
+                            if (document.documentElement.requestFullscreen) {
+                                document.documentElement.requestFullscreen();
+                            } else if (document.documentElement.webkitRequestFullscreen) {
+                                document.documentElement.webkitRequestFullscreen();
+                            }
+                        } catch (e) {}
+                        // 尝试锁定横屏方向
+                        if (screen.orientation && screen.orientation.lock) {
+                            screen.orientation.lock('landscape').catch(() => {});
+                        }
+                    });
+
+                    exitFullscreenBtn.addEventListener('click', () => {
+                        try {
+                            if (document.exitFullscreen) {
+                                document.exitFullscreen();
+                            } else if (document.webkitExitFullscreen) {
+                                document.webkitExitFullscreen();
+                            }
+                        } catch (e) {}
+                    });
+
+                    document.addEventListener('fullscreenchange', () => {
+                        if (document.fullscreenElement) {
+                            exitFullscreenBtn.style.display = 'flex';
+                            fullscreenBtn.style.display = 'none';
+                        } else {
+                            exitFullscreenBtn.style.display = 'none';
+                            fullscreenBtn.style.display = 'flex';
+                        }
+                    });
+                    document.addEventListener('webkitfullscreenchange', () => {
+                        if (document.webkitFullscreenElement) {
+                            exitFullscreenBtn.style.display = 'flex';
+                            fullscreenBtn.style.display = 'none';
+                        } else {
+                            exitFullscreenBtn.style.display = 'none';
+                            fullscreenBtn.style.display = 'flex';
+                        }
+                    });
+
+                    // 检查方向
+                    this.checkOrientation();
+                    rotateBtn.addEventListener('click', () => {
+                        orientationHint.style.display = 'none';
+                    });
+                }
+
+                checkOrientation() {
+                    const orientationHint = document.getElementById('orientation-hint');
+                    if (window.innerHeight > window.innerWidth) {
+                        orientationHint.style.display = 'flex';
+                    } else {
+                        orientationHint.style.display = 'none';
+                    }
+                }
+
+                initTouchControls() {
+                    const joystickZone = document.getElementById('joystick-zone');
+                    const joystickBase = document.getElementById('joystick-base');
+                    const joystickKnob = document.getElementById('joystick-knob');
+                    const jumpBtn = document.getElementById('jump-btn');
+                    const placeBtn = document.getElementById('place-btn');
+                    const breakBtn = document.getElementById('break-btn');
+                    const canvas = this.renderer.domElement;
+
+                    // 摇杆 - 使用touches列表
+                    joystickZone.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (this.touchState.joystick) return;
+                        const touch = e.changedTouches[0];
+                        this.touchState.joystick = {
+                            id: touch.identifier,
+                            startX: touch.clientX,
+                            startY: touch.clientY,
+                            currentX: touch.clientX,
+                            currentY: touch.clientY,
+                        };
+                        joystickBase.style.display = 'block';
+                        joystickBase.style.left = (touch.clientX - 55) + 'px';
+                        joystickBase.style.top = (touch.clientY - 55) + 'px';
+                        joystickKnob.style.left = '33px';
+                        joystickKnob.style.top = '33px';
+                    }, { passive: false });
+
+                    joystickZone.addEventListener('touchmove', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const touch = this.findTouch(e.touches, this.touchState.joystick?.id);
+                        if (!touch || !this.touchState.joystick) return;
+                        this.touchState.joystick.currentX = touch.clientX;
+                        this.touchState.joystick.currentY = touch.clientY;
+                        const dx = touch.clientX - this.touchState.joystick.startX;
+                        const dy = touch.clientY - this.touchState.joystick.startY;
+                        const maxDist = 45;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        const clampedDist = Math.min(dist, maxDist);
+                        const angle = Math.atan2(dy, dx);
+                        const knobX = Math.cos(angle) * clampedDist;
+                        const knobY = Math.sin(angle) * clampedDist;
+                        joystickKnob.style.left = (33 + knobX) + 'px';
+                        joystickKnob.style.top = (33 + knobY) + 'px';
+                        this.moveInput.x = dx / maxDist;
+                        this.moveInput.y = -dy / maxDist;
+                        const mag = Math.sqrt(this.moveInput.x ** 2 + this.moveInput.y ** 2);
+                        if (mag > 1) {
+                            this.moveInput.x /= mag;
+                            this.moveInput.y /= mag;
+                        }
+                    }, { passive: false });
+
+                    const endJoystick = (e) => {
+                        e.stopPropagation();
+                        const touch = this.findTouch(e.changedTouches, this.touchState.joystick?.id);
+                        if (touch) {
+                            this.touchState.joystick = null;
+                            this.moveInput.x = 0;
+                            this.moveInput.y = 0;
+                            joystickBase.style.display = 'none';
+                        }
+                    };
+                    joystickZone.addEventListener('touchend', endJoystick, { passive: true });
+                    joystickZone.addEventListener('touchcancel', endJoystick, { passive: true });
+
+                    // 视角控制 - 在画布上
+                    canvas.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        for (const touch of e.changedTouches) {
+                            if (this.touchState.lookTouch === null) {
+                                this.touchState.lookTouch = {
+                                    id: touch.identifier,
+                                    lastX: touch.clientX,
+                                    lastY: touch.clientY,
+                                };
+                            }
+                        }
+                    }, { passive: false });
+
+                    canvas.addEventListener('touchmove', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const touch = this.findTouch(e.touches, this.touchState.lookTouch?.id);
+                        if (touch) {
+                            const dx = touch.clientX - this.touchState.lookTouch.lastX;
+                            const dy = touch.clientY - this.touchState.lookTouch.lastY;
+                            this.touchState.lookTouch.lastX = touch.clientX;
+                            this.touchState.lookTouch.lastY = touch.clientY;
+                            this.lookDelta.x += dx;
+                            this.lookDelta.y += dy;
+                        }
+                    }, { passive: false });
+
+                    const endLook = (e) => {
+                        e.stopPropagation();
+                        const touch = this.findTouch(e.changedTouches, this.touchState.lookTouch?.id);
+                        if (touch) {
+                            this.touchState.lookTouch = null;
+                        }
+                    };
+                    canvas.addEventListener('touchend', endLook, { passive: true });
+                    canvas.addEventListener('touchcancel', endLook, { passive: true });
+
+                    // 跳跃按钮
+                    jumpBtn.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.touchState.jumpPressed = true;
+                        this.tryJump();
+                    }, { passive: false });
+                    jumpBtn.addEventListener('touchend', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.touchState.jumpPressed = false;
+                    }, { passive: false });
+
+                    // 放置按钮
+                    placeBtn.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.placeBlock();
+                    }, { passive: false });
+
+                    // 破坏按钮
+                    breakBtn.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.breakBlock();
+                    }, { passive: false });
+
+                    // 点击画布放置方块（右侧区域）
+                    let lastTapTime = 0;
+                    canvas.addEventListener('click', (e) => {
+                        const now = performance.now();
+                        if (now - lastTapTime < 300) return;
+                        lastTapTime = now;
+                        if (e.clientX < window.innerWidth * 0.45) return;
+                        this.placeBlock();
+                    });
+
+                    // 阻止上下文菜单
+                    canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+                }
+
+                findTouch(touches, id) {
+                    if (id === undefined || id === null) return null;
+                    for (const touch of touches) {
+                        if (touch.identifier === id) return touch;
+                    }
+                    return null;
+                }
+
+                tryJump() {
+                    if (this.isOnGround) {
+                        this.playerVelocity.y = JUMP_SPEED;
+                        this.isOnGround = false;
+                        this.playSound('jump');
+                    }
+                }
+
+                placeBlock() {
+                    const target = this.getTargetBlock();
+                    if (!target) return;
+                    const placePos = {
+                        x: target.x + target.face[0],
+                        y: target.y + target.face[1],
+                        z: target.z + target.face[2],
+                    };
+                    if (placePos.y < 0 || placePos.y >= CHUNK_HEIGHT) return;
+
+                    const existingBlock = this.world.getBlock(placePos.x, placePos.y, placePos.z);
+                    if (existingBlock !== BLOCK.AIR && existingBlock !== BLOCK.WATER) return;
+
+                    // 检查是否与玩家重叠
+                    const playerBox = this.getPlayerAABB();
+                    const blockBox = {
+                        minX: placePos.x,
+                        maxX: placePos.x + 1,
+                        minY: placePos.y,
+                        maxY: placePos.y + 1,
+                        minZ: placePos.z,
+                        maxZ: placePos.z + 1,
+                    };
+                    if (this.aabbIntersect(playerBox, blockBox)) return;
+
+                    const blockId = PLACEABLE_BLOCKS[this.selectedSlot];
+                    this.world.setBlock(placePos.x, placePos.y, placePos.z, blockId);
+                    this.playSound('place');
+                    this.spawnBlockParticles(placePos.x + 0.5, placePos.y + 0.5, placePos.z + 0.5, blockId);
+                }
+
+                breakBlock() {
+                    const target = this.getTargetBlock();
+                    if (!target) return;
+                    if (target.blockId === BLOCK.BEDROCK) return;
+                    if (target.blockId === BLOCK.WATER || target.blockId === BLOCK.AIR) return;
+                    const blockId = target.blockId;
+                    this.world.setBlock(target.x, target.y, target.z, BLOCK.AIR);
+                    this.playSound('break');
+                    this.spawnBlockParticles(target.x + 0.5, target.y + 0.5, target.z + 0.5, blockId);
+                }
+
+                getTargetBlock() {
+                    const direction = new THREE.Vector3(0, 0, -1);
+                    direction.applyEuler(new THREE.Euler(this.playerPitch, this.playerYaw, 0, 'YXZ'));
+                    const eyePos = new THREE.Vector3(
+                        this.playerPosition.x,
+                        this.playerPosition.y + PLAYER_EYE_HEIGHT,
+                        this.playerPosition.z
+                    );
+                    return raycastVoxel(this.world, eyePos, direction, MAX_PLACE_DISTANCE);
+                }
+
+                getPlayerAABB() {
+                    const halfW = PLAYER_WIDTH / 2;
+                    return {
+                        minX: this.playerPosition.x - halfW,
+                        maxX: this.playerPosition.x + halfW,
+                        minY: this.playerPosition.y,
+                        maxY: this.playerPosition.y + PLAYER_HEIGHT,
+                        minZ: this.playerPosition.z - halfW,
+                        maxZ: this.playerPosition.z + halfW,
+                    };
+                }
+
+                aabbIntersect(a, b) {
+                    return a.minX < b.maxX && a.maxX > b.minX &&
+                        a.minY < b.maxY && a.maxY > b.minY &&
+                        a.minZ < b.maxZ && a.maxZ > b.minZ;
+                }
+
+                checkCollision(pos) {
+                    const halfW = PLAYER_WIDTH / 2;
+                    const minX = Math.floor(pos.x - halfW);
+                    const maxX = Math.floor(pos.x + halfW);
+                    const minY = Math.floor(pos.y);
+                    const maxY = Math.floor(pos.y + PLAYER_HEIGHT);
+                    const minZ = Math.floor(pos.z - halfW);
+                    const maxZ = Math.floor(pos.z + halfW);
+
+                    for (let x = minX; x <= maxX; x++) {
+                        for (let y = minY; y <= maxY; y++) {
+                            for (let z = minZ; z <= maxZ; z++) {
+                                if (this.world.isSolid(x, y, z)) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                    return false;
+                }
+
+                updatePlayer(deltaTime) {
+                    // 视角旋转
+                    if (this.lookDelta.x !== 0 || this.lookDelta.y !== 0) {
+                        this.playerYaw -= this.lookDelta.x * TOUCH_SENSITIVITY;
+                        this.playerPitch -= this.lookDelta.y * TOUCH_SENSITIVITY;
+                        this.playerPitch = Math.max(-Math.PI / 2 + 0.01, Math.min(Math.PI / 2 - 0.01, this.playerPitch));
+                        this.lookDelta.x = 0;
+                        this.lookDelta.y = 0;
+                    }
+
+                    // 移动方向
+                    const forward = new THREE.Vector3(-Math.sin(this.playerYaw), 0, -Math.cos(this.playerYaw));
+                    const right = new THREE.Vector3(Math.cos(this.playerYaw), 0, -Math.sin(this.playerYaw));
+                    const moveVec = new THREE.Vector3();
+                    moveVec.addScaledVector(forward, this.moveInput.y);
+                    moveVec.addScaledVector(right, this.moveInput.x);
+                    if (moveVec.length() > 1) moveVec.normalize();
+
+                    const speed = this.isFlying ? FLY_SPEED : WALK_SPEED;
+                    const targetVx = moveVec.x * speed;
+                    const targetVz = moveVec.z * speed;
+                    const accel = this.isOnGround ? 12 : 5;
+                    this.playerVelocity.x += (targetVx - this.playerVelocity.x) * Math.min(1, accel * deltaTime);
+                    this.playerVelocity.z += (targetVz - this.playerVelocity.z) * Math.min(1, accel * deltaTime);
+
+                    // 重力
+                    if (!this.isFlying) {
+                        this.playerVelocity.y += GRAVITY * deltaTime;
+                        if (this.playerVelocity.y < -30) this.playerVelocity.y = -30;
+                    } else {
+                        this.playerVelocity.y = 0;
+                    }
+
+                    // 尝试移动X
+                    const newX = this.playerPosition.x + this.playerVelocity.x * deltaTime;
+                    if (!this.checkCollision(new THREE.Vector3(newX, this.playerPosition.y, this.playerPosition.z))) {
+                        this.playerPosition.x = newX;
+                    } else {
+                        this.playerVelocity.x = 0;
+                    }
+
+                    // 尝试移动Z
+                    const newZ = this.playerPosition.z + this.playerVelocity.z * deltaTime;
+                    if (!this.checkCollision(new THREE.Vector3(this.playerPosition.x, this.playerPosition.y, newZ))) {
+                        this.playerPosition.z = newZ;
+                    } else {
+                        this.playerVelocity.z = 0;
+                    }
+
+                    // 尝试移动Y
+                    const newY = this.playerPosition.y + this.playerVelocity.y * deltaTime;
+                    if (!this.checkCollision(new THREE.Vector3(this.playerPosition.x, newY, this.playerPosition.z))) {
+                        this.playerPosition.y = newY;
+                        this.isOnGround = false;
+                    } else {
+                        if (this.playerVelocity.y < 0) {
+                            this.isOnGround = true;
+                            if (this.playerVelocity.y < -8) this.playSound('land');
+                        }
+                        this.playerVelocity.y = 0;
+                    }
+
+                    // 检查脚下
+                    const footY = Math.floor(this.playerPosition.y - 0.01);
+                    const footX = Math.floor(this.playerPosition.x);
+                    const footZ = Math.floor(this.playerPosition.z);
+                    if (this.world.isSolid(footX, footY, footZ)) {
+                        this.isOnGround = true;
+                    }
+
+                    // 防止掉出世界底部
+                    if (this.playerPosition.y < -10) {
+                        this.playerPosition.y = 40;
+                        this.playerVelocity.y = 0;
+                    }
+
+                    // 水检测
+                    const headY = Math.floor(this.playerPosition.y + PLAYER_EYE_HEIGHT);
+                    const headBlock = this.world.getBlock(Math.floor(this.playerPosition.x), headY, Math.floor(this
+                        .playerPosition.z));
+                    if (headBlock === BLOCK.WATER) {
+                        this.playerVelocity.y = Math.max(this.playerVelocity.y, -5);
+                    }
+                }
+
+                updateCamera() {
+                    this.camera.position.set(
+                        this.playerPosition.x,
+                        this.playerPosition.y + PLAYER_EYE_HEIGHT,
+                        this.playerPosition.z
+                    );
+                    this.camera.rotation.order = 'YXZ';
+                    this.camera.rotation.y = this.playerYaw;
+                    this.camera.rotation.x = this.playerPitch;
+                }
+
+                updateHighlight() {
+                    const target = this.getTargetBlock();
+                    if (target && target.blockId !== BLOCK.AIR && target.blockId !== BLOCK.WATER) {
+                        this.highlightMesh.position.set(target.x + 0.5, target.y + 0.5, target.z + 0.5);
+                        this.highlightMesh.visible = true;
+                        this.raycastResult = target;
+                    } else {
+                        this.highlightMesh.visible = false;
+                        this.raycastResult = null;
+                    }
+                }
+
+                spawnBlockParticles(x, y, z, blockId) {
+                    const colors = {
+                        [BLOCK.GRASS]: 0x6B8E23,
+                        [BLOCK.DIRT]: 0x8B6B3D,
+                        [BLOCK.STONE]: 0x808080,
+                        [BLOCK.LOG]: 0x8B5A2B,
+                        [BLOCK.LEAVES]: 0x2E8B57,
+                        [BLOCK.SAND]: 0xE8D8A0,
+                        [BLOCK.BRICK]: 0x8B3A3A,
+                        [BLOCK.PLANK]: 0xCD9B5A,
+                    };
+                    const color = colors[blockId] || 0xcccccc;
+                    const positions = [];
+                    for (let i = 0; i < 15; i++) {
+                        positions.push(
+                            x + (Math.random() - 0.5) * 0.6,
+                            y + (Math.random() - 0.5) * 0.6,
+                            z + (Math.random() - 0.5) * 0.6
+                        );
+                    }
+                    const geo = new THREE.BufferGeometry();
+                    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+                    const mat = new THREE.PointsMaterial({
+                        color: color,
+                        size: 0.06,
+                        transparent: true,
+                        opacity: 0.9,
+                        sizeAttenuation: true,
+                    });
+                    const points = new THREE.Points(geo, mat);
+                    points.userData = { lifetime: 0.5, age: 0, velocities: positions.map(() => ({
+                        vx: (Math.random() - 0.5) * 2,
+                        vy: Math.random() * 3,
+                        vz: (Math.random() - 0.5) * 2,
+                    })) };
+                    this.scene.add(points);
+                    this.particles.push(points);
+                }
+
+                updateParticles(deltaTime) {
+                    for (let i = this.particles.length - 1; i >= 0; i--) {
+                        const p = this.particles[i];
+                        p.userData.age += deltaTime;
+                        if (p.userData.age >= p.userData.lifetime) {
+                            this.scene.remove(p);
+                            p.geometry.dispose();
+                            p.material.dispose();
+                            this.particles.splice(i, 1);
+                            continue;
+                        }
+                        const pos = p.geometry.attributes.position;
+                        const vels = p.userData.velocities;
+                        for (let j = 0; j < pos.count; j++) {
+                            pos.array[j * 3] += vels[j].vx * deltaTime;
+                            pos.array[j * 3 + 1] += vels[j].vy * deltaTime;
+                            pos.array[j * 3 + 2] += vels[j].vz * deltaTime;
+                            vels[j].vy -= 9 * deltaTime;
+                        }
+                        pos.needsUpdate = true;
+                        p.material.opacity = 0.9 * (1 - p.userData.age / p.userData.lifetime);
+                    }
+                }
+
+                playSound(type) {
+                    try {
+                        const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        const now = audioCtx.currentTime;
+                        if (type === 'place' || type === 'break') {
+                            osc.type = 'square';
+                            osc.frequency.setValueAtTime(type === 'place' ? 300 : 200, now);
+                            osc.frequency.exponentialRampToValueAtTime(100, now + 0.08);
+                            gain.gain.setValueAtTime(0.15, now);
+                            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+                            osc.start(now);
+                            osc.stop(now + 0.1);
+                        } else if (type === 'jump') {
+                            osc.type = 'sine';
+                            osc.frequency.setValueAtTime(200, now);
+                            osc.frequency.exponentialRampToValueAtTime(400, now + 0.06);
+                            gain.gain.setValueAtTime(0.1, now);
+                            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+                            osc.start(now);
+                            osc.stop(now + 0.08);
+                        } else if (type === 'land') {
+                            osc.type = 'sine';
+                            osc.frequency.setValueAtTime(150, now);
+                            osc.frequency.exponentialRampToValueAtTime(80, now + 0.06);
+                            gain.gain.setValueAtTime(0.08, now);
+                            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+                            osc.start(now);
+                            osc.stop(now + 0.07);
+                        }
+                        setTimeout(() => audioCtx.close(), 200);
+                    } catch (e) {}
+                }
+
+                gameLoop() {
+                    requestAnimationFrame(() => this.gameLoop());
+
+                    const now = performance.now();
+                    const deltaTime = Math.min(0.05, (now - this.lastTime) / 1000);
+                    this.lastTime = now;
+
+                    // FPS计数
+                    this.fpsCounter++;
+                    this.fpsTime += deltaTime;
+                    if (this.fpsTime >= 0.5) {
+                        this.fpsDisplay = Math.round(this.fpsCounter / this.fpsTime);
+                        this.fpsCounter = 0;
+                        this.fpsTime = 0;
+                        const fpsEl = document.getElementById('fps-counter');
+                        if (fpsEl.style.display !== 'none') {
+                            fpsEl.textContent = 'FPS: ' + this.fpsDisplay;
+                        }
+                    }
+
+                    this.updatePlayer(deltaTime);
+                    this.updateCamera();
+                    this.updateHighlight();
+                    this.updateChunks();
+                    this.updateParticles(deltaTime);
+
+                    // 云朵移动
+                    if (this.cloudGroup) {
+                        this.cloudGroup.position.x += deltaTime * 0.3;
+                        if (this.cloudGroup.position.x > 60) this.cloudGroup.position.x = -60;
+                    }
+
+                    this.renderer.render(this.scene, this.camera);
+                }
+            }
+
+            // ==================== 启动游戏 ====================
+            window.addEventListener('DOMContentLoaded', () => {
+                const game = new MinecraftMobile();
+                window.game = game;
+
+                // 显示FPS（长按屏幕三秒可切换）
+                let pressTimer = null;
+                document.addEventListener('touchstart', (e) => {
+                    pressTimer = setTimeout(() => {
+                        const fpsEl = document.getElementById('fps-counter');
+                        const debugEl = document.getElementById('debug-info');
+                        const show = fpsEl.style.display === 'none';
+                        fpsEl.style.display = show ? 'block' : 'none';
+                        debugEl.style.display = show ? 'block' : 'none';
+                    }, 2000);
+                }, { passive: true });
+                document.addEventListener('touchend', () => {
+                    if (pressTimer) clearTimeout(pressTimer);
+                    pressTimer = null;
+                }, { passive: true });
             });
-        }
-        
-        // 初始化函数
-        document.addEventListener('DOMContentLoaded', () => {
-            createParticles();
-            setupNavbar();
-            setupSmoothScroll();
-            
-            // 添加一些悬停效果
-            const featureCards = document.querySelectorAll('.feature-card');
-            featureCards.forEach(card => {
-                card.addEventListener('mouseenter', () => {
-                    card.style.transform = 'translateY(-10px)';
-                });
-                card.addEventListener('mouseleave', () => {
-                    card.style.transform = 'translateY(0)';
-                });
-            });
-        });
+        })();
     </script>
 </body>
 </html>
