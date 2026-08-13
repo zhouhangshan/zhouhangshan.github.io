@@ -37,7 +37,6 @@
             height: 100%;
             display: block;
             z-index: 1;
-            touch-action: none;
         }
         #crosshair {
             position: absolute;
@@ -208,32 +207,6 @@
             background: rgba(200, 50, 0, 0.5);
             border-color: rgba(255, 150, 100, 0.6);
         }
-        #backpack-btn {
-            position: absolute;
-            top: calc(10px + env(safe-area-inset-top));
-            right: calc(10px + env(safe-area-inset-right));
-            z-index: 40;
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            background: rgba(0, 0, 0, 0.5);
-            color: #fff;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            pointer-events: auto;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            touch-action: manipulation;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-        #backpack-btn:active {
-            background: rgba(255, 255, 255, 0.3);
-        }
         #fullscreen-btn {
             position: absolute;
             top: calc(10px + env(safe-area-inset-top));
@@ -259,71 +232,6 @@
         }
         #fullscreen-btn:active {
             background: rgba(255, 255, 255, 0.3);
-        }
-        #backpack-panel {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 80;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            pointer-events: auto;
-        }
-        #backpack-panel.active {
-            display: flex;
-        }
-        #backpack-title {
-            color: #fff;
-            font-size: 22px;
-            margin-bottom: 16px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-        #backpack-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-            gap: 10px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 70%;
-            overflow-y: auto;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-        }
-        .backpack-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 8px;
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 10px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-        .backpack-item:active {
-            background: rgba(255, 255, 255, 0.3);
-            border-color: #fff;
-        }
-        .backpack-item img {
-            width: 40px;
-            height: 40px;
-            image-rendering: pixelated;
-            margin-bottom: 4px;
-        }
-        .backpack-item span {
-            color: #fff;
-            font-size: 10px;
-            text-align: center;
-            pointer-events: none;
         }
         #fps-counter {
             position: absolute;
@@ -414,41 +322,79 @@
             opacity: 0;
         }
         @media (max-width: 400px) {
-            .hotbar-slot { width: 38px; height: 38px; }
-            .hotbar-slot img { width: 28px; height: 28px; }
-            .action-btn { width: 46px; height: 46px; font-size: 10px; }
-            #jump-btn { width: 50px; height: 50px; font-size: 12px; }
-            #joystick-base { width: 90px; height: 90px; }
-            #joystick-knob { width: 36px; height: 36px; }
-            #fullscreen-btn, #backpack-btn { width: 34px; height: 34px; font-size: 16px; }
+            .hotbar-slot {
+                width: 38px;
+                height: 38px;
+            }
+            .hotbar-slot img {
+                width: 28px;
+                height: 28px;
+            }
+            .action-btn {
+                width: 46px;
+                height: 46px;
+                font-size: 10px;
+            }
+            #jump-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 12px;
+            }
+            #joystick-base {
+                width: 90px;
+                height: 90px;
+            }
+            #joystick-knob {
+                width: 36px;
+                height: 36px;
+            }
+            #fullscreen-btn {
+                width: 34px;
+                height: 34px;
+                font-size: 16px;
+            }
         }
         @media (orientation: landscape) {
-            #action-buttons { bottom: calc(65px + env(safe-area-inset-bottom)); right: 20px; }
-            #hotbar { bottom: calc(8px + env(safe-area-inset-bottom)); }
-            .hotbar-slot { width: 44px; height: 44px; }
-            .hotbar-slot img { width: 32px; height: 32px; }
-            #action-buttons { gap: 8px; }
+            #action-buttons {
+                bottom: calc(65px + env(safe-area-inset-bottom));
+                right: 20px;
+            }
+            #hotbar {
+                bottom: calc(8px + env(safe-area-inset-bottom));
+            }
+            .hotbar-slot {
+                width: 44px;
+                height: 44px;
+            }
+            .hotbar-slot img {
+                width: 32px;
+                height: 32px;
+            }
+            #action-buttons {
+                gap: 8px;
+            }
         }
     </style>
 </head>
 <body>
     <div id="gameCanvas"></div>
+
     <div id="crosshair"></div>
+
     <div id="hotbar"></div>
+
     <div id="joystick-zone"></div>
-    <div id="joystick-base"><div id="joystick-knob"></div></div>
+    <div id="joystick-base">
+        <div id="joystick-knob"></div>
+    </div>
+
     <div id="action-buttons">
         <button class="action-btn" id="jump-btn">⬆️ 跳跃</button>
         <button class="action-btn" id="break-btn">⛏️ 破坏</button>
         <button class="action-btn" id="place-btn">🧱 放置</button>
     </div>
-    <button id="fullscreen-btn" title="切换全屏">⛶</button>
-    <button id="backpack-btn" title="背包">🎒</button>
 
-    <div id="backpack-panel">
-        <div id="backpack-title">背包</div>
-        <div id="backpack-grid"></div>
-    </div>
+    <button id="fullscreen-btn" title="切换全屏">⛶</button>
 
     <div id="fps-counter">FPS: 0</div>
     <div id="debug-info"></div>
@@ -456,604 +402,763 @@
     <div id="loading-screen">
         <div style="font-size:32px;margin-bottom:8px;">⛏️</div>
         <div>我的世界 · 手机版</div>
-        <div id="loading-bar-container"><div id="loading-bar"></div></div>
+        <div id="loading-bar-container">
+            <div id="loading-bar"></div>
+        </div>
         <div id="loading-text">正在生成世界...</div>
     </div>
 
-    <div id="touch-hint">👆 左侧摇杆移动<br>🖱️ 右侧滑动旋转视角<br>🎒 点击背包按钮选择方块<br>🟢 放置 | 🔴 破坏 | ⬆️ 跳跃</div>
+    <div id="touch-hint">
+        👆 左侧摇杆移动<br>
+        🖱️ 右侧滑动旋转视角<br>
+        🟢 放置方块 | 🔴 破坏方块<br>
+        ⬆️ 跳跃按钮
+    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js">
+    </script>
     <script>
-    (function() {
-        'use strict';
+        (function() {
+            'use strict';
 
-        // ==================== 常量定义 ====================
-        const CHUNK_SIZE = 16;
-        const CHUNK_HEIGHT = 64;
-        const SEA_LEVEL = 28;
-        const RENDER_DISTANCE = 3;
-        const MAX_PLACE_DISTANCE = 6;
-        const PLAYER_WIDTH = 0.6;
-        const PLAYER_HEIGHT = 1.8;
-        const PLAYER_EYE_HEIGHT = 1.62;
-        const GRAVITY = -24;
-        const JUMP_SPEED = 8.5;
-        const WALK_SPEED = 4.3;
-        const FLY_SPEED = 8;
-        const TOUCH_SENSITIVITY = 0.004;
+            // ==================== 常量定义 ====================
+            const CHUNK_SIZE = 16;
+            const CHUNK_HEIGHT = 64;
+            const WORLD_HEIGHT = 64;
+            const SEA_LEVEL = 28;
+            const RENDER_DISTANCE = 3;
+            const MAX_PLACE_DISTANCE = 6;
+            const PLAYER_WIDTH = 0.6;
+            const PLAYER_HEIGHT = 1.8;
+            const PLAYER_EYE_HEIGHT = 1.62;
+            const GRAVITY = -24;
+            const JUMP_SPEED = 8.5;
+            const WALK_SPEED = 4.3;
+            const FLY_SPEED = 8;
+            const MOUSE_SENSITIVITY = 0.003;
+            const TOUCH_SENSITIVITY = 0.004;
+            const BREAK_TIME = 0.35;
 
-        const BLOCK = {
-            AIR:0, GRASS:1, DIRT:2, STONE:3, LOG:4, LEAVES:5, SAND:6, WATER:7, GLASS:8, BRICK:9, PLANK:10, BEDROCK:11,
-            COAL_BLOCK:12, IRON_BLOCK:13, GOLD_BLOCK:14, DIAMOND_BLOCK:15, REDSTONE_BLOCK:16, LAPIS_BLOCK:17, SNOW_BLOCK:18,
-            PUMPKIN:19, MELON:20, BOOKSHELF:21
-        };
+            // 方块ID
+            const BLOCK = {
+                AIR: 0,
+                GRASS: 1,
+                DIRT: 2,
+                STONE: 3,
+                LOG: 4,
+                LEAVES: 5,
+                SAND: 6,
+                WATER: 7,
+                GLASS: 8,
+                BRICK: 9,
+                PLANK: 10,
+                BEDROCK: 11,
+                COAL_BLOCK: 12,
+                IRON_BLOCK: 13,
+                GOLD_BLOCK: 14,
+                DIAMOND_BLOCK: 15,
+                REDSTONE_BLOCK: 16,
+                LAPIS_BLOCK: 17,
+                SNOW_BLOCK: 18,
+                PUMPKIN: 19,
+                MELON: 20,
+                BOOKSHELF: 21,
+            };
 
-        const BLOCK_NAMES = {
-            [BLOCK.AIR]:'空气', [BLOCK.GRASS]:'草方块', [BLOCK.DIRT]:'泥土', [BLOCK.STONE]:'石头', [BLOCK.LOG]:'橡木原木',
-            [BLOCK.LEAVES]:'树叶', [BLOCK.SAND]:'沙子', [BLOCK.WATER]:'水', [BLOCK.GLASS]:'玻璃', [BLOCK.BRICK]:'砖块',
-            [BLOCK.PLANK]:'木板', [BLOCK.BEDROCK]:'基岩', [BLOCK.COAL_BLOCK]:'煤块', [BLOCK.IRON_BLOCK]:'铁块', [BLOCK.GOLD_BLOCK]:'金块',
-            [BLOCK.DIAMOND_BLOCK]:'钻石块', [BLOCK.REDSTONE_BLOCK]:'红石块', [BLOCK.LAPIS_BLOCK]:'青金石块', [BLOCK.SNOW_BLOCK]:'雪块',
-            [BLOCK.PUMPKIN]:'南瓜', [BLOCK.MELON]:'西瓜', [BLOCK.BOOKSHELF]:'书架'
-        };
+            // 方块名称
+            const BLOCK_NAMES = {
+                [BLOCK.AIR]: '空气',
+                [BLOCK.GRASS]: '草方块',
+                [BLOCK.DIRT]: '泥土',
+                [BLOCK.STONE]: '石头',
+                [BLOCK.LOG]: '橡木原木',
+                [BLOCK.LEAVES]: '树叶',
+                [BLOCK.SAND]: '沙子',
+                [BLOCK.WATER]: '水',
+                [BLOCK.GLASS]: '玻璃',
+                [BLOCK.BRICK]: '砖块',
+                [BLOCK.PLANK]: '木板',
+                [BLOCK.BEDROCK]: '基岩',
+                [BLOCK.COAL_BLOCK]: '煤块',
+                [BLOCK.IRON_BLOCK]: '铁块',
+                [BLOCK.GOLD_BLOCK]: '金块',
+                [BLOCK.DIAMOND_BLOCK]: '钻石块',
+                [BLOCK.REDSTONE_BLOCK]: '红石块',
+                [BLOCK.LAPIS_BLOCK]: '青金石块',
+                [BLOCK.SNOW_BLOCK]: '雪块',
+                [BLOCK.PUMPKIN]: '南瓜',
+                [BLOCK.MELON]: '西瓜',
+                [BLOCK.BOOKSHELF]: '书架',
+            };
 
-        const PLACEABLE_BLOCKS = [
-            BLOCK.GRASS, BLOCK.DIRT, BLOCK.STONE, BLOCK.LOG, BLOCK.LEAVES, BLOCK.SAND, BLOCK.GLASS, BLOCK.BRICK, BLOCK.PLANK,
-            BLOCK.COAL_BLOCK, BLOCK.IRON_BLOCK, BLOCK.GOLD_BLOCK, BLOCK.DIAMOND_BLOCK, BLOCK.REDSTONE_BLOCK, BLOCK.LAPIS_BLOCK,
-            BLOCK.SNOW_BLOCK, BLOCK.PUMPKIN, BLOCK.MELON, BLOCK.BOOKSHELF
-        ];
+            // 可放置方块列表（扩充）
+            const PLACEABLE_BLOCKS = [
+                BLOCK.GRASS, BLOCK.DIRT, BLOCK.STONE, BLOCK.LOG,
+                BLOCK.LEAVES, BLOCK.SAND, BLOCK.GLASS, BLOCK.BRICK, BLOCK.PLANK,
+                BLOCK.COAL_BLOCK, BLOCK.IRON_BLOCK, BLOCK.GOLD_BLOCK, BLOCK.DIAMOND_BLOCK,
+                BLOCK.REDSTONE_BLOCK, BLOCK.LAPIS_BLOCK, BLOCK.SNOW_BLOCK, BLOCK.PUMPKIN, BLOCK.MELON, BLOCK.BOOKSHELF
+            ];
 
-        const TRANSPARENT_BLOCKS = new Set([BLOCK.WATER, BLOCK.GLASS, BLOCK.LEAVES, BLOCK.AIR]);
-        const SOLID_BLOCKS = new Set([
-            BLOCK.GRASS, BLOCK.DIRT, BLOCK.STONE, BLOCK.LOG, BLOCK.LEAVES, BLOCK.SAND, BLOCK.BRICK, BLOCK.PLANK, BLOCK.BEDROCK,
-            BLOCK.COAL_BLOCK, BLOCK.IRON_BLOCK, BLOCK.GOLD_BLOCK, BLOCK.DIAMOND_BLOCK, BLOCK.REDSTONE_BLOCK, BLOCK.LAPIS_BLOCK,
-            BLOCK.SNOW_BLOCK, BLOCK.PUMPKIN, BLOCK.MELON, BLOCK.BOOKSHELF
-        ]);
+            // 透明方块
+            const TRANSPARENT_BLOCKS = new Set([BLOCK.WATER, BLOCK.GLASS, BLOCK.LEAVES, BLOCK.AIR]);
 
-        const TEX = {
-            GRASS_TOP:0, GRASS_SIDE:1, DIRT:2, STONE:3, LOG_SIDE:4, LOG_TOP:5, LEAVES:6, SAND:7, WATER:8, GLASS:9,
-            BRICK:10, PLANK:11, BEDROCK:12, COAL_BLOCK:13, IRON_BLOCK:14, GOLD_BLOCK:15, DIAMOND_BLOCK:16,
-            REDSTONE_BLOCK:17, LAPIS_BLOCK:18, SNOW_BLOCK:19, PUMPKIN:20, MELON:21, BOOKSHELF:22
-        };
+            // 固体方块（用于碰撞检测）
+            const SOLID_BLOCKS = new Set([
+                BLOCK.GRASS, BLOCK.DIRT, BLOCK.STONE, BLOCK.LOG,
+                BLOCK.LEAVES, BLOCK.SAND, BLOCK.BRICK, BLOCK.PLANK, BLOCK.BEDROCK,
+                BLOCK.COAL_BLOCK, BLOCK.IRON_BLOCK, BLOCK.GOLD_BLOCK, BLOCK.DIAMOND_BLOCK,
+                BLOCK.REDSTONE_BLOCK, BLOCK.LAPIS_BLOCK, BLOCK.SNOW_BLOCK, BLOCK.PUMPKIN, BLOCK.MELON, BLOCK.BOOKSHELF
+            ]);
 
-        const BLOCK_FACES = {
-            [BLOCK.GRASS]: { px:TEX.GRASS_SIDE, nx:TEX.GRASS_SIDE, py:TEX.GRASS_TOP, ny:TEX.DIRT, pz:TEX.GRASS_SIDE, nz:TEX.GRASS_SIDE },
-            [BLOCK.DIRT]: { px:TEX.DIRT, nx:TEX.DIRT, py:TEX.DIRT, ny:TEX.DIRT, pz:TEX.DIRT, nz:TEX.DIRT },
-            [BLOCK.STONE]: { px:TEX.STONE, nx:TEX.STONE, py:TEX.STONE, ny:TEX.STONE, pz:TEX.STONE, nz:TEX.STONE },
-            [BLOCK.LOG]: { px:TEX.LOG_SIDE, nx:TEX.LOG_SIDE, py:TEX.LOG_TOP, ny:TEX.LOG_TOP, pz:TEX.LOG_SIDE, nz:TEX.LOG_SIDE },
-            [BLOCK.LEAVES]: { px:TEX.LEAVES, nx:TEX.LEAVES, py:TEX.LEAVES, ny:TEX.LEAVES, pz:TEX.LEAVES, nz:TEX.LEAVES },
-            [BLOCK.SAND]: { px:TEX.SAND, nx:TEX.SAND, py:TEX.SAND, ny:TEX.SAND, pz:TEX.SAND, nz:TEX.SAND },
-            [BLOCK.WATER]: { px:TEX.WATER, nx:TEX.WATER, py:TEX.WATER, ny:TEX.WATER, pz:TEX.WATER, nz:TEX.WATER },
-            [BLOCK.GLASS]: { px:TEX.GLASS, nx:TEX.GLASS, py:TEX.GLASS, ny:TEX.GLASS, pz:TEX.GLASS, nz:TEX.GLASS },
-            [BLOCK.BRICK]: { px:TEX.BRICK, nx:TEX.BRICK, py:TEX.BRICK, ny:TEX.BRICK, pz:TEX.BRICK, nz:TEX.BRICK },
-            [BLOCK.PLANK]: { px:TEX.PLANK, nx:TEX.PLANK, py:TEX.PLANK, ny:TEX.PLANK, pz:TEX.PLANK, nz:TEX.PLANK },
-            [BLOCK.BEDROCK]: { px:TEX.BEDROCK, nx:TEX.BEDROCK, py:TEX.BEDROCK, ny:TEX.BEDROCK, pz:TEX.BEDROCK, nz:TEX.BEDROCK },
-            [BLOCK.COAL_BLOCK]: { px:TEX.COAL_BLOCK, nx:TEX.COAL_BLOCK, py:TEX.COAL_BLOCK, ny:TEX.COAL_BLOCK, pz:TEX.COAL_BLOCK, nz:TEX.COAL_BLOCK },
-            [BLOCK.IRON_BLOCK]: { px:TEX.IRON_BLOCK, nx:TEX.IRON_BLOCK, py:TEX.IRON_BLOCK, ny:TEX.IRON_BLOCK, pz:TEX.IRON_BLOCK, nz:TEX.IRON_BLOCK },
-            [BLOCK.GOLD_BLOCK]: { px:TEX.GOLD_BLOCK, nx:TEX.GOLD_BLOCK, py:TEX.GOLD_BLOCK, ny:TEX.GOLD_BLOCK, pz:TEX.GOLD_BLOCK, nz:TEX.GOLD_BLOCK },
-            [BLOCK.DIAMOND_BLOCK]: { px:TEX.DIAMOND_BLOCK, nx:TEX.DIAMOND_BLOCK, py:TEX.DIAMOND_BLOCK, ny:TEX.DIAMOND_BLOCK, pz:TEX.DIAMOND_BLOCK, nz:TEX.DIAMOND_BLOCK },
-            [BLOCK.REDSTONE_BLOCK]: { px:TEX.REDSTONE_BLOCK, nx:TEX.REDSTONE_BLOCK, py:TEX.REDSTONE_BLOCK, ny:TEX.REDSTONE_BLOCK, pz:TEX.REDSTONE_BLOCK, nz:TEX.REDSTONE_BLOCK },
-            [BLOCK.LAPIS_BLOCK]: { px:TEX.LAPIS_BLOCK, nx:TEX.LAPIS_BLOCK, py:TEX.LAPIS_BLOCK, ny:TEX.LAPIS_BLOCK, pz:TEX.LAPIS_BLOCK, nz:TEX.LAPIS_BLOCK },
-            [BLOCK.SNOW_BLOCK]: { px:TEX.SNOW_BLOCK, nx:TEX.SNOW_BLOCK, py:TEX.SNOW_BLOCK, ny:TEX.SNOW_BLOCK, pz:TEX.SNOW_BLOCK, nz:TEX.SNOW_BLOCK },
-            [BLOCK.PUMPKIN]: { px:TEX.PUMPKIN, nx:TEX.PUMPKIN, py:TEX.PUMPKIN, ny:TEX.PUMPKIN, pz:TEX.PUMPKIN, nz:TEX.PUMPKIN },
-            [BLOCK.MELON]: { px:TEX.MELON, nx:TEX.MELON, py:TEX.MELON, ny:TEX.MELON, pz:TEX.MELON, nz:TEX.MELON },
-            [BLOCK.BOOKSHELF]: { px:TEX.BOOKSHELF, nx:TEX.BOOKSHELF, py:TEX.PLANK, ny:TEX.PLANK, pz:TEX.BOOKSHELF, nz:TEX.BOOKSHELF },
-        };
+            // 纹理索引
+            const TEX = {
+                GRASS_TOP: 0,
+                GRASS_SIDE: 1,
+                DIRT: 2,
+                STONE: 3,
+                LOG_SIDE: 4,
+                LOG_TOP: 5,
+                LEAVES: 6,
+                SAND: 7,
+                WATER: 8,
+                GLASS: 9,
+                BRICK: 10,
+                PLANK: 11,
+                BEDROCK: 12,
+                COAL_BLOCK: 13,
+                IRON_BLOCK: 14,
+                GOLD_BLOCK: 15,
+                DIAMOND_BLOCK: 16,
+                REDSTONE_BLOCK: 17,
+                LAPIS_BLOCK: 18,
+                SNOW_BLOCK: 19,
+                PUMPKIN: 20,
+                MELON: 21,
+                BOOKSHELF: 22,
+                GRASS_BOTTOM: 2,
+            };
 
-        // ==================== 噪声函数 ====================
-        class PerlinNoise {
-            constructor(seed) {
-                this.seed = seed;
-                this.perm = new Uint8Array(512);
-                const p = new Uint8Array(256);
-                let s = seed;
-                for (let i = 0; i < 256; i++) { s = (s * 1103515245 + 12345) & 0x7fffffff; p[i] = (s >> 8) & 255; }
-                for (let i = 0; i < 512; i++) this.perm[i] = p[i & 255];
-            }
-            fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
-            lerp(a, b, t) { return a + t * (b - a); }
-            grad(hash, x, y) { const h = hash & 3; const u = h < 2 ? x : y; const v = h < 2 ? y : x; return ((h & 1) ? -u : u) + ((h & 2) ? -v : v); }
-            noise2D(x, y) {
-                const X = Math.floor(x) & 255, Y = Math.floor(y) & 255;
-                const xf = x - Math.floor(x), yf = y - Math.floor(y);
-                const u = this.fade(xf), v = this.fade(yf);
-                const A = this.perm[X] + Y, B = this.perm[X + 1] + Y;
-                const AA = this.perm[A] & 255, BA = this.perm[B] & 255, AB = this.perm[A + 1] & 255, BB = this.perm[B + 1] & 255;
-                return this.lerp(
-                    this.lerp(this.grad(this.perm[AA], xf, yf), this.grad(this.perm[BA], xf - 1, yf), u),
-                    this.lerp(this.grad(this.perm[AB], xf, yf - 1), this.grad(this.perm[BB], xf - 1, yf - 1), u), v
-                );
-            }
-            fbm(x, y, octaves = 4, persistence = 0.5) {
-                let total = 0, amplitude = 1, frequency = 1, maxVal = 0;
-                for (let i = 0; i < octaves; i++) { total += this.noise2D(x * frequency, y * frequency) * amplitude; maxVal += amplitude; amplitude *= persistence; frequency *= 2; }
-                return total / maxVal;
-            }
-        }
+            // 每个方块的6个面的纹理索引 [右,左,上,下,前,后]
+            const BLOCK_FACES = {
+                [BLOCK.GRASS]: { px: TEX.GRASS_SIDE, nx: TEX.GRASS_SIDE, py: TEX.GRASS_TOP, ny: TEX.DIRT,
+                    pz: TEX.GRASS_SIDE, nz: TEX.GRASS_SIDE },
+                [BLOCK.DIRT]: { px: TEX.DIRT, nx: TEX.DIRT, py: TEX.DIRT, ny: TEX.DIRT, pz: TEX.DIRT, nz: TEX.DIRT },
+                [BLOCK.STONE]: { px: TEX.STONE, nx: TEX.STONE, py: TEX.STONE, ny: TEX.STONE, pz: TEX.STONE,
+                    nz: TEX.STONE },
+                [BLOCK.LOG]: { px: TEX.LOG_SIDE, nx: TEX.LOG_SIDE, py: TEX.LOG_TOP, ny: TEX.LOG_TOP, pz: TEX.LOG_SIDE,
+                    nz: TEX.LOG_SIDE },
+                [BLOCK.LEAVES]: { px: TEX.LEAVES, nx: TEX.LEAVES, py: TEX.LEAVES, ny: TEX.LEAVES, pz: TEX.LEAVES,
+                    nz: TEX.LEAVES },
+                [BLOCK.SAND]: { px: TEX.SAND, nx: TEX.SAND, py: TEX.SAND, ny: TEX.SAND, pz: TEX.SAND, nz: TEX.SAND },
+                [BLOCK.WATER]: { px: TEX.WATER, nx: TEX.WATER, py: TEX.WATER, ny: TEX.WATER, pz: TEX.WATER,
+                    nz: TEX.WATER },
+                [BLOCK.GLASS]: { px: TEX.GLASS, nx: TEX.GLASS, py: TEX.GLASS, ny: TEX.GLASS, pz: TEX.GLASS,
+                    nz: TEX.GLASS },
+                [BLOCK.BRICK]: { px: TEX.BRICK, nx: TEX.BRICK, py: TEX.BRICK, ny: TEX.BRICK, pz: TEX.BRICK,
+                    nz: TEX.BRICK },
+                [BLOCK.PLANK]: { px: TEX.PLANK, nx: TEX.PLANK, py: TEX.PLANK, ny: TEX.PLANK, pz: TEX.PLANK,
+                    nz: TEX.PLANK },
+                [BLOCK.BEDROCK]: { px: TEX.BEDROCK, nx: TEX.BEDROCK, py: TEX.BEDROCK, ny: TEX.BEDROCK, pz: TEX.BEDROCK,
+                    nz: TEX.BEDROCK },
+                [BLOCK.COAL_BLOCK]: { px: TEX.COAL_BLOCK, nx: TEX.COAL_BLOCK, py: TEX.COAL_BLOCK, ny: TEX.COAL_BLOCK,
+                    pz: TEX.COAL_BLOCK, nz: TEX.COAL_BLOCK },
+                [BLOCK.IRON_BLOCK]: { px: TEX.IRON_BLOCK, nx: TEX.IRON_BLOCK, py: TEX.IRON_BLOCK, ny: TEX.IRON_BLOCK,
+                    pz: TEX.IRON_BLOCK, nz: TEX.IRON_BLOCK },
+                [BLOCK.GOLD_BLOCK]: { px: TEX.GOLD_BLOCK, nx: TEX.GOLD_BLOCK, py: TEX.GOLD_BLOCK, ny: TEX.GOLD_BLOCK,
+                    pz: TEX.GOLD_BLOCK, nz: TEX.GOLD_BLOCK },
+                [BLOCK.DIAMOND_BLOCK]: { px: TEX.DIAMOND_BLOCK, nx: TEX.DIAMOND_BLOCK, py: TEX.DIAMOND_BLOCK,
+                    ny: TEX.DIAMOND_BLOCK, pz: TEX.DIAMOND_BLOCK, nz: TEX.DIAMOND_BLOCK },
+                [BLOCK.REDSTONE_BLOCK]: { px: TEX.REDSTONE_BLOCK, nx: TEX.REDSTONE_BLOCK, py: TEX.REDSTONE_BLOCK,
+                    ny: TEX.REDSTONE_BLOCK, pz: TEX.REDSTONE_BLOCK, nz: TEX.REDSTONE_BLOCK },
+                [BLOCK.LAPIS_BLOCK]: { px: TEX.LAPIS_BLOCK, nx: TEX.LAPIS_BLOCK, py: TEX.LAPIS_BLOCK,
+                    ny: TEX.LAPIS_BLOCK, pz: TEX.LAPIS_BLOCK, nz: TEX.LAPIS_BLOCK },
+                [BLOCK.SNOW_BLOCK]: { px: TEX.SNOW_BLOCK, nx: TEX.SNOW_BLOCK, py: TEX.SNOW_BLOCK, ny: TEX.SNOW_BLOCK,
+                    pz: TEX.SNOW_BLOCK, nz: TEX.SNOW_BLOCK },
+                [BLOCK.PUMPKIN]: { px: TEX.PUMPKIN, nx: TEX.PUMPKIN, py: TEX.PUMPKIN, ny: TEX.PUMPKIN, pz: TEX.PUMPKIN,
+                    nz: TEX.PUMPKIN },
+                [BLOCK.MELON]: { px: TEX.MELON, nx: TEX.MELON, py: TEX.MELON, ny: TEX.MELON, pz: TEX.MELON,
+                    nz: TEX.MELON },
+                [BLOCK.BOOKSHELF]: { px: TEX.BOOKSHELF, nx: TEX.BOOKSHELF, py: TEX.PLANK, ny: TEX.PLANK,
+                    pz: TEX.BOOKSHELF, nz: TEX.BOOKSHELF },
+            };
 
-        // ==================== 纹理图集 ====================
-        class TextureAtlas {
-            constructor() {
-                this.size = 256; this.texSize = 16; this.cols = this.size / this.texSize;
-                this.canvas = document.createElement('canvas'); this.canvas.width = this.size; this.canvas.height = this.size;
-                this.ctx = this.canvas.getContext('2d'); this.generateTextures();
-                this.texture = new THREE.CanvasTexture(this.canvas);
-                this.texture.magFilter = THREE.NearestFilter; this.texture.minFilter = THREE.NearestFilter;
-                this.texture.wrapS = THREE.ClampToEdgeWrapping; this.texture.wrapT = THREE.ClampToEdgeWrapping;
-            }
-            drawPixel(texIndex, px, py, color) {
-                const col = texIndex % this.cols, row = Math.floor(texIndex / this.cols);
-                this.ctx.fillStyle = color; this.ctx.fillRect(col * this.texSize + px, row * this.texSize + py, 1, 1);
-            }
-            generateTextures() {
-                this.generateGrassTop(TEX.GRASS_TOP); this.generateGrassSide(TEX.GRASS_SIDE); this.generateDirt(TEX.DIRT);
-                this.generateStone(TEX.STONE); this.generateLogSide(TEX.LOG_SIDE); this.generateLogTop(TEX.LOG_TOP);
-                this.generateLeaves(TEX.LEAVES); this.generateSand(TEX.SAND); this.generateWater(TEX.WATER);
-                this.generateGlass(TEX.GLASS); this.generateBrick(TEX.BRICK); this.generatePlank(TEX.PLANK);
-                this.generateBedrock(TEX.BEDROCK); this.generateSolidColor(TEX.COAL_BLOCK, 40,40,40);
-                this.generateSolidColor(TEX.IRON_BLOCK, 200,200,200); this.generateSolidColor(TEX.GOLD_BLOCK, 255,215,0);
-                this.generateSolidColor(TEX.DIAMOND_BLOCK, 0,200,200); this.generateSolidColor(TEX.REDSTONE_BLOCK, 180,0,0);
-                this.generateSolidColor(TEX.LAPIS_BLOCK, 30,50,150); this.generateSolidColor(TEX.SNOW_BLOCK, 240,248,255);
-                this.generatePumpkin(TEX.PUMPKIN); this.generateMelon(TEX.MELON); this.generateBookshelf(TEX.BOOKSHELF);
-            }
-            generateGrassTop(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const n=Math.random()*20; this.drawPixel(tex,x,y,`rgb(${60+n*0.5|0},${90+n|0},${35+n*0.3|0})`); } }
-            generateGrassSide(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { if(y<4){const n=Math.random()*25;this.drawPixel(tex,x,y,`rgb(${55+n|0},${85+n|0},${30+n*0.3|0})`);}else{const n=Math.random()*30;this.drawPixel(tex,x,y,`rgb(${130+n|0},${95+n*0.7|0},${60+n*0.4|0})`);} } }
-            generateDirt(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const n=Math.random()*35; this.drawPixel(tex,x,y,`rgb(${125+n|0},${90+n*0.8|0},${55+n*0.5|0})`); } }
-            generateStone(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const n=Math.random()*30; const v=120+n; this.drawPixel(tex,x,y,`rgb(${v|0},${v|0},${(v+5)|0})`); } }
-            generateLogSide(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const s=(x+y)%5, n=Math.random()*18; if(s<2)this.drawPixel(tex,x,y,`rgb(${70+n|0},${45+n*0.6|0},${25+n*0.3|0})`); else this.drawPixel(tex,x,y,`rgb(${110+n|0},${75+n*0.6|0},${40+n*0.3|0})`); } }
-            generateLogTop(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const d=Math.sqrt((x-7.5)**2+(y-7.5)**2), r=Math.floor(d/2.5), n=Math.random()*15; if(r%2===0)this.drawPixel(tex,x,y,`rgb(${130+n|0},${90+n*0.6|0},${45+n*0.3|0})`); else this.drawPixel(tex,x,y,`rgb(${95+n|0},${65+n*0.6|0},${35+n*0.3|0})`); } }
-            generateLeaves(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const n=Math.random()*30; if(Math.random()<0.15)this.drawPixel(tex,x,y,`rgb(${30+n|0},${70+n|0},${20+n*0.3|0})`); else this.drawPixel(tex,x,y,`rgb(${45+n|0},${95+n|0},${25+n*0.4|0})`); } }
-            generateSand(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const n=Math.random()*30; this.drawPixel(tex,x,y,`rgb(${210+n|0},${195+n|0},${150+n*0.7|0})`); } }
-            generateWater(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const n=Math.random()*20; this.drawPixel(tex,x,y,`rgba(${40+n|0},${90+n|0},${200+n|0},0.7)`); } }
-            generateGlass(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { if(x===0||x===15||y===0||y===15)this.drawPixel(tex,x,y,'rgba(220,230,240,0.8)'); else if(Math.random()<0.08)this.drawPixel(tex,x,y,'rgba(200,220,240,0.5)'); else this.drawPixel(tex,x,y,'rgba(180,200,220,0.25)'); } }
-            generateBrick(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const br=Math.floor(y/4), off=br%2===0?0:4, bx=(x+off)%8, mortar=(y%4===3)||bx===7, n=Math.random()*20; if(mortar)this.drawPixel(tex,x,y,`rgb(${180+n*0.3|0},${170+n*0.3|0},${165+n*0.3|0})`); else this.drawPixel(tex,x,y,`rgb(${140+n|0},${50+n*0.4|0},${35+n*0.3|0})`); } }
-            generatePlank(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const pr=Math.floor(y/4), off=pr%2===0?0:6, bx=(x+off)%8, gap=(y%4===3)||bx===7, n=Math.random()*22; if(gap)this.drawPixel(tex,x,y,`rgb(${100+n*0.4|0},${75+n*0.3|0},${45+n*0.2|0})`); else this.drawPixel(tex,x,y,`rgb(${175+n|0},${140+n*0.7|0},${90+n*0.4|0})`); } }
-            generateBedrock(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const n=Math.random()*40, v=50+n; this.drawPixel(tex,x,y,`rgb(${v|0},${v|0},${(v+8)|0})`); } }
-            generateSolidColor(tex, r,g,b) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const n=Math.random()*15; this.drawPixel(tex,x,y,`rgb(${Math.min(255,r+n)|0},${Math.min(255,g+n)|0},${Math.min(255,b+n)|0})`); } }
-            generatePumpkin(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const d=Math.sqrt((x-7.5)**2+(y-7.5)**2), n=Math.random()*20; if(d<6)this.drawPixel(tex,x,y,`rgb(${220+n*0.5|0},${140+n|0},${30+n*0.4|0})`); else this.drawPixel(tex,x,y,`rgb(${180+n|0},${100+n*0.7|0},${25+n*0.3|0})`); } }
-            generateMelon(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const s=(x+y)%6, n=Math.random()*20; if(s<2)this.drawPixel(tex,x,y,`rgb(${40+n|0},${120+n|0},${40+n*0.5|0})`); else this.drawPixel(tex,x,y,`rgb(${120+n|0},${170+n|0},${80+n*0.5|0})`); } }
-            generateBookshelf(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const row=Math.floor(y/3), col=Math.floor(x/4), isBook=(row%3!==2)&&(col%4!==3), n=Math.random()*20; if(isBook)this.drawPixel(tex,x,y,`rgb(${130+n|0},${90+n*0.8|0},${50+n*0.5|0})`); else this.drawPixel(tex,x,y,`rgb(${110+n*0.5|0},${70+n*0.4|0},${40+n*0.3|0})`); } }
-        }
-
-        // ==================== 世界数据 ====================
-        class World {
-            constructor(seed) { this.chunks = new Map(); this.noise = new PerlinNoise(seed); this.treeNoise = new PerlinNoise(seed ^ 0x12345678); }
-            getChunkKey(cx, cz) { return cx + ',' + cz; }
-            getChunk(cx, cz) { return this.chunks.get(this.getChunkKey(cx, cz)) || null; }
-            getOrCreateChunk(cx, cz) { const key = this.getChunkKey(cx, cz); let chunk = this.chunks.get(key); if (!chunk) { chunk = this.generateChunk(cx, cz); this.chunks.set(key, chunk); } return chunk; }
-            generateChunk(cx, cz) {
-                const blocks = new Uint8Array(CHUNK_SIZE * CHUNK_SIZE * CHUNK_HEIGHT);
-                const heightMap = new Uint8Array(CHUNK_SIZE * CHUNK_SIZE);
-                const worldX = cx * CHUNK_SIZE, worldZ = cz * CHUNK_SIZE;
-                for (let lx=0; lx<CHUNK_SIZE; lx++) for (let lz=0; lz<CHUNK_SIZE; lz++) {
-                    const wx=worldX+lx, wz=worldZ+lz;
-                    const n1=this.noise.fbm(wx*0.025, wz*0.025, 4, 0.5), n2=this.noise.fbm(wx*0.08+100, wz*0.08+100, 3, 0.5);
-                    let height = Math.floor(20 + n1*40 + n2*8); if(height<3)height=3; if(height>CHUNK_HEIGHT-3)height=CHUNK_HEIGHT-3;
-                    heightMap[lx*CHUNK_SIZE+lz]=height;
-                }
-                for (let lx=0; lx<CHUNK_SIZE; lx++) for (let lz=0; lz<CHUNK_SIZE; lz++) {
-                    const height=heightMap[lx*CHUNK_SIZE+lz], wx=worldX+lx, wz=worldZ+lz, idx=(lx*CHUNK_SIZE+lz)*CHUNK_HEIGHT;
-                    blocks[idx]=BLOCK.BEDROCK;
-                    const treeThreshold=this.treeNoise.fbm(wx*0.03+500, wz*0.03+500, 3, 0.5);
-                    for(let y=1;y<=height;y++) {
-                        let blockType;
-                        if(y===height) blockType = height<=SEA_LEVEL+1 ? BLOCK.SAND : BLOCK.GRASS;
-                        else if(y>=height-3) blockType = height<=SEA_LEVEL+1 ? BLOCK.SAND : BLOCK.DIRT;
-                        else blockType = BLOCK.STONE;
-                        blocks[idx+y]=blockType;
+            // ==================== 噪声函数 ====================
+            class PerlinNoise {
+                constructor(seed) {
+                    this.seed = seed;
+                    this.perm = new Uint8Array(512);
+                    const p = new Uint8Array(256);
+                    let s = seed;
+                    for (let i = 0; i < 256; i++) {
+                        s = (s * 1103515245 + 12345) & 0x7fffffff;
+                        p[i] = (s >> 8) & 255;
                     }
-                    if(height<SEA_LEVEL) for(let y=height+1;y<=SEA_LEVEL;y++) blocks[idx+y]=BLOCK.WATER;
-                    if(height>SEA_LEVEL+2 && height<CHUNK_HEIGHT-8 && treeThreshold>0.62 && blocks[idx+height]===BLOCK.GRASS) {
-                        const treeHeight=4+Math.floor(Math.random()*3);
-                        for(let ty=1;ty<=treeHeight;ty++) { const by=height+ty; if(by<CHUNK_HEIGHT) blocks[idx+by]=BLOCK.LOG; }
-                        const leafTop=height+treeHeight;
-                        for(let ly=-2;ly<=1;ly++) {
-                            const by=leafTop+ly; if(by<CHUNK_HEIGHT&&by>0) {
-                                const radius=ly>=-1?2:1;
-                                for(let lx2=-radius;lx2<=radius;lx2++) for(let lz2=-radius;lz2<=radius;lz2++) {
-                                    if(Math.abs(lx2)===radius&&Math.abs(lz2)===radius&&Math.random()<0.4) continue;
-                                    const nx=lx+lx2, nz=lz+lz2;
-                                    if(nx>=0&&nx<CHUNK_SIZE&&nz>=0&&nz<CHUNK_SIZE) {
-                                        const nIdx=(nx*CHUNK_SIZE+nz)*CHUNK_HEIGHT+by;
-                                        if(blocks[nIdx]===BLOCK.AIR||blocks[nIdx]===BLOCK.WATER) blocks[nIdx]=BLOCK.LEAVES;
+                    for (let i = 0; i < 512; i++) {
+                        this.perm[i] = p[i & 255];
+                    }
+                }
+                fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+                lerp(a, b, t) { return a + t * (b - a); }
+                grad(hash, x, y) {
+                    const h = hash & 3;
+                    const u = h < 2 ? x : y;
+                    const v = h < 2 ? y : x;
+                    return ((h & 1) ? -u : u) + ((h & 2) ? -v : v);
+                }
+                noise2D(x, y) {
+                    const X = Math.floor(x) & 255;
+                    const Y = Math.floor(y) & 255;
+                    const xf = x - Math.floor(x);
+                    const yf = y - Math.floor(y);
+                    const u = this.fade(xf);
+                    const v = this.fade(yf);
+                    const A = this.perm[X] + Y;
+                    const B = this.perm[X + 1] + Y;
+                    const AA = this.perm[A] & 255;
+                    const BA = this.perm[B] & 255;
+                    const AB = this.perm[A + 1] & 255;
+                    const BB = this.perm[B + 1] & 255;
+                    const val = this.lerp(
+                        this.lerp(this.grad(this.perm[AA], xf, yf), this.grad(this.perm[BA], xf - 1, yf), u),
+                        this.lerp(this.grad(this.perm[AB], xf, yf - 1), this.grad(this.perm[BB], xf - 1, yf - 1), u),
+                        v
+                    );
+                    return (val + 1) / 2;
+                }
+                fbm(x, y, octaves = 4, persistence = 0.5) {
+                    let total = 0;
+                    let amplitude = 1;
+                    let frequency = 1;
+                    let maxVal = 0;
+                    for (let i = 0; i < octaves; i++) {
+                        total += this.noise2D(x * frequency, y * frequency) * amplitude;
+                        maxVal += amplitude;
+                        amplitude *= persistence;
+                        frequency *= 2;
+                    }
+                    return total / maxVal;
+                }
+            }
+
+            // ==================== 纹理图集生成 ====================
+            class TextureAtlas {
+                constructor() {
+                    this.size = 256;
+                    this.texSize = 16;
+                    this.cols = this.size / this.texSize;
+                    this.canvas = document.createElement('canvas');
+                    this.canvas.width = this.size;
+                    this.canvas.height = this.size;
+                    this.ctx = this.canvas.getContext('2d');
+                    this.generateTextures();
+                    this.texture = new THREE.CanvasTexture(this.canvas);
+                    this.texture.magFilter = THREE.NearestFilter;
+                    this.texture.minFilter = THREE.NearestFilter;
+                    this.texture.wrapS = THREE.ClampToEdgeWrapping;
+                    this.texture.wrapT = THREE.ClampToEdgeWrapping;
+                }
+
+                getUV(texIndex, u, v) {
+                    const col = texIndex % this.cols;
+                    const row = Math.floor(texIndex / this.cols);
+                    const u0 = (col + u) / this.cols;
+                    const v0 = 1 - (row + 1 - v) / this.cols;
+                    return [u0, v0];
+                }
+
+                drawPixel(texIndex, px, py, color) {
+                    const col = texIndex % this.cols;
+                    const row = Math.floor(texIndex / this.cols);
+                    this.ctx.fillStyle = color;
+                    this.ctx.fillRect(col * this.texSize + px, row * this.texSize + py, 1, 1);
+                }
+
+                generateTextures() {
+                    this.generateGrassTop(TEX.GRASS_TOP);
+                    this.generateGrassSide(TEX.GRASS_SIDE);
+                    this.generateDirt(TEX.DIRT);
+                    this.generateStone(TEX.STONE);
+                    this.generateLogSide(TEX.LOG_SIDE);
+                    this.generateLogTop(TEX.LOG_TOP);
+                    this.generateLeaves(TEX.LEAVES);
+                    this.generateSand(TEX.SAND);
+                    this.generateWater(TEX.WATER);
+                    this.generateGlass(TEX.GLASS);
+                    this.generateBrick(TEX.BRICK);
+                    this.generatePlank(TEX.PLANK);
+                    this.generateBedrock(TEX.BEDROCK);
+                    this.generateSolidColor(TEX.COAL_BLOCK, 40, 40, 40);
+                    this.generateSolidColor(TEX.IRON_BLOCK, 200, 200, 200);
+                    this.generateSolidColor(TEX.GOLD_BLOCK, 255, 215, 0);
+                    this.generateSolidColor(TEX.DIAMOND_BLOCK, 0, 200, 200);
+                    this.generateSolidColor(TEX.REDSTONE_BLOCK, 180, 0, 0);
+                    this.generateSolidColor(TEX.LAPIS_BLOCK, 30, 50, 150);
+                    this.generateSolidColor(TEX.SNOW_BLOCK, 240, 248, 255);
+                    this.generatePumpkin(TEX.PUMPKIN);
+                    this.generateMelon(TEX.MELON);
+                    this.generateBookshelf(TEX.BOOKSHELF);
+                }
+
+                generateGrassTop(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const noise = Math.random() * 20;
+                            const g = 90 + noise;
+                            const r = 60 + noise * 0.5;
+                            const b = 35 + noise * 0.3;
+                            this.drawPixel(tex, x, y, `rgb(${r|0},${g|0},${b|0})`);
+                        }
+                    }
+                }
+                generateGrassSide(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            if (y < 4) {
+                                const noise = Math.random() * 25;
+                                this.drawPixel(tex, x, y, `rgb(${55+noise|0},${85+noise|0},${30+noise*0.3|0})`);
+                            } else {
+                                const noise = Math.random() * 30;
+                                this.drawPixel(tex, x, y, `rgb(${130+noise|0},${95+noise*0.7|0},${60+noise*0.4|0})`);
+                            }
+                        }
+                    }
+                }
+                generateDirt(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const noise = Math.random() * 35;
+                            this.drawPixel(tex, x, y, `rgb(${125+noise|0},${90+noise*0.8|0},${55+noise*0.5|0})`);
+                        }
+                    }
+                }
+                generateStone(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const noise = Math.random() * 30;
+                            const v = 120 + noise;
+                            this.drawPixel(tex, x, y, `rgb(${v|0},${v|0},${(v+5)|0})`);
+                        }
+                    }
+                }
+                generateLogSide(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const stripe = (x + y) % 5;
+                            const noise = Math.random() * 18;
+                            if (stripe < 2) {
+                                this.drawPixel(tex, x, y, `rgb(${70+noise|0},${45+noise*0.6|0},${25+noise*0.3|0})`);
+                            } else {
+                                this.drawPixel(tex, x, y, `rgb(${110+noise|0},${75+noise*0.6|0},${40+noise*0.3|0})`);
+                            }
+                        }
+                    }
+                }
+                generateLogTop(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const dist = Math.sqrt((x - 7.5) ** 2 + (y - 7.5) ** 2);
+                            const ring = Math.floor(dist / 2.5);
+                            const noise = Math.random() * 15;
+                            if (ring % 2 === 0) {
+                                this.drawPixel(tex, x, y, `rgb(${130+noise|0},${90+noise*0.6|0},${45+noise*0.3|0})`);
+                            } else {
+                                this.drawPixel(tex, x, y, `rgb(${95+noise|0},${65+noise*0.6|0},${35+noise*0.3|0})`);
+                            }
+                        }
+                    }
+                }
+                generateLeaves(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const noise = Math.random() * 30;
+                            if (Math.random() < 0.15) {
+                                this.drawPixel(tex, x, y, `rgb(${30+noise|0},${70+noise|0},${20+noise*0.3|0})`);
+                            } else {
+                                this.drawPixel(tex, x, y, `rgb(${45+noise|0},${95+noise|0},${25+noise*0.4|0})`);
+                            }
+                        }
+                    }
+                }
+                generateSand(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const noise = Math.random() * 30;
+                            this.drawPixel(tex, x, y, `rgb(${210+noise|0},${195+noise|0},${150+noise*0.7|0})`);
+                        }
+                    }
+                }
+                generateWater(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const noise = Math.random() * 20;
+                            this.drawPixel(tex, x, y, `rgba(${40+noise|0},${90+noise|0},${200+noise|0},0.7)`);
+                        }
+                    }
+                }
+                generateGlass(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const isBorder = x === 0 || x === 15 || y === 0 || y === 15;
+                            if (isBorder) {
+                                this.drawPixel(tex, x, y, 'rgba(220,230,240,0.8)');
+                            } else if (Math.random() < 0.08) {
+                                this.drawPixel(tex, x, y, 'rgba(200,220,240,0.5)');
+                            } else {
+                                this.drawPixel(tex, x, y, 'rgba(180,200,220,0.25)');
+                            }
+                        }
+                    }
+                }
+                generateBrick(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const brickRow = Math.floor(y / 4);
+                            const offset = brickRow % 2 === 0 ? 0 : 4;
+                            const bx = (x + offset) % 8;
+                            const isMortar = (y % 4 === 3) || bx === 7;
+                            const noise = Math.random() * 20;
+                            if (isMortar) {
+                                this.drawPixel(tex, x, y, `rgb(${180+noise*0.3|0},${170+noise*0.3|0},${165+noise*0.3|0})`);
+                            } else {
+                                this.drawPixel(tex, x, y, `rgb(${140+noise|0},${50+noise*0.4|0},${35+noise*0.3|0})`);
+                            }
+                        }
+                    }
+                }
+                generatePlank(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const plankRow = Math.floor(y / 4);
+                            const offset = plankRow % 2 === 0 ? 0 : 6;
+                            const bx = (x + offset) % 8;
+                            const isGap = (y % 4 === 3) || bx === 7;
+                            const noise = Math.random() * 22;
+                            if (isGap) {
+                                this.drawPixel(tex, x, y, `rgb(${100+noise*0.4|0},${75+noise*0.3|0},${45+noise*0.2|0})`);
+                            } else {
+                                this.drawPixel(tex, x, y, `rgb(${175+noise|0},${140+noise*0.7|0},${90+noise*0.4|0})`);
+                            }
+                        }
+                    }
+                }
+                generateBedrock(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const noise = Math.random() * 40;
+                            const v = 50 + noise;
+                            this.drawPixel(tex, x, y, `rgb(${v|0},${v|0},${(v+8)|0})`);
+                        }
+                    }
+                }
+                generateSolidColor(tex, r, g, b) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const noise = Math.random() * 15;
+                            this.drawPixel(tex, x, y, `rgb(${Math.min(255,r+noise)|0},${Math.min(255,g+noise)|0},${Math.min(255,b+noise)|0})`);
+                        }
+                    }
+                }
+                generatePumpkin(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const dist = Math.sqrt((x-7.5)**2 + (y-7.5)**2);
+                            const noise = Math.random() * 20;
+                            if (dist < 6) {
+                                this.drawPixel(tex, x, y, `rgb(${220+noise*0.5|0},${140+noise|0},${30+noise*0.4|0})`);
+                            } else {
+                                this.drawPixel(tex, x, y, `rgb(${180+noise|0},${100+noise*0.7|0},${25+noise*0.3|0})`);
+                            }
+                        }
+                    }
+                }
+                generateMelon(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const stripe = (x + y) % 6;
+                            const noise = Math.random() * 20;
+                            if (stripe < 2) {
+                                this.drawPixel(tex, x, y, `rgb(${40+noise|0},${120+noise|0},${40+noise*0.5|0})`);
+                            } else {
+                                this.drawPixel(tex, x, y, `rgb(${120+noise|0},${170+noise|0},${80+noise*0.5|0})`);
+                            }
+                        }
+                    }
+                }
+                generateBookshelf(tex) {
+                    for (let y = 0; y < 16; y++) {
+                        for (let x = 0; x < 16; x++) {
+                            const row = Math.floor(y / 3);
+                            const col = Math.floor(x / 4);
+                            const isBook = (row % 3 !== 2) && (col % 4 !== 3);
+                            const noise = Math.random() * 20;
+                            if (isBook) {
+                                const r = 130 + noise;
+                                const g = 90 + noise * 0.8;
+                                const b = 50 + noise * 0.5;
+                                this.drawPixel(tex, x, y, `rgb(${r|0},${g|0},${b|0})`);
+                            } else {
+                                this.drawPixel(tex, x, y, `rgb(${110+noise*0.5|0},${70+noise*0.4|0},${40+noise*0.3|0})`);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // ==================== 世界数据 ====================
+            class World {
+                constructor(seed) {
+                    this.chunks = new Map();
+                    this.noise = new PerlinNoise(seed);
+                    this.treeNoise = new PerlinNoise(seed ^ 0x12345678);
+                }
+
+                getChunkKey(cx, cz) { return cx + ',' + cz; }
+
+                getChunk(cx, cz) {
+                    return this.chunks.get(this.getChunkKey(cx, cz)) || null;
+                }
+
+                getOrCreateChunk(cx, cz) {
+                    const key = this.getChunkKey(cx, cz);
+                    let chunk = this.chunks.get(key);
+                    if (!chunk) {
+                        chunk = this.generateChunk(cx, cz);
+                        this.chunks.set(key, chunk);
+                    }
+                    return chunk;
+                }
+
+                generateChunk(cx, cz) {
+                    const blocks = new Uint8Array(CHUNK_SIZE * CHUNK_SIZE * CHUNK_HEIGHT);
+                    const heightMap = new Uint8Array(CHUNK_SIZE * CHUNK_SIZE);
+                    const worldX = cx * CHUNK_SIZE;
+                    const worldZ = cz * CHUNK_SIZE;
+
+                    for (let lx = 0; lx < CHUNK_SIZE; lx++) {
+                        for (let lz = 0; lz < CHUNK_SIZE; lz++) {
+                            const wx = worldX + lx;
+                            const wz = worldZ + lz;
+                            const n1 = this.noise.fbm(wx * 0.025, wz * 0.025, 4, 0.5);
+                            const n2 = this.noise.fbm(wx * 0.08 + 100, wz * 0.08 + 100, 3, 0.5);
+                            let height = Math.floor(20 + n1 * 40 + n2 * 8);
+                            if (height < 3) height = 3;
+                            if (height > CHUNK_HEIGHT - 3) height = CHUNK_HEIGHT - 3;
+                            heightMap[lx * CHUNK_SIZE + lz] = height;
+                        }
+                    }
+
+                    for (let lx = 0; lx < CHUNK_SIZE; lx++) {
+                        for (let lz = 0; lz < CHUNK_SIZE; lz++) {
+                            const height = heightMap[lx * CHUNK_SIZE + lz];
+                            const wx = worldX + lx;
+                            const wz = worldZ + lz;
+                            const idx = (lx * CHUNK_SIZE + lz) * CHUNK_HEIGHT;
+                            blocks[idx] = BLOCK.BEDROCK;
+
+                            const treeThreshold = this.treeNoise.fbm(wx * 0.03 + 500, wz * 0.03 + 500, 3, 0.5);
+
+                            for (let y = 1; y <= height; y++) {
+                                let blockType;
+                                if (y === height) {
+                                    if (height <= SEA_LEVEL + 1) {
+                                        blockType = BLOCK.SAND;
+                                    } else {
+                                        blockType = BLOCK.GRASS;
+                                    }
+                                } else if (y >= height - 3) {
+                                    blockType = (height <= SEA_LEVEL + 1) ? BLOCK.SAND : BLOCK.DIRT;
+                                } else {
+                                    blockType = BLOCK.STONE;
+                                }
+                                blocks[idx + y] = blockType;
+                            }
+
+                            if (height < SEA_LEVEL) {
+                                for (let y = height + 1; y <= SEA_LEVEL; y++) {
+                                    blocks[idx + y] = BLOCK.WATER;
+                                }
+                            }
+
+                            if (height > SEA_LEVEL + 2 && height < CHUNK_HEIGHT - 8 && treeThreshold > 0.62 &&
+                                blocks[idx + height] === BLOCK.GRASS) {
+                                const treeHeight = 4 + Math.floor(Math.random() * 3);
+                                for (let ty = 1; ty <= treeHeight; ty++) {
+                                    const by = height + ty;
+                                    if (by < CHUNK_HEIGHT) blocks[idx + by] = BLOCK.LOG;
+                                }
+                                const leafTop = height + treeHeight;
+                                for (let ly = -2; ly <= 1; ly++) {
+                                    const by = leafTop + ly;
+                                    if (by < CHUNK_HEIGHT && by > 0) {
+                                        const radius = ly >= -1 ? 2 : 1;
+                                        for (let lx2 = -radius; lx2 <= radius; lx2++) {
+                                            for (let lz2 = -radius; lz2 <= radius; lz2++) {
+                                                if (Math.abs(lx2) === radius && Math.abs(lz2) === radius && Math.random() < 0.4) continue;
+                                                const nx = lx + lx2;
+                                                const nz = lz + lz2;
+                                                if (nx >= 0 && nx < CHUNK_SIZE && nz >= 0 && nz < CHUNK_SIZE) {
+                                                    const nIdx = (nx * CHUNK_SIZE + nz) * CHUNK_HEIGHT + by;
+                                                    if (blocks[nIdx] === BLOCK.AIR || blocks[nIdx] === BLOCK.WATER) {
+                                                        blocks[nIdx] = BLOCK.LEAVES;
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
-                return { cx, cz, blocks, heightMap, mesh:null, waterMesh:null, dirty:true };
-            }
-            getBlock(wx, wy, wz) {
-                if(wy<0||wy>=CHUNK_HEIGHT) return BLOCK.AIR;
-                const cx=Math.floor(wx/CHUNK_SIZE), cz=Math.floor(wz/CHUNK_SIZE);
-                const chunk=this.getChunk(cx, cz); if(!chunk) return BLOCK.AIR;
-                const lx=((wx%CHUNK_SIZE)+CHUNK_SIZE)%CHUNK_SIZE, lz=((wz%CHUNK_SIZE)+CHUNK_SIZE)%CHUNK_SIZE;
-                return chunk.blocks[(lx*CHUNK_SIZE+lz)*CHUNK_HEIGHT+wy];
-            }
-            setBlock(wx, wy, wz, blockId) {
-                if(wy<0||wy>=CHUNK_HEIGHT) return;
-                const cx=Math.floor(wx/CHUNK_SIZE), cz=Math.floor(wz/CHUNK_SIZE);
-                const chunk=this.getChunk(cx, cz); if(!chunk) return;
-                const lx=((wx%CHUNK_SIZE)+CHUNK_SIZE)%CHUNK_SIZE, lz=((wz%CHUNK_SIZE)+CHUNK_SIZE)%CHUNK_SIZE;
-                chunk.blocks[(lx*CHUNK_SIZE+lz)*CHUNK_HEIGHT+wy]=blockId; chunk.dirty=true;
-                if(lx===0)this.markDirty(cx-1,cz); if(lx===CHUNK_SIZE-1)this.markDirty(cx+1,cz);
-                if(lz===0)this.markDirty(cx,cz-1); if(lz===CHUNK_SIZE-1)this.markDirty(cx,cz+1);
-            }
-            markDirty(cx,cz){ const chunk=this.getChunk(cx,cz); if(chunk) chunk.dirty=true; }
-            isSolid(wx,wy,wz){ return SOLID_BLOCKS.has(this.getBlock(wx,wy,wz)); }
-        }
 
-        // ==================== 区块网格构建 ====================
-        class ChunkMeshBuilder {
-            constructor(world, atlas){ this.world=world; this.atlas=atlas; }
-            buildMesh(chunk) {
-                const positions=[], normals=[], uvs=[], indices=[], waterPositions=[], waterNormals=[], waterUvs=[], waterIndices=[];
-                const blocks=chunk.blocks, startX=chunk.cx*CHUNK_SIZE, startZ=chunk.cz*CHUNK_SIZE;
-                for(let lx=0;lx<CHUNK_SIZE;lx++) for(let lz=0;lz<CHUNK_SIZE;lz++) for(let ly=0;ly<CHUNK_HEIGHT;ly++) {
-                    const blockId=blocks[(lx*CHUNK_SIZE+lz)*CHUNK_HEIGHT+ly]; if(blockId===BLOCK.AIR) continue;
-                    const wx=startX+lx, wy=ly, wz=startZ+lz, faces=BLOCK_FACES[blockId]; if(!faces) continue;
-                    const isWater=blockId===BLOCK.WATER, isGlass=blockId===BLOCK.GLASS, isLeaves=blockId===BLOCK.LEAVES, isTransparentBlock=isWater||isGlass||isLeaves;
-                    const faceDefs=[
-                        {dir:[1,0,0],tex:faces.px,nx:1,ny:0,nz:0,corners:[[1,0,1],[1,0,0],[1,1,0],[1,1,1]]},
-                        {dir:[-1,0,0],tex:faces.nx,nx:-1,ny:0,nz:0,corners:[[0,0,0],[0,0,1],[0,1,1],[0,1,0]]},
-                        {dir:[0,1,0],tex:faces.py,nx:0,ny:1,nz:0,corners:[[0,1,1],[1,1,1],[1,1,0],[0,1,0]]},
-                        {dir:[0,-1,0],tex:faces.ny,nx:0,ny:-1,nz:0,corners:[[0,0,0],[1,0,0],[1,0,1],[0,0,1]]},
-                        {dir:[0,0,1],tex:faces.pz,nx:0,ny:0,nz:1,corners:[[1,0,1],[0,0,1],[0,1,1],[1,1,1]]},
-                        {dir:[0,0,-1],tex:faces.nz,nx:0,ny:0,nz:-1,corners:[[0,0,0],[1,0,0],[1,1,0],[0,1,0]]}
+                    return { cx, cz, blocks, heightMap, mesh: null, waterMesh: null, dirty: true };
+                }
+
+                getBlock(wx, wy, wz) {
+                    if (wy < 0 || wy >= CHUNK_HEIGHT) return BLOCK.AIR;
+                    const cx = Math.floor(wx / CHUNK_SIZE);
+                    const cz = Math.floor(wz / CHUNK_SIZE);
+                    const chunk = this.getChunk(cx, cz);
+                    if (!chunk) return BLOCK.AIR;
+                    const lx = ((wx % CHUNK_SIZE) + CHUNK_SIZE) % CHUNK_SIZE;
+                    const lz = ((wz % CHUNK_SIZE) + CHUNK_SIZE) % CHUNK_SIZE;
+                    return chunk.blocks[(lx * CHUNK_SIZE + lz) * CHUNK_HEIGHT + wy];
+                }
+
+                setBlock(wx, wy, wz, blockId) {
+                    if (wy < 0 || wy >= CHUNK_HEIGHT) return;
+                    const cx = Math.floor(wx / CHUNK_SIZE);
+                    const cz = Math.floor(wz / CHUNK_SIZE);
+                    const chunk = this.getChunk(cx, cz);
+                    if (!chunk) return;
+                    const lx = ((wx % CHUNK_SIZE) + CHUNK_SIZE) % CHUNK_SIZE;
+                    const lz = ((wz % CHUNK_SIZE) + CHUNK_SIZE) % CHUNK_SIZE;
+                    chunk.blocks[(lx * CHUNK_SIZE + lz) * CHUNK_HEIGHT + wy] = blockId;
+                    chunk.dirty = true;
+                    if (lx === 0) this.markDirty(cx - 1, cz);
+                    if (lx === CHUNK_SIZE - 1) this.markDirty(cx + 1, cz);
+                    if (lz === 0) this.markDirty(cx, cz - 1);
+                    if (lz === CHUNK_SIZE - 1) this.markDirty(cx, cz + 1);
+                }
+
+                markDirty(cx, cz) {
+                    const chunk = this.getChunk(cx, cz);
+                    if (chunk) chunk.dirty = true;
+                }
+
+                isSolid(wx, wy, wz) {
+                    return SOLID_BLOCKS.has(this.getBlock(wx, wy, wz));
+                }
+            }
+
+            // ==================== 区块网格构建 ====================
+            class ChunkMeshBuilder {
+                constructor(world, atlas) {
+                    this.world = world;
+                    this.atlas = atlas;
+                }
+
+                buildMesh(chunk) {
+                    const positions = [];
+                    const normals = [];
+                    const uvs = [];
+                    const indices = [];
+                    const waterPositions = [];
+                    const waterNormals = [];
+                    const waterUvs = [];
+                    const waterIndices = [];
+
+                    const blocks = chunk.blocks;
+                    const startX = chunk.cx * CHUNK_SIZE;
+                    const startZ = chunk.cz * CHUNK_SIZE;
+
+                    for (let lx = 0; lx < CHUNK_SIZE; lx++) {
+                        for (let lz = 0; lz < CHUNK_SIZE; lz++) {
+                            for (let ly = 0; ly < CHUNK_HEIGHT; ly++) {
+                                const blockId = blocks[(lx * CHUNK_SIZE + lz) * CHUNK_HEIGHT + ly];
+                                if (blockId === BLOCK.AIR) continue;
+
+                                const wx = startX + lx;
+                                const wy = ly;
+                                const wz = startZ + lz;
+                                const faces = BLOCK_FACES[blockId];
+                                if (!faces) continue;
+
+                                const isWater = blockId === BLOCK.WATER;
+                                const isGlass = blockId === BLOCK.GLASS;
+                                const isLeaves = blockId === BLOCK.LEAVES;
+                                const isTransparentBlock = isWater || isGlass || isLeaves;
+
+                                const faceDefs = [
+                                    { dir: [1, 0, 0], tex: faces.px, nx: 1, ny: 0, nz: 0, corners: [[1,0,1],[1,0,0],[1,1,0],[1,1,1]] },
+                                    { dir: [-1, 0, 0], tex: faces.nx, nx: -1, ny: 0, nz: 0, corners: [[0,0,0],[0,0,1],[0,1,1],[0,1,0]] },
+                                    { dir: [0, 1, 0], tex: faces.py, nx: 0, ny: 1, nz: 0, corners: [[0,1,1],[1,1,1],[1,1,0],[0,1,0]] },
+                                    { dir: [0, -1, 0], tex: faces.ny, nx: 0, ny: -1, nz: 0, corners: [[0,0,0],[1,0,0],[1,0,1],[0,0,1]] },
+                                    { dir: [0, 0, 1], tex: faces.pz, nx: 0, ny: 0, nz: 1, corners: [[1,0,1],[0,0,1],[0,1,1],[1,1,1]] },
+                                    { dir: [0, 0, -1], tex: faces.nz, nx: 0, ny: 0, nz: -1, corners: [[0,0,0],[1,0,0],[1,1,0],[0,1,0]] },
+                                ];
+
+                                for (const face of faceDefs) {
+                                    const neighborBlock = this.world.getBlock(wx + face.dir[0], wy + face.dir[1], wz + face.dir[2]);
+                                    const neighborTransparent = TRANSPARENT_BLOCKS.has(neighborBlock);
+                                    let shouldRender = false;
+                                    if (isTransparentBlock) {
+                                        if (neighborBlock === BLOCK.AIR) shouldRender = true;
+                                        else if (neighborBlock !== blockId && neighborTransparent) shouldRender = true;
+                                    } else {
+                                        shouldRender = neighborBlock === BLOCK.AIR || neighborTransparent;
+                                    }
+                                    if (!shouldRender) continue;
+
+                                    const texIndex = face.tex;
+                                    const isWaterFace = isWater;
+                                    const target = isWaterFace ? waterPositions : positions;
+                                    const targetNorms = isWaterFace ? waterNormals : normals;
+                                    const targetUVs = isWaterFace ? waterUvs : uvs;
+                                    const targetIndices = isWaterFace ? waterIndices : indices;
+                                    const baseIndex = target.length / 3;
+
+                                    for (const corner of face.corners) {
+                                        target.push(wx + corner[0], wy + corner[1], wz + corner[2]);
+                                        targetNorms.push(face.nx, face.ny, face.nz);
+                                    }
+
+                                    const uvStart = targetUVs.length;
+                                    const cornerUVs = this.getCornerUVs(texIndex);
+                                    for (let i = 0; i < 4; i++) {
+                                        targetUVs.push(cornerUVs[i][0], cornerUVs[i][1]);
+                                    }
+
+                                    targetIndices.push(baseIndex, baseIndex + 1, baseIndex + 2);
+                                    targetIndices.push(baseIndex, baseIndex + 2, baseIndex + 3);
+                                }
+                            }
+                        }
+                    }
+
+                    return {
+                        solid: { positions, normals, uvs, indices },
+                        water: { positions: waterPositions, normals: waterNormals, uvs: waterUvs, indices: waterIndices },
+                    };
+                }
+
+                getCornerUVs(texIndex) {
+                    const atlas = this.atlas;
+                    const col = texIndex % atlas.cols;
+                    const row = Math.floor(texIndex / atlas.cols);
+                    const u0 = col / atlas.cols;
+                    const v0 = 1 - (row + 1) / atlas.cols;
+                    const u1 = (col + 1) / atlas.cols;
+                    const v1 = 1 - row / atlas.cols;
+                    return [
+                        [u0, v0],
+                        [u1, v0],
+                        [u1, v1],
+                        [u0, v1]
                     ];
-                    for(const face of faceDefs) {
-                        const neighborBlock=this.world.getBlock(wx+face.dir[0], wy+face.dir[1], wz+face.dir[2]);
-                        const neighborTransparent=TRANSPARENT_BLOCKS.has(neighborBlock);
-                        let shouldRender=false;
-                        if(isTransparentBlock){ if(neighborBlock===BLOCK.AIR) shouldRender=true; else if(neighborBlock!==blockId&&neighborTransparent) shouldRender=true; }
-                        else shouldRender=neighborBlock===BLOCK.AIR||neighborTransparent;
-                        if(!shouldRender) continue;
-                        const texIndex=face.tex, isWaterFace=isWater;
-                        const target=isWaterFace?waterPositions:positions, targetNorms=isWaterFace?waterNormals:normals, targetUVs=isWaterFace?waterUvs:uvs, targetIndices=isWaterFace?waterIndices:indices;
-                        const baseIndex=target.length/3;
-                        for(const corner of face.corners){ target.push(wx+corner[0], wy+corner[1], wz+corner[2]); targetNorms.push(face.nx,face.ny,face.nz); }
-                        const uvStart=targetUVs.length;
-                        const cornerUVs=this.getCornerUVs(texIndex);
-                        for(let i=0;i<4;i++) targetUVs.push(cornerUVs[i][0], cornerUVs[i][1]);
-                        targetIndices.push(baseIndex,baseIndex+1,baseIndex+2); targetIndices.push(baseIndex,baseIndex+2,baseIndex+3);
-                    }
-                }
-                return { solid:{positions,normals,uvs,indices}, water:{positions:waterPositions,normals:waterNormals,uvs:waterUvs,indices:waterIndices} };
-            }
-            getCornerUVs(texIndex) {
-                const col=texIndex%this.atlas.cols, row=Math.floor(texIndex/this.atlas.cols);
-                const u0=col/this.atlas.cols, v0=1-(row+1)/this.atlas.cols, u1=(col+1)/this.atlas.cols, v1=1-row/this.atlas.cols;
-                return [[u0,v0],[u1,v0],[u1,v1],[u0,v1]];
-            }
-        }
-
-        // ==================== 射线检测 ====================
-        function raycastVoxel(world, origin, direction, maxDist) {
-            let x=Math.floor(origin.x), y=Math.floor(origin.y), z=Math.floor(origin.z);
-            const stepX=direction.x>0?1:-1, stepY=direction.y>0?1:-1, stepZ=direction.z>0?1:-1;
-            const tDeltaX=Math.abs(1/(direction.x||0.0001)), tDeltaY=Math.abs(1/(direction.y||0.0001)), tDeltaZ=Math.abs(1/(direction.z||0.0001));
-            let tMaxX=direction.x>0?(x+1-origin.x)/direction.x:direction.x<0?(x-origin.x)/direction.x:Infinity;
-            let tMaxY=direction.y>0?(y+1-origin.y)/direction.y:direction.y<0?(y-origin.y)/direction.y:Infinity;
-            let tMaxZ=direction.z>0?(z+1-origin.z)/direction.z:direction.z<0?(z-origin.z)/direction.z:Infinity;
-            let face=[0,0,0], t=0;
-            for(let i=0;i<100;i++) {
-                const blockId=world.getBlock(x,y,z);
-                if(blockId!==BLOCK.AIR&&blockId!==BLOCK.WATER) return {x,y,z,blockId,face,distance:t};
-                if(tMaxX<tMaxY&&tMaxX<tMaxZ){ x+=stepX; t=tMaxX; tMaxX+=tDeltaX; face=[-stepX,0,0]; }
-                else if(tMaxY<tMaxZ){ y+=stepY; t=tMaxY; tMaxY+=tDeltaY; face=[0,-stepY,0]; }
-                else { z+=stepZ; t=tMaxZ; tMaxZ+=tDeltaZ; face=[0,0,-stepZ]; }
-                if(t>maxDist) break; if(y<0||y>=CHUNK_HEIGHT) break;
-            }
-            return null;
-        }
-
-        // ==================== 生物类 ====================
-        class Animal {
-            constructor(type, x, y, z, world) {
-                this.type=type; this.world=world;
-                this.position=new THREE.Vector3(x,y,z);
-                this.velocity=new THREE.Vector3(0,0,0);
-                this.group=new THREE.Group();
-                this.buildModel(type);
-                this.group.position.copy(this.position);
-                this.moveTimer=0; this.moveDirection=new THREE.Vector3((Math.random()-0.5)*2,0,(Math.random()-0.5)*2).normalize();
-                this.walkAnim=0;
-            }
-            buildModel(type) {
-                const material=(color)=>new THREE.MeshLambertMaterial({color});
-                const bodyMat=material(type==='pig'?0xffb6c1:type==='cow'?0x8B4513:type==='sheep'?0xeeeeee:0xfff0e0);
-                const headMat=material(type==='pig'?0xffa07a:type==='cow'?0x654321:type==='sheep'?0xdddddd:0xffccaa);
-                const legMat=material(type==='cow'?0x5D3A1A:type==='sheep'?0xbbbbbb:0xcc8866);
-                // 身体
-                const body=new THREE.Mesh(new THREE.BoxGeometry(0.9,0.7,0.6), bodyMat);
-                body.position.y=0.6; this.group.add(body);
-                // 头
-                const head=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.5,0.5), headMat);
-                head.position.set(0,1.0,0.25); this.group.add(head);
-                // 腿
-                const legGeo=new THREE.BoxGeometry(0.2,0.5,0.2);
-                const legPositions=[[-0.3,0.25,0.2],[0.3,0.25,0.2],[-0.3,0.25,-0.2],[0.3,0.25,-0.2]];
-                legPositions.forEach(pos=>{ const leg=new THREE.Mesh(legGeo, legMat); leg.position.set(pos[0],pos[1],pos[2]); this.group.add(leg); });
-                // 特征
-                if(type==='pig') { // 鼻子
-                    const nose=new THREE.Mesh(new THREE.BoxGeometry(0.2,0.1,0.1), material(0xff8c69)); nose.position.set(0,0.9,0.5); this.group.add(nose);
-                } else if(type==='cow') { // 角
-                    const hornGeo=new THREE.BoxGeometry(0.1,0.3,0.1); const hornMat=material(0xcccccc);
-                    const horn1=new THREE.Mesh(hornGeo,hornMat); horn1.position.set(-0.2,1.25,0.1); horn1.rotation.z=0.3; this.group.add(horn1);
-                    const horn2=new THREE.Mesh(hornGeo,hornMat); horn2.position.set(0.2,1.25,0.1); horn2.rotation.z=-0.3; this.group.add(horn2);
-                } else if(type==='sheep') { // 羊毛
-                    const wool=new THREE.Mesh(new THREE.BoxGeometry(0.9,0.5,0.6), material(0xf0f0f0)); wool.position.y=0.75; this.group.add(wool);
-                } else if(type==='chicken') { // 鸡冠和喙
-                    const comb=new THREE.Mesh(new THREE.BoxGeometry(0.2,0.15,0.1), material(0xff0000)); comb.position.set(0,1.25,0.2); this.group.add(comb);
-                    const beak=new THREE.Mesh(new THREE.BoxGeometry(0.15,0.1,0.2), material(0xffaa00)); beak.position.set(0,0.85,0.5); this.group.add(beak);
-                }
-                this.group.scale.set(0.8,0.8,0.8);
-            }
-            update(deltaTime) {
-                this.moveTimer-=deltaTime;
-                if(this.moveTimer<=0){ this.moveTimer=2+Math.random()*3; this.moveDirection=new THREE.Vector3((Math.random()-0.5)*2,0,(Math.random()-0.5)*2).normalize(); }
-                const speed=1.2;
-                this.velocity.x=this.moveDirection.x*speed;
-                this.velocity.z=this.moveDirection.z*speed;
-                this.velocity.y-=20*deltaTime; // 重力
-                // 移动X
-                const newX=this.position.x+this.velocity.x*deltaTime;
-                if(!this.checkCollision(newX,this.position.y,this.position.z)) this.position.x=newX; else this.velocity.x=0;
-                // 移动Z
-                const newZ=this.position.z+this.velocity.z*deltaTime;
-                if(!this.checkCollision(this.position.x,this.position.y,newZ)) this.position.z=newZ; else this.velocity.z=0;
-                // 移动Y
-                const newY=this.position.y+this.velocity.y*deltaTime;
-                if(!this.checkCollision(this.position.x,newY,this.position.z)) this.position.y=newY; else { this.velocity.y=0; }
-                // 地面检测
-                if(this.world.isSolid(Math.floor(this.position.x), Math.floor(this.position.y-0.1), Math.floor(this.position.z))) {
-                    // 在地面
-                } else {
-                    // 下落
-                    this.velocity.y-=20*deltaTime;
-                }
-                this.group.position.copy(this.position);
-                this.walkAnim+=deltaTime*8;
-                if(this.velocity.x!==0||this.velocity.z!==0) this.group.rotation.y=Math.atan2(this.velocity.x,this.velocity.z);
-            }
-            checkCollision(x,y,z) {
-                const halfW=0.4;
-                const minX=Math.floor(x-halfW), maxX=Math.floor(x+halfW);
-                const minY=Math.floor(y), maxY=Math.floor(y+1.2);
-                const minZ=Math.floor(z-halfW), maxZ=Math.floor(z+halfW);
-                for(let bx=minX;bx<=maxX;bx++) for(let by=minY;by<=maxY;by++) for(let bz=minZ;bz<=maxZ;bz++) if(this.world.isSolid(bx,by,bz)) return true;
-                return false;
-            }
-        }
-
-        // ==================== 游戏主类 ====================
-        class MinecraftMobile {
-            constructor() {
-                this.canvasContainer=document.getElementById('gameCanvas');
-                this.scene=new THREE.Scene(); this.scene.background=new THREE.Color(0x87CEEB); this.scene.fog=new THREE.Fog(0x87CEEB,30,60);
-                this.camera=new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 200);
-                this.renderer=new THREE.WebGLRenderer({antialias:false, powerPreference:'high-performance'});
-                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio,2)); this.renderer.setSize(window.innerWidth,window.innerHeight); this.renderer.shadowMap.enabled=false;
-                this.canvasContainer.appendChild(this.renderer.domElement);
-                const ambient=new THREE.AmbientLight(0xffffff,0.55); this.scene.add(ambient);
-                const dirLight=new THREE.DirectionalLight(0xffffff,0.6); dirLight.position.set(50,100,30); dirLight.target.position.set(0,0,0); this.scene.add(dirLight); this.scene.add(dirLight.target);
-                this.atlas=new TextureAtlas(); this.textureAtlas=this.atlas.texture;
-                const seed=Math.floor(Math.random()*1000000); this.world=new World(seed); this.meshBuilder=new ChunkMeshBuilder(this.world,this.atlas);
-                this.solidMaterial=new THREE.MeshLambertMaterial({map:this.textureAtlas, side:THREE.DoubleSide});
-                this.waterMaterial=new THREE.MeshLambertMaterial({map:this.textureAtlas, transparent:true, opacity:0.65, side:THREE.DoubleSide, depthWrite:false});
-                this.playerPosition=new THREE.Vector3(8,40,8); this.playerVelocity=new THREE.Vector3(0,0,0); this.playerYaw=0; this.playerPitch=0; this.isOnGround=false; this.isFlying=false;
-                this.selectedSlot=0; this.hotbarBlocks=PLACEABLE_BLOCKS.slice(0,9); // 快捷栏前9个
-                this.touchState={joystick:null, lookTouch:null, jumpPressed:false}; this.moveInput={x:0,y:0}; this.lookDelta={x:0,y:0};
-                this.createHighlightMesh(); this.createClouds(); this.initUI(); this.initTouchControls(); this.initResizeHandler(); this.initFullscreenButton(); this.initBackpack();
-                this.generateInitialChunks();
-                this.animals=[]; this.spawnAnimals();
-                this.lastTime=performance.now(); this.fpsCounter=0; this.fpsTime=0; this.fpsDisplay=0; this.raycastResult=null;
-                this.gameLoop();
-            }
-            createHighlightMesh() {
-                const geo=new THREE.BoxGeometry(1.01,1.01,1.01); const edges=new THREE.EdgesGeometry(geo);
-                const mat=new THREE.LineBasicMaterial({color:0xffffff, linewidth:2, transparent:true, opacity:0.8});
-                this.highlightMesh=new THREE.LineSegments(edges,mat); this.highlightMesh.visible=false; this.scene.add(this.highlightMesh);
-            }
-            createClouds() {
-                const cloudGroup=new THREE.Group(); const cloudMat=new THREE.MeshLambertMaterial({color:0xffffff,transparent:true,opacity:0.8,side:THREE.DoubleSide});
-                for(let i=0;i<12;i++) { const geo=new THREE.PlaneGeometry(8+Math.random()*12,3+Math.random()*4); const cloud=new THREE.Mesh(geo,cloudMat); cloud.position.set((Math.random()-0.5)*80,45+Math.random()*10,(Math.random()-0.5)*80); cloud.rotation.x=-Math.PI/2; cloud.rotation.z=Math.random()*Math.PI; cloudGroup.add(cloud); }
-                this.scene.add(cloudGroup); this.cloudGroup=cloudGroup;
-            }
-            generateInitialChunks() {
-                const px=Math.floor(this.playerPosition.x/CHUNK_SIZE), pz=Math.floor(this.playerPosition.z/CHUNK_SIZE);
-                const totalChunks=(RENDER_DISTANCE*2+1)**2; let loaded=0; const loadingBar=document.getElementById('loading-bar'); const loadingText=document.getElementById('loading-text');
-                for(let dx=-RENDER_DISTANCE;dx<=RENDER_DISTANCE;dx++) for(let dz=-RENDER_DISTANCE;dz<=RENDER_DISTANCE;dz++) { this.world.getOrCreateChunk(px+dx,pz+dz); loaded++; loadingBar.style.width=Math.min(80,(loaded/totalChunks)*80)+'%'; loadingText.textContent=`生成区块 ${loaded}/${totalChunks}...`; }
-                for(let dx=-RENDER_DISTANCE;dx<=RENDER_DISTANCE;dx++) for(let dz=-RENDER_DISTANCE;dz<=RENDER_DISTANCE;dz++) this.buildChunkMesh(px+dx,pz+dz);
-                loadingBar.style.width='100%'; loadingText.textContent='完成！';
-                setTimeout(()=>{ document.getElementById('loading-screen').classList.add('hidden'); setTimeout(()=>document.getElementById('touch-hint').classList.add('hidden'),3000); },300);
-                const groundY=this.findGroundHeight(px*CHUNK_SIZE+8,pz*CHUNK_SIZE+8); this.playerPosition.y=groundY+0.5; this.isOnGround=true;
-            }
-            findGroundHeight(wx,wz){ for(let y=CHUNK_HEIGHT-1;y>=0;y--){ const b=this.world.getBlock(Math.floor(wx),y,Math.floor(wz)); if(SOLID_BLOCKS.has(b)) return y+1; } return SEA_LEVEL+1; }
-            buildChunkMesh(cx,cz) {
-                const chunk=this.world.getOrCreateChunk(cx,cz); const result=this.meshBuilder.buildMesh(chunk);
-                if(chunk.mesh){ this.scene.remove(chunk.mesh); chunk.mesh.geometry.dispose(); }
-                if(chunk.waterMesh){ this.scene.remove(chunk.waterMesh); chunk.waterMesh.geometry.dispose(); }
-                if(result.solid.positions.length>0){ const geo=new THREE.BufferGeometry(); geo.setAttribute('position',new THREE.Float32BufferAttribute(result.solid.positions,3)); geo.setAttribute('normal',new THREE.Float32BufferAttribute(result.solid.normals,3)); geo.setAttribute('uv',new THREE.Float32BufferAttribute(result.solid.uvs,2)); geo.setIndex(result.solid.indices); const mesh=new THREE.Mesh(geo,this.solidMaterial); this.scene.add(mesh); chunk.mesh=mesh; } else chunk.mesh=null;
-                if(result.water.positions.length>0){ const geo=new THREE.BufferGeometry(); geo.setAttribute('position',new THREE.Float32BufferAttribute(result.water.positions,3)); geo.setAttribute('normal',new THREE.Float32BufferAttribute(result.water.normals,3)); geo.setAttribute('uv',new THREE.Float32BufferAttribute(result.water.uvs,2)); geo.setIndex(result.water.indices); const mesh=new THREE.Mesh(geo,this.waterMaterial); mesh.renderOrder=1; this.scene.add(mesh); chunk.waterMesh=mesh; } else chunk.waterMesh=null;
-                chunk.dirty=false;
-            }
-            updateChunks() {
-                const px=Math.floor(this.playerPosition.x/CHUNK_SIZE), pz=Math.floor(this.playerPosition.z/CHUNK_SIZE);
-                for(const chunk of this.world.chunks.values()){ if(chunk.dirty){ const dist=Math.max(Math.abs(chunk.cx-px),Math.abs(chunk.cz-pz)); if(dist<=RENDER_DISTANCE+1) this.buildChunkMesh(chunk.cx,chunk.cz); } }
-                for(const chunk of this.world.chunks.values()){ const dist=Math.max(Math.abs(chunk.cx-px),Math.abs(chunk.cz-pz)); if(dist>RENDER_DISTANCE+1){ if(chunk.mesh){ this.scene.remove(chunk.mesh); chunk.mesh.geometry.dispose(); chunk.mesh=null; } if(chunk.waterMesh){ this.scene.remove(chunk.waterMesh); chunk.waterMesh.geometry.dispose(); chunk.waterMesh=null; } } else if(dist<=RENDER_DISTANCE&&!chunk.mesh&&!chunk.waterMesh&&!chunk.dirty) this.buildChunkMesh(chunk.cx,chunk.cz); }
-                for(let dx=-RENDER_DISTANCE;dx<=RENDER_DISTANCE;dx++) for(let dz=-RENDER_DISTANCE;dz<=RENDER_DISTANCE;dz++){ if(!this.world.getChunk(px+dx,pz+dz)){ this.world.getOrCreateChunk(px+dx,pz+dz); this.buildChunkMesh(px+dx,pz+dz); } }
-            }
-            initUI() {
-                const hotbar=document.getElementById('hotbar'); hotbar.innerHTML=''; const canvas=document.createElement('canvas'); canvas.width=16; canvas.height=16; const ctx=canvas.getContext('2d'); const atlasCanvas=this.atlas.canvas;
-                this.hotbarBlocks.forEach((blockId,index)=>{
-                    const slot=document.createElement('div'); slot.className='hotbar-slot'+(index===this.selectedSlot?' active':''); slot.dataset.index=index;
-                    const texIndex=this.getBlockIconTexture(blockId); const col=texIndex%this.atlas.cols, row=Math.floor(texIndex/this.atlas.cols);
-                    ctx.clearRect(0,0,16,16); ctx.drawImage(atlasCanvas,col*16,row*16,16,16,0,0,16,16);
-                    const img=document.createElement('img'); img.src=canvas.toDataURL(); img.alt=BLOCK_NAMES[blockId]||'方块'; slot.appendChild(img);
-                    const num=document.createElement('span'); num.className='slot-number'; num.textContent=index+1; slot.appendChild(num);
-                    slot.addEventListener('click',(e)=>{e.preventDefault();e.stopPropagation();this.selectSlot(index);});
-                    slot.addEventListener('touchstart',(e)=>{e.preventDefault();e.stopPropagation();this.selectSlot(index);},{passive:false});
-                    hotbar.appendChild(slot);
-                });
-            }
-            getBlockIconTexture(blockId) {
-                const faces=BLOCK_FACES[blockId]; if(!faces) return TEX.STONE;
-                if(blockId===BLOCK.GRASS)return TEX.GRASS_SIDE; if(blockId===BLOCK.LOG)return TEX.LOG_SIDE; if(blockId===BLOCK.PLANK)return TEX.PLANK;
-                if(blockId===BLOCK.BRICK)return TEX.BRICK; if(blockId===BLOCK.GLASS)return TEX.GLASS; if(blockId===BLOCK.LEAVES)return TEX.LEAVES;
-                if(blockId===BLOCK.SAND)return TEX.SAND; if(blockId===BLOCK.DIRT)return TEX.DIRT; if(blockId===BLOCK.STONE)return TEX.STONE;
-                if(blockId===BLOCK.COAL_BLOCK)return TEX.COAL_BLOCK; if(blockId===BLOCK.IRON_BLOCK)return TEX.IRON_BLOCK; if(blockId===BLOCK.GOLD_BLOCK)return TEX.GOLD_BLOCK;
-                if(blockId===BLOCK.DIAMOND_BLOCK)return TEX.DIAMOND_BLOCK; if(blockId===BLOCK.REDSTONE_BLOCK)return TEX.REDSTONE_BLOCK; if(blockId===BLOCK.LAPIS_BLOCK)return TEX.LAPIS_BLOCK;
-                if(blockId===BLOCK.SNOW_BLOCK)return TEX.SNOW_BLOCK; if(blockId===BLOCK.PUMPKIN)return TEX.PUMPKIN; if(blockId===BLOCK.MELON)return TEX.MELON; if(blockId===BLOCK.BOOKSHELF)return TEX.BOOKSHELF;
-                return faces.py||TEX.STONE;
-            }
-            selectSlot(index){ this.selectedSlot=index; document.querySelectorAll('.hotbar-slot').forEach((slot,i)=>slot.classList.toggle('active',i===index)); }
-            initResizeHandler() {
-                window.addEventListener('resize',()=>{ this.camera.aspect=window.innerWidth/window.innerHeight; this.camera.updateProjectionMatrix(); this.renderer.setSize(window.innerWidth,window.innerHeight); });
-                window.addEventListener('orientationchange',()=>{ setTimeout(()=>{ this.camera.aspect=window.innerWidth/window.innerHeight; this.camera.updateProjectionMatrix(); this.renderer.setSize(window.innerWidth,window.innerHeight); },300); });
-            }
-            initFullscreenButton() {
-                const btn=document.getElementById('fullscreen-btn');
-                const toggle=()=>{
-                    if(!document.fullscreenElement&&!document.webkitFullscreenElement){ const el=document.documentElement; if(el.requestFullscreen)el.requestFullscreen().catch(()=>{}); else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen(); btn.textContent='✕'; }
-                    else { if(document.exitFullscreen)document.exitFullscreen().catch(()=>{}); else if(document.webkitExitFullscreen)document.webkitExitFullscreen(); btn.textContent='⛶'; }
-                };
-                btn.addEventListener('click',toggle); btn.addEventListener('touchstart',(e)=>{e.preventDefault();e.stopPropagation();toggle();},{passive:false});
-                document.addEventListener('fullscreenchange',()=>{btn.textContent=document.fullscreenElement?'✕':'⛶';});
-                document.addEventListener('webkitfullscreenchange',()=>{btn.textContent=document.webkitFullscreenElement?'✕':'⛶';});
-            }
-            initBackpack() {
-                const btn=document.getElementById('backpack-btn'); const panel=document.getElementById('backpack-panel'); const grid=document.getElementById('backpack-grid');
-                const open=()=>{ panel.classList.toggle('active'); if(panel.classList.contains('active')) this.fillBackpackGrid(grid); };
-                btn.addEventListener('click',open); btn.addEventListener('touchstart',(e)=>{e.preventDefault();e.stopPropagation();open();},{passive:false});
-                panel.addEventListener('click',(e)=>{ if(e.target===panel) panel.classList.remove('active'); });
-            }
-            fillBackpackGrid(grid) {
-                grid.innerHTML=''; const canvas=document.createElement('canvas'); canvas.width=16; canvas.height=16; const ctx=canvas.getContext('2d'); const atlasCanvas=this.atlas.canvas;
-                PLACEABLE_BLOCKS.forEach(blockId=>{
-                    const item=document.createElement('div'); item.className='backpack-item';
-                    const texIndex=this.getBlockIconTexture(blockId); const col=texIndex%this.atlas.cols, row=Math.floor(texIndex/this.atlas.cols);
-                    ctx.clearRect(0,0,16,16); ctx.drawImage(atlasCanvas,col*16,row*16,16,16,0,0,16,16);
-                    const img=document.createElement('img'); img.src=canvas.toDataURL(); item.appendChild(img);
-                    const label=document.createElement('span'); label.textContent=BLOCK_NAMES[blockId]||'方块'; item.appendChild(label);
-                    item.addEventListener('click',(e)=>{ e.stopPropagation(); this.hotbarBlocks[this.selectedSlot]=blockId; this.initUI(); panel.classList.remove('active'); });
-                    item.addEventListener('touchstart',(e)=>{ e.preventDefault(); e.stopPropagation(); this.hotbarBlocks[this.selectedSlot]=blockId; this.initUI(); panel.classList.remove('active'); },{passive:false});
-                    grid.appendChild(item);
-                });
-            }
-            spawnAnimals() {
-                const types=['pig','cow','sheep','chicken']; const px=this.playerPosition.x, pz=this.playerPosition.z;
-                for(let i=0;i<8;i++) {
-                    const type=types[i%types.length];
-                    const angle=Math.random()*Math.PI*2; const dist=5+Math.random()*10;
-                    const wx=px+Math.cos(angle)*dist, wz=pz+Math.sin(angle)*dist;
-                    const wy=this.findGroundHeight(wx,wz);
-                    if(wy>0) {
-                        const animal=new Animal(type, wx, wy+0.01, wz, this.world);
-                        this.scene.add(animal.group); this.animals.push(animal);
-                    }
                 }
             }
-            initTouchControls() {
-                const joystickZone=document.getElementById('joystick-zone'); const joystickBase=document.getElementById('joystick-base'); const joystickKnob=document.getElementById('joystick-knob');
-                const jumpBtn=document.getElementById('jump-btn'); const placeBtn=document.getElementById('place-btn'); const breakBtn=document.getElementById('break-btn'); const canvas=this.renderer.domElement;
-                joystickZone.addEventListener('touchstart',(e)=>{
-                    e.preventDefault(); e.stopPropagation(); if(this.touchState.joystick) return;
-                    const touch=e.changedTouches[0]; this.touchState.joystick={id:touch.identifier,startX:touch.clientX,startY:touch.clientY,currentX:touch.clientX,currentY:touch.clientY};
-                    joystickBase.style.display='block'; joystickBase.style.left=(touch.clientX-55)+'px'; joystickBase.style.top=(touch.clientY-55)+'px'; joystickKnob.style.left='33px'; joystickKnob.style.top='33px';
-                },{passive:false});
-                joystickZone.addEventListener('touchmove',(e)=>{
-                    e.preventDefault(); e.stopPropagation(); if(!this.touchState.joystick) return;
-                    const touch=Array.from(e.touches).find(t=>t.identifier===this.touchState.joystick.id) || Array.from(e.changedTouches).find(t=>t.identifier===this.touchState.joystick.id);
-                    if(!touch) return;
-                    this.touchState.joystick.currentX=touch.clientX; this.touchState.joystick.currentY=touch.clientY;
-                    const dx=touch.clientX-this.touchState.joystick.startX, dy=touch.clientY-this.touchState.joystick.startY;
-                    const maxDist=45, dist=Math.sqrt(dx*dx+dy*dy), clamped=Math.min(dist,maxDist), angle=Math.atan2(dy,dx);
-                    joystickKnob.style.left=(33+Math.cos(angle)*clamped)+'px'; joystickKnob.style.top=(33+Math.sin(angle)*clamped)+'px';
-                    this.moveInput.x=dx/maxDist; this.moveInput.y=-dy/maxDist;
-                    const mag=Math.sqrt(this.moveInput.x**2+this.moveInput.y**2); if(mag>1){this.moveInput.x/=mag;this.moveInput.y/=mag;}
-                },{passive:false});
-                const endJoystick=(e)=>{ const touch=Array.from(e.changedTouches).find(t=>t.identifier===this.touchState.joystick?.id); if(touch){ this.touchState.joystick=null; this.moveInput.x=0;this.moveInput.y=0; joystickBase.style.display='none'; } };
-                joystickZone.addEventListener('touchend',endJoystick,{passive:true}); joystickZone.addEventListener('touchcancel',endJoystick,{passive:true});
-                canvas.addEventListener('touchstart',(e)=>{ e.preventDefault(); for(const touch of e.changedTouches){ if(this.touchState.lookTouch===null) this.touchState.lookTouch={id:touch.identifier,lastX:touch.clientX,lastY:touch.clientY}; } },{passive:false});
-                canvas.addEventListener('touchmove',(e)=>{ e.preventDefault(); const touch=Array.from(e.changedTouches).find(t=>t.identifier===this.touchState.lookTouch?.id) || Array.from(e.touches).find(t=>t.identifier===this.touchState.lookTouch?.id); if(touch){ const dx=touch.clientX-this.touchState.lookTouch.lastX, dy=touch.clientY-this.touchState.lookTouch.lastY; this.touchState.lookTouch.lastX=touch.clientX; this.touchState.lookTouch.lastY=touch.clientY; this.lookDelta.x+=dx; this.lookDelta.y+=dy; } },{passive:false});
-                const endLook=(e)=>{ const touch=Array.from(e.changedTouches).find(t=>t.identifier===this.touchState.lookTouch?.id); if(touch) this.touchState.lookTouch=null; };
-                canvas.addEventListener('touchend',endLook,{passive:true}); canvas.addEventListener('touchcancel',endLook,{passive:true});
-                jumpBtn.addEventListener('touchstart',(e)=>{ e.preventDefault(); e.stopPropagation(); this.tryJump(); },{passive:false});
-                jumpBtn.addEventListener('touchend',(e)=>{ e.preventDefault(); e.stopPropagation(); },{passive:false});
-                placeBtn.addEventListener('touchstart',(e)=>{ e.preventDefault(); e.stopPropagation(); this.placeBlock(); },{passive:false});
-                breakBtn.addEventListener('touchstart',(e)=>{ e.preventDefault(); e.stopPropagation(); this.breakBlock(); },{passive:false});
-                let lastTapTime=0; canvas.addEventListener('click',(e)=>{ const now=performance.now(); if(now-lastTapTime<300)return; lastTapTime=now; if(e.clientX<window.innerWidth*0.45)return; this.placeBlock(); });
-                canvas.addEventListener('contextmenu',(e)=>e.preventDefault());
-            }
-            tryJump(){ if(this.isOnGround){ this.playerVelocity.y=JUMP_SPEED; this.isOnGround=false; this.playSound('jump'); } }
-            placeBlock(){
-                const target=this.getTargetBlock(); if(!target) return;
-                const placePos={x:target.x+target.face[0],y:target.y+target.face[1],z:target.z+target.face[2]};
-                if(placePos.y<0||placePos.y>=CHUNK_HEIGHT) return;
-                const existing=this.world.getBlock(placePos.x,placePos.y,placePos.z); if(existing!==BLOCK.AIR&&existing!==BLOCK.WATER) return;
-                const pBox=this.getPlayerAABB(); const bBox={minX:placePos.x,maxX:placePos.x+1,minY:placePos.y,maxY:placePos.y+1,minZ:placePos.z,maxZ:placePos.z+1};
-                if(this.aabbIntersect(pBox,bBox)) return;
-                const blockId=this.hotbarBlocks[this.selectedSlot];
-                this.world.setBlock(placePos.x,placePos.y,placePos.z,blockId); this.playSound('place'); this.spawnBlockParticles(placePos.x+0.5,placePos.y+0.5,placePos.z+0.5,blockId);
-            }
-            breakBlock(){
-                const target=this.getTargetBlock(); if(!target) return; if(target.blockId===BLOCK.BEDROCK) return;
-                const blockId=target.blockId; this.world.setBlock(target.x,target.y,target.z,BLOCK.AIR); this.playSound('break'); this.spawnBlockParticles(target.x+0.5,target.y+0.5,target.z+0.5,blockId);
-            }
-            getTargetBlock(){
-                const dir=new THREE.Vector3(0,0,-1).applyEuler(new THREE.Euler(this.playerPitch,this.playerYaw,0,'YXZ'));
-                const eye=new THREE.Vector3(this.playerPosition.x,this.playerPosition.y+PLAYER_EYE_HEIGHT,this.playerPosition.z);
-                return raycastVoxel(this.world,eye,dir,MAX_PLACE_DISTANCE);
-            }
-            getPlayerAABB(){ const hw=PLAYER_WIDTH/2; return {minX:this.playerPosition.x-hw,maxX:this.playerPosition.x+hw,minY:this.playerPosition.y,maxY:this.playerPosition.y+PLAYER_HEIGHT,minZ:this.playerPosition.z-hw,maxZ:this.playerPosition.z+hw}; }
-            aabbIntersect(a,b){ return a.minX<b.maxX&&a.maxX>b.minX&&a.minY<b.maxY&&a.maxY>b.minY&&a.minZ<b.maxZ&&a.maxZ>b.minZ; }
-            checkCollision(pos){
-                const hw=PLAYER_WIDTH/2; const minX=Math.floor(pos.x-hw),maxX=Math.floor(pos.x+hw),minY=Math.floor(pos.y),maxY=Math.floor(pos.y+PLAYER_HEIGHT),minZ=Math.floor(pos.z-hw),maxZ=Math.floor(pos.z+hw);
-                for(let x=minX;x<=maxX;x++)for(let y=minY;y<=maxY;y++)for(let z=minZ;z<=maxZ;z++) if(this.world.isSolid(x,y,z)) return true; return false;
-            }
-            updatePlayer(dt){
-                if(this.lookDelta.x!==0||this.lookDelta.y!==0){ this.playerYaw-=this.lookDelta.x*TOUCH_SENSITIVITY; this.playerPitch-=this.lookDelta.y*TOUCH_SENSITIVITY; this.playerPitch=Math.max(-Math.PI/2+0.01,Math.min(Math.PI/2-0.01,this.playerPitch)); this.lookDelta.x=0;this.lookDelta.y=0; }
-                const forward=new THREE.Vector3(-Math.sin(this.playerYaw),0,-Math.cos(this.playerYaw)); const right=new THREE.Vector3(Math.cos(this.playerYaw),0,-Math.sin(this.playerYaw));
-                const moveVec=new THREE.Vector3().addScaledVector(forward,this.moveInput.y).addScaledVector(right,this.moveInput.x); if(moveVec.length()>1)moveVec.normalize();
-                const speed=this.isFlying?FLY_SPEED:WALK_SPEED; const accel=this.isOnGround?12:5;
-                this.playerVelocity.x+=(moveVec.x*speed-this.playerVelocity.x)*Math.min(1,accel*dt); this.playerVelocity.z+=(moveVec.z*speed-this.playerVelocity.z)*Math.min(1,accel*dt);
-                if(!this.isFlying){ this.playerVelocity.y+=GRAVITY*dt; if(this.playerVelocity.y<-30)this.playerVelocity.y=-30; } else this.playerVelocity.y=0;
-                const newX=this.playerPosition.x+this.playerVelocity.x*dt; if(!this.checkCollision(new THREE.Vector3(newX,this.playerPosition.y,this.playerPosition.z))) this.playerPosition.x=newX; else this.playerVelocity.x=0;
-                const newZ=this.playerPosition.z+this.playerVelocity.z*dt; if(!this.checkCollision(new THREE.Vector3(this.playerPosition.x,this.playerPosition.y,newZ))) this.playerPosition.z=newZ; else this.playerVelocity.z=0;
-                const newY=this.playerPosition.y+this.playerVelocity.y*dt; if(!this.checkCollision(new THREE.Vector3(this.playerPosition.x,newY,this.playerPosition.z))){ this.playerPosition.y=newY; this.isOnGround=false; } else { if(this.playerVelocity.y<0){ this.isOnGround=true; if(this.playerVelocity.y<-8)this.playSound('land'); } this.playerVelocity.y=0; }
-                if(this.world.isSolid(Math.floor(this.playerPosition.x),Math.floor(this.playerPosition.y-0.01),Math.floor(this.playerPosition.z))) this.isOnGround=true;
-                if(this.playerPosition.y<-10){ this.playerPosition.y=40; this.playerVelocity.y=0; }
-            }
-            updateCamera(){ this.camera.position.set(this.playerPosition.x,this.playerPosition.y+PLAYER_EYE_HEIGHT,this.playerPosition.z); this.camera.rotation.order='YXZ'; this.camera.rotation.y=this.playerYaw; this.camera.rotation.x=this.playerPitch; }
-            updateHighlight(){ const target=this.getTargetBlock(); if(target&&target.blockId!==BLOCK.AIR&&target.blockId!==BLOCK.WATER){ this.highlightMesh.position.set(target.x+0.5,target.y+0.5,target.z+0.5); this.highlightMesh.visible=true; this.raycastResult=target; } else { this.highlightMesh.visible=false; this.raycastResult=null; } }
-            spawnBlockParticles(x,y,z,blockId){
-                const colors={[BLOCK.GRASS]:0x6B8E23,[BLOCK.DIRT]:0x8B6B3D,[BLOCK.STONE]:0x808080,[BLOCK.LOG]:0x8B5A2B,[BLOCK.LEAVES]:0x2E8B57,[BLOCK.SAND]:0xE8D8A0,[BLOCK.BRICK]:0x8B3A3A,[BLOCK.PLANK]:0xCD9B5A,[BLOCK.COAL_BLOCK]:0x2B2B2B,[BLOCK.IRON_BLOCK]:0xC0C0C0,[BLOCK.GOLD_BLOCK]:0xFFD700,[BLOCK.DIAMOND_BLOCK]:0x00C8C8,[BLOCK.REDSTONE_BLOCK]:0xB40000,[BLOCK.LAPIS_BLOCK]:0x1E3296,[BLOCK.SNOW_BLOCK]:0xF0F8FF,[BLOCK.PUMPKIN]:0xFF8C00,[BLOCK.MELON]:0x7CFC00,[BLOCK.BOOKSHELF]:0x8B6B3D};
-                const color=colors[blockId]||0xcccccc; const positions=[];
-                for(let i=0;i<15;i++) positions.push(x+(Math.random()-0.5)*0.6,y+(Math.random()-0.5)*0.6,z+(Math.random()-0.5)*0.6);
-                const geo=new THREE.BufferGeometry(); geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3)); const mat=new THREE.PointsMaterial({color,size:0.06,transparent:true,opacity:0.9,sizeAttenuation:true});
-                const points=new THREE.Points(geo,mat); points.userData={lifetime:0.5,age:0,velocities:positions.map(()=>({vx:(Math.random()-0.5)*2,vy:Math.random()*3,vz:(Math.random()-0.5)*2}))}; this.scene.add(points); this.particles.push(points);
-            }
-            updateParticles(dt){ for(let i=this.particles.length-1;i>=0;i--){ const p=this.particles[i]; p.userData.age+=dt; if(p.userData.age>=p.userData.lifetime){ this.scene.remove(p); p.geometry.dispose(); p.material.dispose(); this.particles.splice(i,1); continue; } const pos=p.geometry.attributes.position; const vels=p.userData.velocities; for(let j=0;j<pos.count;j++){ pos.array[j*3]+=vels[j].vx*dt; pos.array[j*3+1]+=vels[j].vy*dt; pos.array[j*3+2]+=vels[j].vz*dt; vels[j].vy-=9*dt; } pos.needsUpdate=true; p.material.opacity=0.9*(1-p.userData.age/p.userData.lifetime); } }
-            playSound(type){ try{ const ctx=new(window.AudioContext||window.webkitAudioContext)(); const osc=ctx.createOscillator(); const gain=ctx.createGain(); osc.connect(gain);gain.connect(ctx.destination); const now=ctx.currentTime; if(type==='place'||type==='break'){ osc.type='square'; osc.frequency.setValueAtTime(type==='place'?300:200,now); osc.frequency.exponentialRampToValueAtTime(100,now+0.08); gain.gain.setValueAtTime(0.15,now); gain.gain.exponentialRampToValueAtTime(0.001,now+0.1); osc.start(now);osc.stop(now+0.1); } else if(type==='jump'){ osc.type='sine'; osc.frequency.setValueAtTime(200,now); osc.frequency.exponentialRampToValueAtTime(400,now+0.06); gain.gain.setValueAtTime(0.1,now); gain.gain.exponentialRampToValueAtTime(0.001,now+0.08); osc.start(now);osc.stop(now+0.08); } else if(type==='land'){ osc.type='sine'; osc.frequency.setValueAtTime(150,now); osc.frequency.exponentialRampToValueAtTime(80,now+0.06); gain.gain.setValueAtTime(0.08,now); gain.gain.exponentialRampToValueAtTime(0.001,now+0.07); osc.start(now);osc.stop(now+0.07); } setTimeout(()=>ctx.close(),200); }catch(e){} }
-            gameLoop(){
-                requestAnimationFrame(()=>this.gameLoop());
-                const now=performance.now(); const dt=Math.min(0.05,(now-this.lastTime)/1000); this.lastTime=now;
-                this.fpsCounter++; this.fpsTime+=dt; if(this.fpsTime>=0.5){ this.fpsDisplay=Math.round(this.fpsCounter/this.fpsTime); this.fpsCounter=0; this.fpsTime=0; const fpsEl=document.getElementById('fps-counter'); if(fpsEl.style.display!=='none') fpsEl.textContent='FPS: '+this.fpsDisplay; }
-                this.updatePlayer(dt); this.updateCamera(); this.updateHighlight(); this.updateChunks(); this.updateParticles(dt);
-                for(const animal of this.animals) animal.update(dt);
-                if(this.cloudGroup){ this.cloudGroup.position.x+=dt*0.3; if(this.cloudGroup.position.x>60)this.cloudGroup.position.x=-60; }
-                this.renderer.render(this.scene,this.camera);
-            }
-        }
 
-        window.addEventListener('DOMContentLoaded',()=>{
-            const game=new MinecraftMobile(); window.game=game;
-            let pressTimer=null;
-            document.addEventListener('touchstart',()=>{ pressTimer=setTimeout(()=>{ const fpsEl=document.getElementById('fps-counter'); const debugEl=document.getElementById('debug-info'); const show=fpsEl.style.display==='none'; fpsEl.style.display=show?'block':'none'; debugEl.style.display=show?'block':'none'; },2000); },{passive:true});
-            document.addEventListener('touchend',()=>{ if(pressTimer)clearTimeout(pressTimer); pressTimer=null; },{passive:true});
-        });
-    })();
-    </script>
-</body>
-</html>
+            // ==================== 3D体素射线检测 ====================
+            function raycastVoxel(world, origin, direction, maxDist) {
+                let x = Math.floor(origin.x);
+                let y = Mat
