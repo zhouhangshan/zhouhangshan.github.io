@@ -8,7 +8,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>联机版我的世界</title>
     <style>
-        /* 基础样式（精简版，与之前保持一致） */
         *{margin:0;padding:0;box-sizing:border-box;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;}
         html,body{width:100%;height:100%;overflow:hidden;background:#000;touch-action:none;font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;position:fixed;top:0;left:0;}
         #gameCanvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;z-index:1;touch-action:none;}
@@ -32,28 +31,24 @@
         #place-btn{background:rgba(0,150,50,0.5);border-color:rgba(100,255,150,0.6);}
         #break-btn{background:rgba(200,50,0,0.5);border-color:rgba(255,150,100,0.6);}
         #fullscreen-btn{position:absolute;top:calc(10px + env(safe-area-inset-top));left:calc(10px + env(safe-area-inset-left));z-index:40;width:40px;height:40px;border-radius:8px;border:2px solid rgba(255,255,255,0.5);background:rgba(0,0,0,0.5);color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;pointer-events:auto;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);touch-action:manipulation;-webkit-user-select:none;user-select:none;}
-        #fullscreen-btn:active{background:rgba(255,255,255,0.3);}
         #backpack-panel{position:absolute;top:0;left:0;width:100%;height:100%;z-index:80;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:none;flex-direction:column;align-items:center;justify-content:center;pointer-events:auto;}
         #backpack-panel.active{display:flex;}
-        #backpack-title{color:#fff;font-size:22px;margin-bottom:16px;text-shadow:0 2px 4px rgba(0,0,0,0.5);}
+        #backpack-title{color:#fff;font-size:22px;margin-bottom:16px;}
         #backpack-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:10px;width:90%;max-width:500px;max-height:70%;overflow-y:auto;padding:10px;background:rgba(255,255,255,0.1);border-radius:16px;border:2px solid rgba(255,255,255,0.2);}
-        .backpack-item{display:flex;flex-direction:column;align-items:center;padding:8px;background:rgba(0,0,0,0.4);border-radius:10px;border:2px solid rgba(255,255,255,0.2);cursor:pointer;transition:all 0.15s ease;}
-        .backpack-item:active{background:rgba(255,255,255,0.3);border-color:#fff;}
+        .backpack-item{display:flex;flex-direction:column;align-items:center;padding:8px;background:rgba(0,0,0,0.4);border-radius:10px;border:2px solid rgba(255,255,255,0.2);cursor:pointer;}
+        .backpack-item:active{background:rgba(255,255,255,0.3);}
         .backpack-item img{width:40px;height:40px;image-rendering:pixelated;margin-bottom:4px;}
-        .backpack-item span{color:#fff;font-size:10px;text-align:center;pointer-events:none;}
+        .backpack-item span{color:#fff;font-size:10px;}
         #loading-screen{position:absolute;top:0;left:0;width:100%;height:100%;background:#1a1a2e;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-size:20px;transition:opacity 0.5s ease;}
         #loading-screen.hidden{opacity:0;pointer-events:none;}
-        #loading-bar-container{width:200px;height:6px;background:rgba(255,255,255,0.2);border-radius:3px;margin-top:16px;overflow:hidden;}
-        #loading-bar{width:0%;height:100%;background:#4CAF50;border-radius:3px;transition:width 0.3s ease;}
-        #loading-text{font-size:14px;margin-top:8px;color:rgba(255,255,255,0.7);}
-        #touch-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:50;color:#fff;font-size:14px;background:rgba(0,0,0,0.7);padding:12px 20px;border-radius:10px;pointer-events:none;text-align:center;transition:opacity 1s ease;line-height:1.6;}
-        #touch-hint.hidden{opacity:0;}
-        /* 联机相关UI */
-        .menu-panel{background:rgba(0,0,0,0.8);border-radius:16px;padding:20px;margin:10px;display:flex;flex-direction:column;gap:10px;align-items:center;}
+        .menu-panel{background:rgba(0,0,0,0.8);border-radius:16px;padding:20px;margin:10px;display:flex;flex-direction:column;gap:12px;align-items:center;}
         .menu-input{padding:8px 12px;border-radius:8px;border:1px solid #fff;background:rgba(255,255,255,0.2);color:#fff;font-size:16px;width:200px;text-align:center;}
-        .menu-btn{padding:10px 20px;border-radius:10px;border:none;background:#4CAF50;color:#fff;font-size:16px;cursor:pointer;width:200px;}
+        .menu-btn{padding:12px 20px;border-radius:10px;border:none;background:#4CAF50;color:#fff;font-size:18px;cursor:pointer;width:220px;}
         .menu-btn.secondary{background:#2196F3;}
         #online-status{position:absolute;bottom:80px;left:10px;z-index:25;color:#fff;font-size:12px;background:rgba(0,0,0,0.6);padding:4px 8px;border-radius:4px;pointer-events:none;}
+        #touch-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:50;color:#fff;font-size:14px;background:rgba(0,0,0,0.7);padding:12px 20px;border-radius:10px;pointer-events:none;text-align:center;transition:opacity 1s ease;line-height:1.6;}
+        #touch-hint.hidden{opacity:0;}
+        #error-message{position:absolute;top:20%;left:50%;transform:translateX(-50%);z-index:110;background:rgba(200,0,0,0.8);color:#fff;padding:10px 20px;border-radius:8px;display:none;}
         @media (max-width:400px){.hotbar-slot{width:38px;height:38px}.hotbar-slot img{width:28px;height:28px}.action-btn{width:46px;height:46px;font-size:10px}#jump-btn{width:50px;height:50px;font-size:12px}#joystick-base{width:90px;height:90px}#joystick-knob{width:36px;height:36px}#fullscreen-btn{width:34px;height:34px;font-size:16px}}
         @media (orientation:landscape){#action-buttons{bottom:calc(65px + env(safe-area-inset-bottom));right:20px}#hotbar{bottom:calc(8px + env(safe-area-inset-bottom))}.hotbar-slot{width:44px;height:44px}.hotbar-slot img{width:32px;height:32px}#action-buttons{gap:8px}}
     </style>
@@ -88,14 +83,14 @@
         <div id="loading-text"></div>
     </div>
     <div id="touch-hint">👆 左侧摇杆移动<br>🖱️ 右侧滑动旋转视角<br>🎒 点击快捷栏右侧“...”打开背包<br>🟢 放置 | 🔴 破坏 | ⬆️ 跳跃</div>
+    <div id="error-message"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
-    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
     <script>
     (function() {
         'use strict';
 
-        // ==================== 常量定义（与之前相同，略作精简） ====================
+        // ==================== 常量定义 ====================
         const CHUNK_SIZE = 16;
         const CHUNK_HEIGHT = 64;
         const SEA_LEVEL = 28;
@@ -437,12 +432,11 @@
                 this.initUI(); this.initTouchControls(); this.initResizeHandler(); this.initFullscreenButton(); this.initBackpack();
                 this.generateInitialChunks();
                 this.animals=[]; this.spawnAnimals();
-                // 联机相关
                 this.isOnline = isOnline;
                 this.roomCode = roomCode;
                 this.peer = null;
-                this.connections = {}; // peerId -> DataConnection
-                this.remotePlayers = {}; // peerId -> Group
+                this.connections = {};
+                this.remotePlayers = {};
                 this.connectionCount = 0;
                 if (this.isOnline) {
                     this.initMultiplayer();
@@ -464,8 +458,7 @@
             }
             generateInitialChunks() {
                 const px=Math.floor(this.playerPosition.x/CHUNK_SIZE), pz=Math.floor(this.playerPosition.z/CHUNK_SIZE);
-                const totalChunks=(RENDER_DISTANCE*2+1)**2; let loaded=0;
-                for(let dx=-RENDER_DISTANCE;dx<=RENDER_DISTANCE;dx++) for(let dz=-RENDER_DISTANCE;dz<=RENDER_DISTANCE;dz++) { this.world.getOrCreateChunk(px+dx,pz+dz); loaded++; }
+                for(let dx=-RENDER_DISTANCE;dx<=RENDER_DISTANCE;dx++) for(let dz=-RENDER_DISTANCE;dz<=RENDER_DISTANCE;dz++) this.world.getOrCreateChunk(px+dx,pz+dz);
                 for(let dx=-RENDER_DISTANCE;dx<=RENDER_DISTANCE;dx++) for(let dz=-RENDER_DISTANCE;dz<=RENDER_DISTANCE;dz++) this.buildChunkMesh(px+dx,pz+dz);
                 const groundY=this.findGroundHeight(px*CHUNK_SIZE+8,pz*CHUNK_SIZE+8); this.playerPosition.y=groundY+0.5; this.isOnGround=true;
             }
@@ -523,4 +516,301 @@
                     const label=document.createElement('span'); label.textContent=BLOCK_NAMES[blockId]||'方块'; item.appendChild(label);
                     item.addEventListener('click',(e)=>{ e.stopPropagation(); this.replaceHotbarSlot(blockId); });
                     item.addEventListener('touchstart',(e)=>{ e.preventDefault(); e.stopPropagation(); this.replaceHotbarSlot(blockId); },{passive:false});
-                 
+                    grid.appendChild(item);
+                });
+            }
+            replaceHotbarSlot(blockId) { this.hotbarBlocks[this.selectedSlot]=blockId; this.initUI(); document.getElementById('backpack-panel').classList.remove('active'); }
+            initResizeHandler() {
+                window.addEventListener('resize',()=>{ this.camera.aspect=window.innerWidth/window.innerHeight; this.camera.updateProjectionMatrix(); this.renderer.setSize(window.innerWidth,window.innerHeight); });
+                window.addEventListener('orientationchange',()=>{ setTimeout(()=>{ this.camera.aspect=window.innerWidth/window.innerHeight; this.camera.updateProjectionMatrix(); this.renderer.setSize(window.innerWidth,window.innerHeight); },300); });
+            }
+            initFullscreenButton() {
+                const btn=document.getElementById('fullscreen-btn');
+                const toggle=()=>{
+                    if(!document.fullscreenElement&&!document.webkitFullscreenElement){ const el=document.documentElement; if(el.requestFullscreen)el.requestFullscreen().catch(()=>{}); else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen(); btn.textContent='✕'; }
+                    else { if(document.exitFullscreen)document.exitFullscreen().catch(()=>{}); else if(document.webkitExitFullscreen)document.webkitExitFullscreen(); btn.textContent='⛶'; }
+                };
+                btn.addEventListener('click',toggle); btn.addEventListener('touchstart',(e)=>{e.preventDefault();e.stopPropagation();toggle();},{passive:false});
+                document.addEventListener('fullscreenchange',()=>{btn.textContent=document.fullscreenElement?'✕':'⛶';});
+                document.addEventListener('webkitfullscreenchange',()=>{btn.textContent=document.webkitFullscreenElement?'✕':'⛶';});
+            }
+            initBackpack(){ document.getElementById('backpack-panel').addEventListener('click',(e)=>{ if(e.target===document.getElementById('backpack-panel')) document.getElementById('backpack-panel').classList.remove('active'); }); }
+            initTouchControls() {
+                const joystickZone=document.getElementById('joystick-zone'); const joystickBase=document.getElementById('joystick-base'); const joystickKnob=document.getElementById('joystick-knob');
+                const jumpBtn=document.getElementById('jump-btn'); const placeBtn=document.getElementById('place-btn'); const breakBtn=document.getElementById('break-btn'); const canvas=this.renderer.domElement;
+                joystickZone.addEventListener('touchstart',(e)=>{ e.preventDefault(); e.stopPropagation(); if(this.touchState.joystick) return; const touch=e.changedTouches[0]; this.touchState.joystick={id:touch.identifier,startX:touch.clientX,startY:touch.clientY,currentX:touch.clientX,currentY:touch.clientY}; joystickBase.style.display='block'; joystickBase.style.left=(touch.clientX-55)+'px'; joystickBase.style.top=(touch.clientY-55)+'px'; joystickKnob.style.left='33px'; joystickKnob.style.top='33px'; },{passive:false});
+                joystickZone.addEventListener('touchmove',(e)=>{ e.preventDefault(); e.stopPropagation(); if(!this.touchState.joystick) return; const touch=Array.from(e.touches).find(t=>t.identifier===this.touchState.joystick.id); if(!touch) return; this.touchState.joystick.currentX=touch.clientX; this.touchState.joystick.currentY=touch.clientY; const dx=touch.clientX-this.touchState.joystick.startX, dy=touch.clientY-this.touchState.joystick.startY; const maxDist=45, dist=Math.sqrt(dx*dx+dy*dy), clamped=Math.min(dist,maxDist), angle=Math.atan2(dy,dx); joystickKnob.style.left=(33+Math.cos(angle)*clamped)+'px'; joystickKnob.style.top=(33+Math.sin(angle)*clamped)+'px'; this.moveInput.x=dx/maxDist; this.moveInput.y=-dy/maxDist; const mag=Math.sqrt(this.moveInput.x**2+this.moveInput.y**2); if(mag>1){this.moveInput.x/=mag;this.moveInput.y/=mag;} },{passive:false});
+                const endJoystick=(e)=>{ const touch=Array.from(e.changedTouches).find(t=>this.touchState.joystick && t.identifier===this.touchState.joystick.id); if(touch){ this.touchState.joystick=null; this.moveInput.x=0;this.moveInput.y=0; joystickBase.style.display='none'; } };
+                joystickZone.addEventListener('touchend',endJoystick,{passive:true}); joystickZone.addEventListener('touchcancel',endJoystick,{passive:true});
+                canvas.addEventListener('touchstart',(e)=>{ e.preventDefault(); for(const touch of e.changedTouches){ if(!this.touchState.lookTouch) this.touchState.lookTouch={id:touch.identifier,lastX:touch.clientX,lastY:touch.clientY}; } },{passive:false});
+                canvas.addEventListener('touchmove',(e)=>{ e.preventDefault(); const touch=Array.from(e.changedTouches).find(t=>this.touchState.lookTouch && t.identifier===this.touchState.lookTouch.id) || Array.from(e.touches).find(t=>this.touchState.lookTouch && t.identifier===this.touchState.lookTouch.id); if(touch){ const dx=touch.clientX-this.touchState.lookTouch.lastX, dy=touch.clientY-this.touchState.lookTouch.lastY; this.touchState.lookTouch.lastX=touch.clientX; this.touchState.lookTouch.lastY=touch.clientY; this.lookDelta.x+=dx; this.lookDelta.y+=dy; } },{passive:false});
+                const endLook=(e)=>{ const touch=Array.from(e.changedTouches).find(t=>this.touchState.lookTouch && t.identifier===this.touchState.lookTouch.id); if(touch) this.touchState.lookTouch=null; };
+                canvas.addEventListener('touchend',endLook,{passive:true}); canvas.addEventListener('touchcancel',endLook,{passive:true});
+                jumpBtn.addEventListener('touchstart',(e)=>{ e.preventDefault(); e.stopPropagation(); this.tryJump(); },{passive:false});
+                jumpBtn.addEventListener('touchend',(e)=>{ e.preventDefault(); e.stopPropagation(); },{passive:false});
+                placeBtn.addEventListener('touchstart',(e)=>{ e.preventDefault(); e.stopPropagation(); this.placeBlock(); },{passive:false});
+                breakBtn.addEventListener('touchstart',(e)=>{ e.preventDefault(); e.stopPropagation(); this.breakBlock(); },{passive:false});
+                let lastTapTime=0; canvas.addEventListener('click',(e)=>{ const now=performance.now(); if(now-lastTapTime<300)return; lastTapTime=now; if(e.clientX<window.innerWidth*0.45)return; this.placeBlock(); });
+                canvas.addEventListener('contextmenu',(e)=>e.preventDefault());
+            }
+            tryJump(){ if(this.isOnGround){ this.playerVelocity.y=JUMP_SPEED; this.isOnGround=false; this.playSound('jump'); } }
+            placeBlock(){
+                const target=this.getTargetBlock(); if(!target) return;
+                const placePos={x:target.x+target.face[0],y:target.y+target.face[1],z:target.z+target.face[2]};
+                if(placePos.y<0||placePos.y>=CHUNK_HEIGHT) return;
+                const existing=this.world.getBlock(placePos.x,placePos.y,placePos.z); if(existing!==BLOCK.AIR&&existing!==BLOCK.WATER) return;
+                const pBox=this.getPlayerAABB(); const bBox={minX:placePos.x,maxX:placePos.x+1,minY:placePos.y,maxY:placePos.y+1,minZ:placePos.z,maxZ:placePos.z+1};
+                if(this.aabbIntersect(pBox,bBox)) return;
+                const blockId=this.hotbarBlocks[this.selectedSlot];
+                this.world.setBlock(placePos.x,placePos.y,placePos.z,blockId);
+                this.playSound('place'); this.spawnBlockParticles(placePos.x+0.5,placePos.y+0.5,placePos.z+0.5,blockId);
+                if(this.isOnline) this.sendBlockUpdate(placePos.x,placePos.y,placePos.z,blockId);
+            }
+            breakBlock(){
+                const target=this.getTargetBlock(); if(!target) return; if(target.blockId===BLOCK.BEDROCK) return;
+                const blockId=target.blockId; this.world.setBlock(target.x,target.y,target.z,BLOCK.AIR);
+                this.playSound('break'); this.spawnBlockParticles(target.x+0.5,target.y+0.5,target.z+0.5,blockId);
+                if(this.isOnline) this.sendBlockUpdate(target.x,target.y,target.z,BLOCK.AIR);
+            }
+            sendBlockUpdate(x,y,z,blockId){
+                Object.values(this.connections).forEach(conn=>{ if(conn.open) conn.send({type:'block', x,y,z, blockId}); });
+            }
+            getTargetBlock(){
+                const dir=new THREE.Vector3(0,0,-1).applyEuler(new THREE.Euler(this.playerPitch,this.playerYaw,0,'YXZ'));
+                const eye=new THREE.Vector3(this.playerPosition.x,this.playerPosition.y+PLAYER_EYE_HEIGHT,this.playerPosition.z);
+                return raycastVoxel(this.world,eye,dir,MAX_PLACE_DISTANCE);
+            }
+            getPlayerAABB(){ const hw=PLAYER_WIDTH/2; return {minX:this.playerPosition.x-hw,maxX:this.playerPosition.x+hw,minY:this.playerPosition.y,maxY:this.playerPosition.y+PLAYER_HEIGHT,minZ:this.playerPosition.z-hw,maxZ:this.playerPosition.z+hw}; }
+            aabbIntersect(a,b){ return a.minX<b.maxX&&a.maxX>b.minX&&a.minY<b.maxY&&a.maxY>b.minY&&a.minZ<b.maxZ&&a.maxZ>b.minZ; }
+            checkCollision(pos){ const hw=PLAYER_WIDTH/2; const minX=Math.floor(pos.x-hw),maxX=Math.floor(pos.x+hw),minY=Math.floor(pos.y),maxY=Math.floor(pos.y+PLAYER_HEIGHT),minZ=Math.floor(pos.z-hw),maxZ=Math.floor(pos.z+hw); for(let x=minX;x<=maxX;x++)for(let y=minY;y<=maxY;y++)for(let z=minZ;z<=maxZ;z++) if(this.world.isSolid(x,y,z)) return true; return false; }
+            updatePlayer(dt){
+                if(this.lookDelta.x!==0||this.lookDelta.y!==0){ this.playerYaw-=this.lookDelta.x*TOUCH_SENSITIVITY; this.playerPitch-=this.lookDelta.y*TOUCH_SENSITIVITY; this.playerPitch=Math.max(-Math.PI/2+0.01,Math.min(Math.PI/2-0.01,this.playerPitch)); this.lookDelta.x=0;this.lookDelta.y=0; }
+                const forward=new THREE.Vector3(-Math.sin(this.playerYaw),0,-Math.cos(this.playerYaw)); const right=new THREE.Vector3(Math.cos(this.playerYaw),0,-Math.sin(this.playerYaw));
+                const moveVec=new THREE.Vector3().addScaledVector(forward,this.moveInput.y).addScaledVector(right,this.moveInput.x); if(moveVec.length()>1)moveVec.normalize();
+                const speed=this.isFlying?FLY_SPEED:WALK_SPEED; const accel=this.isOnGround?12:5;
+                this.playerVelocity.x+=(moveVec.x*speed-this.playerVelocity.x)*Math.min(1,accel*dt); this.playerVelocity.z+=(moveVec.z*speed-this.playerVelocity.z)*Math.min(1,accel*dt);
+                if(!this.isFlying){ this.playerVelocity.y+=GRAVITY*dt; if(this.playerVelocity.y<-30)this.playerVelocity.y=-30; } else this.playerVelocity.y=0;
+                const newX=this.playerPosition.x+this.playerVelocity.x*dt; if(!this.checkCollision(new THREE.Vector3(newX,this.playerPosition.y,this.playerPosition.z))) this.playerPosition.x=newX; else this.playerVelocity.x=0;
+                const newZ=this.playerPosition.z+this.playerVelocity.z*dt; if(!this.checkCollision(new THREE.Vector3(this.playerPosition.x,this.playerPosition.y,newZ))) this.playerPosition.z=newZ; else this.playerVelocity.z=0;
+                const newY=this.playerPosition.y+this.playerVelocity.y*dt; if(!this.checkCollision(new THREE.Vector3(this.playerPosition.x,newY,this.playerPosition.z))){ this.playerPosition.y=newY; this.isOnGround=false; } else { if(this.playerVelocity.y<0){ this.isOnGround=true; if(this.playerVelocity.y<-8)this.playSound('land'); } this.playerVelocity.y=0; }
+                if(this.world.isSolid(Math.floor(this.playerPosition.x),Math.floor(this.playerPosition.y-0.01),Math.floor(this.playerPosition.z))) this.isOnGround=true;
+                if(this.playerPosition.y<-10){ this.playerPosition.y=40; this.playerVelocity.y=0; }
+                if(this.isOnline) this.sendPositionUpdate();
+            }
+            sendPositionUpdate(){
+                if(!this.peer || !this.isOnline) return;
+                Object.values(this.connections).forEach(conn=>{ if(conn.open) conn.send({type:'pos', x:this.playerPosition.x, y:this.playerPosition.y, z:this.playerPosition.z, yaw:this.playerYaw, pitch:this.playerPitch}); });
+            }
+            updateCamera(){ this.camera.position.set(this.playerPosition.x,this.playerPosition.y+PLAYER_EYE_HEIGHT,this.playerPosition.z); this.camera.rotation.order='YXZ'; this.camera.rotation.y=this.playerYaw; this.camera.rotation.x=this.playerPitch; }
+            updateHighlight(){ const target=this.getTargetBlock(); if(target&&target.blockId!==BLOCK.AIR&&target.blockId!==BLOCK.WATER){ this.highlightMesh.position.set(target.x+0.5,target.y+0.5,target.z+0.5); this.highlightMesh.visible=true; this.raycastResult=target; } else { this.highlightMesh.visible=false; this.raycastResult=null; } }
+            spawnBlockParticles(x,y,z,blockId){
+                const colors={[BLOCK.GRASS]:0x6B8E23,[BLOCK.DIRT]:0x8B6B3D,[BLOCK.STONE]:0x808080,[BLOCK.LOG]:0x8B5A2B,[BLOCK.LEAVES]:0x2E8B57,[BLOCK.SAND]:0xE8D8A0,[BLOCK.BRICK]:0x8B3A3A,[BLOCK.PLANK]:0xCD9B5A,[BLOCK.COAL_BLOCK]:0x2B2B2B,[BLOCK.IRON_BLOCK]:0xC0C0C0,[BLOCK.GOLD_BLOCK]:0xFFD700,[BLOCK.DIAMOND_BLOCK]:0x00C8C8,[BLOCK.REDSTONE_BLOCK]:0xB40000,[BLOCK.LAPIS_BLOCK]:0x1E3296,[BLOCK.SNOW_BLOCK]:0xF0F8FF,[BLOCK.PUMPKIN]:0xFF8C00,[BLOCK.MELON]:0x7CFC00,[BLOCK.BOOKSHELF]:0x8B6B3D};
+                const color=colors[blockId]||0xcccccc; const positions=[];
+                for(let i=0;i<15;i++) positions.push(x+(Math.random()-0.5)*0.6,y+(Math.random()-0.5)*0.6,z+(Math.random()-0.5)*0.6);
+                const geo=new THREE.BufferGeometry(); geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3)); const mat=new THREE.PointsMaterial({color,size:0.06,transparent:true,opacity:0.9,sizeAttenuation:true});
+                const points=new THREE.Points(geo,mat); points.userData={lifetime:0.5,age:0,velocities:positions.map(()=>({vx:(Math.random()-0.5)*2,vy:Math.random()*3,vz:(Math.random()-0.5)*2}))}; this.scene.add(points); this.particles.push(points);
+            }
+            updateParticles(dt){ for(let i=this.particles.length-1;i>=0;i--){ const p=this.particles[i]; p.userData.age+=dt; if(p.userData.age>=p.userData.lifetime){ this.scene.remove(p); p.geometry.dispose(); p.material.dispose(); this.particles.splice(i,1); continue; } const pos=p.geometry.attributes.position; const vels=p.userData.velocities; for(let j=0;j<pos.count;j++){ pos.array[j*3]+=vels[j].vx*dt; pos.array[j*3+1]+=vels[j].vy*dt; pos.array[j*3+2]+=vels[j].vz*dt; vels[j].vy-=9*dt; } pos.needsUpdate=true; p.material.opacity=0.9*(1-p.userData.age/p.userData.lifetime); } }
+            playSound(type){ try{ const ctx=new(window.AudioContext||window.webkitAudioContext)(); const osc=ctx.createOscillator(); const gain=ctx.createGain(); osc.connect(gain);gain.connect(ctx.destination); const now=ctx.currentTime; if(type==='place'||type==='break'){ osc.type='square'; osc.frequency.setValueAtTime(type==='place'?300:200,now); osc.frequency.exponentialRampToValueAtTime(100,now+0.08); gain.gain.setValueAtTime(0.15,now); gain.gain.exponentialRampToValueAtTime(0.001,now+0.1); osc.start(now);osc.stop(now+0.1); } else if(type==='jump'){ osc.type='sine'; osc.frequency.setValueAtTime(200,now); osc.frequency.exponentialRampToValueAtTime(400,now+0.06); gain.gain.setValueAtTime(0.1,now); gain.gain.exponentialRampToValueAtTime(0.001,now+0.08); osc.start(now);osc.stop(now+0.08); } else if(type==='land'){ osc.type='sine'; osc.frequency.setValueAtTime(150,now); osc.frequency.exponentialRampToValueAtTime(80,now+0.06); gain.gain.setValueAtTime(0.08,now); gain.gain.exponentialRampToValueAtTime(0.001,now+0.07); osc.start(now);osc.stop(now+0.07); } setTimeout(()=>ctx.close(),200); }catch(e){} }
+            spawnAnimals(){ const types=['pig','cow','sheep','chicken']; for(let i=0;i<8;i++){ const type=types[i%types.length]; const angle=Math.random()*Math.PI*2; const dist=5+Math.random()*10; const wx=this.playerPosition.x+Math.cos(angle)*dist, wz=this.playerPosition.z+Math.sin(angle)*dist; const wy=this.findGroundHeight(wx,wz); if(wy>0){ const animal=new Animal(type,wx,wy+0.01,wz,this.world); this.scene.add(animal.group); this.animals.push(animal); } } }
+            gameLoop(){
+                requestAnimationFrame(()=>this.gameLoop());
+                const now=performance.now(); const dt=Math.min(0.05,(now-this.lastTime)/1000); this.lastTime=now;
+                this.fpsCounter++; this.fpsTime+=dt; if(this.fpsTime>=0.5){ this.fpsDisplay=Math.round(this.fpsCounter/this.fpsTime); this.fpsCounter=0; this.fpsTime=0; const fpsEl=document.getElementById('fps-counter'); if(fpsEl.style.display!=='none') fpsEl.textContent='FPS: '+this.fpsDisplay; }
+                this.updatePlayer(dt); this.updateCamera(); this.updateHighlight(); this.updateChunks(); this.updateParticles(dt);
+                for(const animal of this.animals) animal.update(dt);
+                if(this.cloudGroup){ this.cloudGroup.position.x+=dt*0.3; if(this.cloudGroup.position.x>60)this.cloudGroup.position.x=-60; }
+                this.renderer.render(this.scene,this.camera);
+            }
+            // ==================== 联机方法 ====================
+            initMultiplayer() {
+                this.updateOnlineStatus('🌐 联机中...');
+                const peerId = 'mc-room-' + this.roomCode;
+                // 动态加载PeerJS
+                if (typeof Peer === 'undefined') {
+                    this.updateOnlineStatus('🔴 联机库加载中...');
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/peerjs@1.4.7/dist/peerjs.min.js';
+                    script.onload = () => this.startPeer(peerId);
+                    script.onerror = () => this.updateOnlineStatus('🔴 联机库加载失败，请检查网络');
+                    document.head.appendChild(script);
+                } else {
+                    this.startPeer(peerId);
+                }
+            }
+            startPeer(peerId) {
+                try {
+                    this.peer = new Peer(peerId);
+                    this.peer.on('open', () => {
+                        this.updateOnlineStatus('🌐 已创建房间 ' + this.roomCode);
+                    });
+                    this.peer.on('connection', (conn) => this.setupConnection(conn));
+                    this.peer.on('disconnected', () => this.updateOnlineStatus('🔴 连接断开'));
+                    this.peer.on('error', (err) => {
+                        if (err.type === 'unavailable-id') {
+                            this.updateOnlineStatus('🌐 正在加入房间...');
+                            this.peer = new Peer();
+                            this.peer.on('open', () => {
+                                const conn = this.peer.connect(peerId, { reliable: true });
+                                this.setupConnection(conn);
+                            });
+                            this.peer.on('error', (err2) => {
+                                console.error('Peer error', err2);
+                                this.updateOnlineStatus('🔴 联机失败: ' + err2.type);
+                            });
+                        } else {
+                            console.error('Peer error', err);
+                            this.updateOnlineStatus('🔴 联机错误: ' + err.type);
+                        }
+                    });
+                } catch(e) {
+                    console.error('Multiplayer init error', e);
+                    this.updateOnlineStatus('🔴 联机初始化错误');
+                }
+            }
+            setupConnection(conn) {
+                conn.on('open', () => {
+                    console.log('Connection established to', conn.peer);
+                    this.connections[conn.peer] = conn;
+                    this.connectionCount++;
+                    this.updateOnlineStatus('🌐 已连接 (' + this.connectionCount + '人)');
+                    conn.send({ type:'pos', x:this.playerPosition.x, y:this.playerPosition.y, z:this.playerPosition.z, yaw:this.playerYaw, pitch:this.playerPitch });
+                });
+                conn.on('data', (data) => {
+                    if (data.type === 'pos') {
+                        if (!this.remotePlayers[conn.peer]) this.createRemotePlayer(conn.peer);
+                        const p = this.remotePlayers[conn.peer];
+                        p.group.position.set(data.x, data.y, data.z);
+                        p.group.rotation.y = data.yaw || 0;
+                    } else if (data.type === 'block') {
+                        this.world.setBlock(data.x, data.y, data.z, data.blockId);
+                    }
+                });
+                conn.on('close', () => {
+                    console.log('Connection closed from', conn.peer);
+                    delete this.connections[conn.peer];
+                    if (this.remotePlayers[conn.peer]) {
+                        this.scene.remove(this.remotePlayers[conn.peer].group);
+                        delete this.remotePlayers[conn.peer];
+                    }
+                    this.connectionCount = Math.max(0, this.connectionCount - 1);
+                    this.updateOnlineStatus('🌐 已连接 (' + this.connectionCount + '人)');
+                });
+            }
+            createRemotePlayer(peerId) {
+                const group = new THREE.Group();
+                const bodyGeo = new THREE.BoxGeometry(0.6, 1.6, 0.4);
+                const headGeo = new THREE.BoxGeometry(0.4, 0.4, 0.4);
+                const bodyMat = new THREE.MeshLambertMaterial({ color: 0x3366cc });
+                const headMat = new THREE.MeshLambertMaterial({ color: 0xffaa88 });
+                const body = new THREE.Mesh(bodyGeo, bodyMat); body.position.y = 0.8;
+                const head = new THREE.Mesh(headGeo, headMat); head.position.y = 1.8;
+                group.add(body); group.add(head);
+                this.scene.add(group);
+                this.remotePlayers[peerId] = { group };
+            }
+            updateOnlineStatus(text) {
+                const el = document.getElementById('online-status');
+                if (el) el.textContent = text;
+            }
+        }
+
+        // ==================== 启动逻辑 ====================
+        function hashString(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash |= 0;
+            }
+            return Math.abs(hash);
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('error-message');
+            if (el) {
+                el.textContent = msg;
+                el.style.display = 'block';
+                setTimeout(() => { el.style.display = 'none'; }, 4000);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const loadingScreen = document.getElementById('loading-screen');
+            const loadingBar = document.getElementById('loading-bar');
+            const loadingBarContainer = document.getElementById('loading-bar-container');
+            const loadingText = document.getElementById('loading-text');
+            const startSingleBtn = document.getElementById('start-single');
+            const startOnlineBtn = document.getElementById('start-online');
+            const roomInput = document.getElementById('room-input');
+
+            function startGame(seed, roomCode, isOnline) {
+                try {
+                    loadingBarContainer.style.display = 'block';
+                    loadingText.textContent = isOnline ? '正在连接联机...' : '正在生成世界...';
+                    loadingScreen.querySelector('.menu-panel').style.display = 'none';
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        progress += 10;
+                        loadingBar.style.width = progress + '%';
+                        if (progress >= 100) {
+                            clearInterval(interval);
+                            loadingScreen.classList.add('hidden');
+                            setTimeout(() => document.getElementById('touch-hint').classList.add('hidden'), 3000);
+                        }
+                    }, 200);
+                    const game = new MinecraftMobile(seed, roomCode, isOnline);
+                    window.game = game;
+                } catch (err) {
+                    console.error('游戏初始化失败:', err);
+                    showError('游戏启动失败: ' + err.message);
+                    loadingBarContainer.style.display = 'none';
+                    loadingScreen.querySelector('.menu-panel').style.display = 'flex';
+                    loadingText.textContent = '';
+                }
+            }
+
+            startSingleBtn.addEventListener('click', () => {
+                const seed = Math.floor(Math.random() * 1000000);
+                startGame(seed, null, false);
+            });
+            startSingleBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                const seed = Math.floor(Math.random() * 1000000);
+                startGame(seed, null, false);
+            });
+
+            startOnlineBtn.addEventListener('click', () => {
+                const roomCode = roomInput.value.trim();
+                if (!roomCode) { alert('请输入房间号'); return; }
+                const seed = hashString(roomCode);
+                startGame(seed, roomCode, true);
+            });
+            startOnlineBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                const roomCode = roomInput.value.trim();
+                if (!roomCode) { alert('请输入房间号'); return; }
+                const seed = hashString(roomCode);
+                startGame(seed, roomCode, true);
+            });
+
+            // 长按显示FPS
+            let pressTimer = null;
+            document.addEventListener('touchstart', () => {
+                pressTimer = setTimeout(() => {
+                    const fpsEl = document.getElementById('fps-counter');
+                    const debugEl = document.getElementById('debug-info');
+                    const show = fpsEl.style.display === 'none';
+                    fpsEl.style.display = show ? 'block' : 'none';
+                    debugEl.style.display = show ? 'block' : 'none';
+                }, 2000);
+            }, { passive: true });
+            document.addEventListener('touchend', () => {
+                if (pressTimer) clearTimeout(pressTimer);
+                pressTimer = null;
+            }, { passive: true });
+        });
+    })();
+    </script>
+</body>
+</html>
