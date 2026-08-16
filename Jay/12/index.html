@@ -1,1263 +1,1155 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>联机版我的世界</title>
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;}
-        html,body{width:100%;height:100%;overflow:hidden;background:#000;touch-action:none;font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;position:fixed;top:0;left:0;}
-        #gameCanvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;z-index:1;touch-action:none;}
-        #crosshair{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;pointer-events:none;filter:drop-shadow(0 0 2px rgba(0,0,0,0.8));}
-        #crosshair::before,#crosshair::after{content:'';position:absolute;background:rgba(255,255,255,0.9);border:1px solid rgba(0,0,0,0.5);}
-        #crosshair::before{width:20px;height:2px;top:-1px;left:-10px;}
-        #crosshair::after{width:2px;height:20px;top:-10px;left:-1px;}
-        #target-name{position:absolute;top:calc(50% + 26px);left:50%;transform:translateX(-50%);z-index:12;color:#fff;font-size:13px;background:rgba(0,0,0,0.55);padding:3px 12px;border-radius:6px;pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,0.9);white-space:nowrap;}
-        #health-bar{position:absolute;top:calc(8px + env(safe-area-inset-top));left:calc(8px + env(safe-area-inset-left));z-index:30;font-size:15px;letter-spacing:1px;pointer-events:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.9));line-height:1;}
-        #day-indicator{position:absolute;top:calc(8px + env(safe-area-inset-top));right:calc(8px + env(safe-area-inset-right));z-index:30;font-size:18px;pointer-events:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.9));}
-        #fps-counter{position:absolute;top:calc(40px + env(safe-area-inset-top));right:calc(8px + env(safe-area-inset-right));z-index:46;color:#8f8;font-size:12px;background:rgba(0,0,0,0.6);padding:3px 8px;border-radius:4px;pointer-events:none;display:none;font-family:monospace;}
-        #debug-info{position:absolute;top:calc(64px + env(safe-area-inset-top));right:calc(8px + env(safe-area-inset-right));z-index:46;color:#ffd;font-size:11px;line-height:1.6;background:rgba(0,0,0,0.6);padding:6px 10px;border-radius:6px;pointer-events:none;display:none;font-family:monospace;text-align:right;white-space:pre;}
-        #hotbar{position:absolute;bottom:calc(10px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:20;background:rgba(0,0,0,0.6);padding:6px 8px;border-radius:12px;border:2px solid rgba(255,255,255,0.3);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);pointer-events:auto;}
-        #selected-name{position:absolute;bottom:calc(78px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:22;color:#fff;font-size:12px;background:rgba(0,0,0,0.55);padding:2px 12px;border-radius:6px;pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,0.9);}
-        .hotbar-slot{width:48px;height:48px;border-radius:8px;border:2px solid rgba(255,255,255,0.3);background:rgba(0,0,0,0.5);position:relative;cursor:pointer;transition:all 0.15s ease;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-        .hotbar-slot.active{border-color:#fff;background:rgba(255,255,255,0.2);box-shadow:0 0 12px rgba(255,255,255,0.5);transform:scale(1.1);}
-        .hotbar-slot img{width:36px;height:36px;image-rendering:pixelated;pointer-events:none;}
-        .hotbar-slot .slot-number{position:absolute;top:2px;left:4px;font-size:10px;color:rgba(255,255,255,0.7);pointer-events:none;font-weight:bold;}
-        .hotbar-slot.backpack-slot{font-size:24px;color:#fff;background:rgba(0,0,0,0.3);border-style:dashed;}
-        #joystick-zone{position:absolute;bottom:0;left:0;width:45%;height:70%;z-index:5;pointer-events:auto;touch-action:none;}
-        #joystick-base{position:absolute;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,0.12);border:3px solid rgba(255,255,255,0.3);display:none;pointer-events:none;z-index:6;box-shadow:0 0 20px rgba(0,0,0,0.3);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);}
-        #joystick-knob{position:absolute;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.35);border:2px solid rgba(255,255,255,0.6);pointer-events:none;z-index:7;box-shadow:0 2px 8px rgba(0,0,0,0.3);transition:none;}
-        #action-buttons{position:absolute;bottom:calc(70px + env(safe-area-inset-bottom));right:16px;display:flex;flex-direction:column;gap:12px;z-index:15;pointer-events:auto;touch-action:none;}
-        .action-btn{width:56px;height:56px;border-radius:50%;border:3px solid rgba(255,255,255,0.5);background:rgba(0,0,0,0.5);color:#fff;font-size:12px;font-weight:bold;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.1s ease;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);text-shadow:0 1px 3px rgba(0,0,0,0.7);pointer-events:auto;touch-action:none;letter-spacing:1px;-webkit-user-select:none;user-select:none;}
-        .action-btn:active{transform:scale(0.88);background:rgba(255,255,255,0.25);border-color:#fff;}
-        #jump-btn{background:rgba(0,100,200,0.5);border-color:rgba(100,180,255,0.6);width:60px;height:60px;font-size:14px;}
-        #place-btn{background:rgba(0,150,50,0.5);border-color:rgba(100,255,150,0.6);}
-        #break-btn{background:rgba(200,50,0,0.5);border-color:rgba(255,150,100,0.6);}
-        #fly-btn{background:rgba(150,60,180,0.5);border-color:rgba(220,140,255,0.6);}
-        #fly-down-btn{background:rgba(80,80,120,0.5);border-color:rgba(180,180,220,0.6);display:none;}
-        #underwater-overlay{position:absolute;top:0;left:0;width:100%;height:100%;z-index:7;pointer-events:none;background:radial-gradient(ellipse at center, rgba(20,60,160,0.25) 0%, rgba(10,40,120,0.55) 100%);opacity:0;transition:opacity 0.4s ease;}
-        #damage-flash{position:absolute;top:0;left:0;width:100%;height:100%;z-index:38;pointer-events:none;background:radial-gradient(ellipse at center, rgba(255,0,0,0) 40%, rgba(200,0,0,0.65) 100%);opacity:0;}
-        #death-overlay{position:absolute;top:0;left:0;width:100%;height:100%;z-index:90;background:rgba(120,0,0,0.55);display:none;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-size:28px;font-weight:bold;text-shadow:0 2px 6px rgba(0,0,0,0.8);pointer-events:none;}
-        #death-overlay .sub{font-size:14px;color:#fcc;margin-top:8px;font-weight:normal;}
-        #fullscreen-btn{position:absolute;top:calc(10px + env(safe-area-inset-top));left:calc(10px + env(safe-area-inset-left));z-index:40;width:40px;height:40px;border-radius:8px;border:2px solid rgba(255,255,255,0.5);background:rgba(0,0,0,0.5);color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;pointer-events:auto;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);touch-action:manipulation;-webkit-user-select:none;user-select:none;}
-        #backpack-panel{position:absolute;top:0;left:0;width:100%;height:100%;z-index:80;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:none;flex-direction:column;align-items:center;justify-content:center;pointer-events:auto;}
-        #backpack-panel.active{display:flex;}
-        #backpack-title{color:#fff;font-size:22px;margin-bottom:16px;}
-        #backpack-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:10px;width:90%;max-width:500px;max-height:70%;overflow-y:auto;padding:10px;background:rgba(255,255,255,0.1);border-radius:16px;border:2px solid rgba(255,255,255,0.2);}
-        .backpack-item{display:flex;flex-direction:column;align-items:center;padding:8px;background:rgba(0,0,0,0.4);border-radius:10px;border:2px solid rgba(255,255,255,0.2);cursor:pointer;}
-        .backpack-item:active{background:rgba(255,255,255,0.3);}
-        .backpack-item img{width:40px;height:40px;image-rendering:pixelated;margin-bottom:4px;}
-        .backpack-item span{color:#fff;font-size:10px;}
-        #loading-screen{position:absolute;top:0;left:0;width:100%;height:100%;background:#1a1a2e;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-size:20px;transition:opacity 0.5s ease;}
-        #loading-screen.hidden{opacity:0;pointer-events:none;}
-        #loading-bar-container{width:60%;max-width:300px;height:10px;background:rgba(255,255,255,0.15);border-radius:6px;overflow:hidden;margin-top:16px;}
-        #loading-bar{width:0%;height:100%;background:linear-gradient(90deg,#4CAF50,#8BC34A);border-radius:6px;transition:width 0.12s linear;}
-        .menu-panel{background:rgba(0,0,0,0.8);border-radius:16px;padding:20px;margin:10px;display:flex;flex-direction:column;gap:12px;align-items:center;}
-        .menu-input{padding:8px 12px;border-radius:8px;border:1px solid #fff;background:rgba(255,255,255,0.2);color:#fff;font-size:16px;width:220px;text-align:center;}
-        .menu-btn{padding:12px 20px;border-radius:10px;border:none;background:#4CAF50;color:#fff;font-size:18px;cursor:pointer;width:220px;}
-        .menu-btn.secondary{background:#2196F3;}
-        #resume-single{background:#FF9800;display:none;}
-        #online-status{position:absolute;bottom:80px;left:10px;z-index:25;color:#fff;font-size:12px;background:rgba(0,0,0,0.6);padding:4px 8px;border-radius:4px;pointer-events:none;}
-        #touch-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:50;color:#fff;font-size:14px;background:rgba(0,0,0,0.7);padding:12px 20px;border-radius:10px;pointer-events:none;text-align:center;transition:opacity 1s ease;line-height:1.6;}
-        #touch-hint.hidden{opacity:0;}
-        #error-message{position:absolute;top:20%;left:50%;transform:translateX(-50%);z-index:110;background:rgba(200,0,0,0.8);color:#fff;padding:10px 20px;border-radius:8px;display:none;}
-        @media (max-width:400px){.hotbar-slot{width:38px;height:38px}.hotbar-slot img{width:28px;height:28px}.action-btn{width:46px;height:46px;font-size:10px}#jump-btn{width:50px;height:50px;font-size:12px}#joystick-base{width:90px;height:90px}#joystick-knob{width:36px;height:36px}#fullscreen-btn{width:34px;height:34px;font-size:16px}#health-bar{font-size:12px}}
-        @media (orientation:landscape){#action-buttons{bottom:calc(65px + env(safe-area-inset-bottom));right:20px}#hotbar{bottom:calc(8px + env(safe-area-inset-bottom))}.hotbar-slot{width:44px;height:44px}.hotbar-slot img{width:32px;height:32px}#action-buttons{gap:8px}}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeepCraft — 网页体素沙盒</title>
+<style>
+  :root {
+    --mc-green: #4CAF50;
+    --mc-dark: #1D1D1F;
+    --mc-panel: #C6C6C6;
+    --mc-slot: #8B8B8B;
+    --mc-outline: #373737;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; }
+  #app, #app canvas { display: block; width: 100%; height: 100%; }
+
+  /* 通用隐藏 */
+  .hidden { display: none !important; }
+
+  /* HUD */
+  #hud { position: fixed; inset: 0; pointer-events: none; z-index: 10; }
+  #crosshair { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; }
+  #crosshair::before, #crosshair::after { content: ''; position: absolute; background: #fff; mix-blend-mode: difference; }
+  #crosshair::before { left: 9px; top: 0; width: 2px; height: 20px; }
+  #crosshair::after { left: 0; top: 9px; width: 20px; height: 2px; }
+  #hotbar { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); display: flex; gap: 2px; background: rgba(0,0,0,0.4); padding: 4px; border: 2px solid #333; border-radius: 3px; }
+  .hotbar-slot { width: 52px; height: 52px; background: rgba(0,0,0,0.55); border: 2px solid #555; position: relative; image-rendering: pixelated; }
+  .hotbar-slot.selected { border-color: #fff; box-shadow: 0 0 0 2px #fff inset; }
+  .hotbar-slot .count { position: absolute; right: 2px; bottom: 0; color: #fff; font-size: 14px; text-shadow: 1px 1px 0 #000; }
+  .hotbar-slot .item-icon { position: absolute; inset: 4px; image-rendering: pixelated; background-size: contain; background-repeat: no-repeat; background-position: center; }
+  #bars { position: absolute; left: 50%; bottom: 74px; transform: translateX(-50%); display: flex; gap: 12px; align-items: flex-end; }
+  .bar-group { display: flex; flex-direction: column; gap: 2px; }
+  .bar { width: 160px; height: 10px; background: rgba(0,0,0,0.6); border: 2px solid #333; position: relative; }
+  .bar > .fill { height: 100%; background: #e74c3c; transition: width 0.1s; }
+  .bar.hunger > .fill { background: #e67e22; }
+  .bar.oxygen > .fill { background: #3498db; }
+  .bar.xp > .fill { background: #2ecc71; }
+  .bar-label { color: #fff; font-size: 11px; text-shadow: 1px 1px 0 #000; text-align: center; }
+  #debug { position: absolute; left: 6px; top: 6px; color: #fff; font-family: monospace; font-size: 12px; text-shadow: 1px 1px 0 #000; white-space: pre; background: rgba(0,0,0,0.35); padding: 4px; border-radius: 2px; }
+  #blockHighlight { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+  #actionbar { position: absolute; left: 50%; bottom: 140px; transform: translateX(-50%); color: #fff; text-shadow: 1px 1px 0 #000; font-size: 16px; background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 3px; opacity: 0; transition: opacity 0.3s; white-space: nowrap; }
+  #actionbar.show { opacity: 1; }
+
+  /* 通用屏幕 */
+  .screen { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.75); }
+  .panel { background: var(--mc-panel); border: 3px solid var(--mc-outline); box-shadow: inset 2px 2px 0 #fff, inset -2px -2px 0 #555; padding: 20px; min-width: 320px; max-width: 90vw; max-height: 90vh; overflow: auto; }
+  .panel h1 { font-size: 28px; color: #3c3c3c; text-shadow: 2px 2px 0 #fff; text-align: center; margin-bottom: 12px; }
+  .btn { display: block; width: 100%; padding: 10px; margin: 6px 0; background: #8b8b8b; border: 2px solid #373737; box-shadow: inset 2px 2px 0 #fff, inset -2px -2px 0 #555; font-size: 16px; color: #222; cursor: pointer; text-align: center; }
+  .btn:hover { background: #a0a0a0; }
+  .btn:active { box-shadow: inset -2px -2px 0 #fff, inset 2px 2px 0 #555; }
+  .btn.primary { background: #5d9c5d; color: #fff; }
+  .btn.primary:hover { background: #6db46d; }
+
+  /* 背包 / 合成 / 熔炉 */
+  #inventoryScreen .inv-grid { display: grid; grid-template-columns: repeat(9, 48px); gap: 2px; justify-content: center; }
+  #inventoryScreen .craft-grid { display: grid; grid-template-columns: repeat(3, 48px); gap: 2px; }
+  #inventoryScreen .craft-2x2 { display: grid; grid-template-columns: repeat(2, 48px); gap: 2px; }
+  .slot { width: 48px; height: 48px; background: var(--mc-slot); border: 2px solid #555; box-shadow: inset 2px 2px 0 rgba(255,255,255,0.5), inset -2px -2px 0 rgba(0,0,0,0.3); position: relative; image-rendering: pixelated; }
+  .slot .item-icon { position: absolute; inset: 4px; background-size: contain; background-repeat: no-repeat; background-position: center; image-rendering: pixelated; }
+  .slot .count { position: absolute; right: 2px; bottom: 0; color: #fff; font-size: 15px; text-shadow: 1px 1px 0 #000; }
+  .slot.dragging { opacity: 0.5; }
+  .slot.hover { background: #a8a8a8; }
+  .inv-layout { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+  .inv-section { text-align: center; }
+  .inv-section h3 { margin: 6px 0; color: #3c3c3c; text-shadow: 1px 1px 0 #fff; }
+  .inv-row { display: flex; gap: 2px; justify-content: center; }
+  .furnace-layout { display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; }
+  .furnace-arrow, .furnace-flame { width: 24px; height: 48px; background: #555; border: 2px solid #333; position: relative; }
+  .furnace-arrow .fill, .furnace-flame .fill { position: absolute; bottom: 0; left: 0; width: 100%; background: #f39c12; height: 0%; }
+  .furnace-flame .fill { background: #e74c3c; }
+  .label { color: #222; font-size: 13px; margin: 4px; }
+
+  /* 设置滑条 */
+  .setting-row { display: flex; justify-content: space-between; align-items: center; margin: 8px 0; }
+  .setting-row label { color: #222; font-size: 14px; }
+  input[type=range] { width: 180px; }
+
+  /* 加载界面 */
+  #loadingScreen { background: #000; color: #fff; font-size: 20px; text-align: center; }
+  #loadingBar { width: 300px; height: 20px; border: 2px solid #fff; margin: 10px auto; }
+  #loadingBarFill { height: 100%; width: 0%; background: #4CAF50; }
+
+  #deathScreen .panel { text-align: center; }
+  #deathScreen h1 { color: #a33; }
+</style>
 </head>
 <body>
-    <div id="gameCanvas"></div>
-    <div id="crosshair"></div>
-    <div id="target-name"></div>
-    <div id="health-bar"></div>
-    <div id="day-indicator">☀️</div>
-    <div id="fps-counter">FPS: 0</div>
-    <div id="debug-info"></div>
-    <div id="hotbar"></div>
-    <div id="selected-name"></div>
-    <div id="joystick-zone"></div>
-    <div id="joystick-base"><div id="joystick-knob"></div></div>
-    <div id="action-buttons">
-        <button class="action-btn" id="jump-btn">⬆️ 跳跃</button>
-        <button class="action-btn" id="break-btn">⛏️ 破坏</button>
-        <button class="action-btn" id="place-btn">🧱 放置</button>
-        <button class="action-btn" id="fly-btn">🕊️ 飞行</button>
-        <button class="action-btn" id="fly-down-btn">⬇️ 下降</button>
+<div id="app"></div>
+
+<!-- HUD -->
+<div id="hud" class="hidden">
+  <div id="crosshair"></div>
+  <div id="hotbar"></div>
+  <div id="bars">
+    <div class="bar-group">
+      <div class="bar health"><div class="fill" id="healthFill" style="width:100%"></div></div>
+      <div class="bar hunger"><div class="fill" id="hungerFill" style="width:100%"></div></div>
+      <div class="bar oxygen"><div class="fill" id="oxygenFill" style="width:100%"></div></div>
+      <div class="bar xp"><div class="fill" id="xpFill" style="width:0%"></div></div>
     </div>
-    <button id="fullscreen-btn" title="切换全屏">⛶</button>
-    <div id="underwater-overlay"></div>
-    <div id="damage-flash"></div>
-    <div id="death-overlay">☠️ 你死了<div class="sub">正在重生…</div></div>
-    <div id="backpack-panel">
-        <div id="backpack-title">背包</div>
-        <div id="backpack-grid"></div>
+  </div>
+  <div id="debug" class="hidden"></div>
+  <div id="actionbar"></div>
+</div>
+
+<!-- 主菜单 -->
+<div id="mainMenu" class="screen">
+  <div class="panel">
+    <h1>DeepCraft</h1>
+    <button class="btn primary" id="btnNewGame">新的世界</button>
+    <button class="btn" id="btnContinue">继续游戏</button>
+    <button class="btn" id="btnSettingsMain">设置</button>
+    <button class="btn" id="btnAbout">关于</button>
+  </div>
+</div>
+
+<!-- 暂停菜单 -->
+<div id="pauseMenu" class="screen hidden">
+  <div class="panel">
+    <h1>游戏暂停</h1>
+    <button class="btn primary" id="btnResume">回到游戏</button>
+    <button class="btn" id="btnSettingsPause">设置</button>
+    <button class="btn" id="btnSaveAndQuit">保存并退出</button>
+  </div>
+</div>
+
+<!-- 设置 -->
+<div id="settingsScreen" class="screen hidden">
+  <div class="panel">
+    <h1>设置</h1>
+    <div class="setting-row"><label>鼠标灵敏度</label><input type="range" id="setSensitivity" min="0.1" max="3" step="0.1" value="1"></div>
+    <div class="setting-row"><label>渲染距离</label><input type="range" id="setRenderDistance" min="2" max="8" step="1" value="4"></div>
+    <div class="setting-row"><label>音量</label><input type="range" id="setVolume" min="0" max="1" step="0.05" value="0.6"></div>
+    <button class="btn" id="btnSettingsBack">返回</button>
+  </div>
+</div>
+
+<!-- 死亡 -->
+<div id="deathScreen" class="screen hidden">
+  <div class="panel">
+    <h1>你死了！</h1>
+    <p id="deathInfo">游戏结束</p>
+    <button class="btn primary" id="btnRespawn">重生</button>
+    <button class="btn" id="btnDeathQuit">保存并退出</button>
+  </div>
+</div>
+
+<!-- 背包/合成 -->
+<div id="inventoryScreen" class="screen hidden">
+  <div class="panel">
+    <h1>背包</h1>
+    <div class="inv-layout">
+      <div class="inv-section">
+        <h3>合成</h3>
+        <div id="craft2x2" class="craft-2x2"></div>
+        <div id="craftResult2x2" class="slot" style="margin: 8px auto;"></div>
+      </div>
+      <div class="inv-section">
+        <h3>主背包</h3>
+        <div id="inventoryGrid" class="inv-grid"></div>
+      </div>
     </div>
-    <div id="online-status">🟢 单机模式</div>
-    <div id="loading-screen">
-        <div style="font-size:32px;margin-bottom:8px;">⛏️</div>
-        <div>我的世界 · 联机版</div>
-        <div class="menu-panel">
-            <input type="text" id="seed-input" class="menu-input" placeholder="种子 (可选)">
-            <input type="text" id="room-input" class="menu-input" placeholder="房间号 (联机用)">
-            <button id="start-single" class="menu-btn">🎮 单机模式</button>
-            <button id="resume-single" class="menu-btn">💾 继续上次世界</button>
-            <button id="start-online" class="menu-btn secondary">🌐 联机模式</button>
-            <div style="font-size:12px;color:#aaa;">联机模式将使用房间号生成相同世界</div>
-        </div>
-        <div id="loading-bar-container" style="display:none;"><div id="loading-bar"></div></div>
-        <div id="loading-text"></div>
+    <button class="btn" id="btnCloseInventory">关闭</button>
+  </div>
+</div>
+
+<!-- 工作台 -->
+<div id="craftingTableScreen" class="screen hidden">
+  <div class="panel">
+    <h1>工作台</h1>
+    <div class="inv-layout">
+      <div class="inv-section">
+        <h3>3x3 合成</h3>
+        <div id="craft3x3" class="craft-grid"></div>
+        <div id="craftResult3x3" class="slot" style="margin: 8px auto;"></div>
+      </div>
+      <div class="inv-section">
+        <h3>主背包</h3>
+        <div id="inventoryGrid3" class="inv-grid"></div>
+      </div>
     </div>
-    <div id="touch-hint">👆 左侧摇杆移动<br>🖱️ 右侧滑动旋转视角<br>🕊️ 飞行 / ⬇️ 下降 / ⬆️ 跳跃 / 🧱 放置 / ⛏️ 破坏<br>🎒 点击快捷栏右侧“...”打开背包<br>💻 桌面端: WASD 移动 · 鼠标视角 · 左键破坏 · 右键放置 · 空格跳跃 · F 飞行 · E 背包 · 1-9 选格 · F3 调试</div>
-    <div id="error-message"></div>
+    <button class="btn" id="btnCloseCrafting">关闭</button>
+  </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
-    <script>
-    (function() {
-        'use strict';
+<!-- 熔炉 -->
+<div id="furnaceScreen" class="screen hidden">
+  <div class="panel">
+    <h1>熔炉</h1>
+    <div class="furnace-layout">
+      <div class="inv-section"><h3>燃料</h3><div id="furnaceFuel" class="slot"></div></div>
+      <div class="furnace-flame"><div class="fill" id="furnaceFlameFill"></div></div>
+      <div class="inv-section"><h3>输入</h3><div id="furnaceInput" class="slot"></div></div>
+      <div class="furnace-arrow"><div class="fill" id="furnaceArrowFill"></div></div>
+      <div class="inv-section"><h3>输出</h3><div id="furnaceOutput" class="slot"></div></div>
+    </div>
+    <div class="inv-section" style="margin-top:12px">
+      <h3>主背包</h3>
+      <div id="furnaceInventoryGrid" class="inv-grid"></div>
+    </div>
+    <button class="btn" id="btnCloseFurnace">关闭</button>
+  </div>
+</div>
 
-        // ==================== 常量定义 ====================
-        const IS_TOUCH = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
-        const CHUNK_SIZE = 16;
-        const CHUNK_HEIGHT = 64;
-        const SEA_LEVEL = 28;
-        const RENDER_DISTANCE = IS_TOUCH ? 3 : 4;
-        const MAX_PLACE_DISTANCE = 6;
-        const PLAYER_WIDTH = 0.6;
-        const PLAYER_HEIGHT = 1.8;
-        const PLAYER_EYE_HEIGHT = 1.62;
-        const GRAVITY = -24;
-        const JUMP_SPEED = 8.5;
-        const WALK_SPEED = 4.3;
-        const FLY_SPEED = 8;
-        const TOUCH_SENSITIVITY = 0.004;
-        const MOUSE_SENSITIVITY = 0.0028;
-        const DAY_LENGTH = 240;       // 一天(昼夜)的秒数
-        const MAX_HEALTH = 20;        // 10 颗心
-        const SAVE_KEY = 'mc_world_save_v1';
+<!-- 加载 -->
+<div id="loadingScreen" class="screen">
+  <div class="panel" style="background:#111; color:#fff; border-color:#333; min-width:400px">
+    <h1 style="color:#4CAF50">DeepCraft</h1>
+    <p>正在生成世界...</p>
+    <div id="loadingBar"><div id="loadingBarFill"></div></div>
+    <p id="loadingText">0%</p>
+  </div>
+</div>
 
-        const BLOCK = {
-            AIR:0, GRASS:1, DIRT:2, STONE:3, LOG:4, LEAVES:5, SAND:6, WATER:7, GLASS:8, BRICK:9, PLANK:10, BEDROCK:11,
-            COAL_BLOCK:12, IRON_BLOCK:13, GOLD_BLOCK:14, DIAMOND_BLOCK:15, REDSTONE_BLOCK:16, LAPIS_BLOCK:17, SNOW_BLOCK:18,
-            PUMPKIN:19, MELON:20, BOOKSHELF:21
-        };
+<!-- 关于 -->
+<div id="aboutScreen" class="screen hidden">
+  <div class="panel">
+    <h1>关于 DeepCraft</h1>
+    <p style="color:#222">一个纯前端实现的体素沙盒游戏。使用 Three.js 渲染、Simplex 噪声生成地形、自研 AABB 碰撞。</p>
+    <button class="btn" id="btnAboutBack">返回</button>
+  </div>
+</div>
 
-        const BLOCK_NAMES = {
-            [BLOCK.AIR]:'空气', [BLOCK.GRASS]:'草方块', [BLOCK.DIRT]:'泥土', [BLOCK.STONE]:'石头', [BLOCK.LOG]:'橡木原木',
-            [BLOCK.LEAVES]:'树叶', [BLOCK.SAND]:'沙子', [BLOCK.WATER]:'水', [BLOCK.GLASS]:'玻璃', [BLOCK.BRICK]:'砖块',
-            [BLOCK.PLANK]:'木板', [BLOCK.BEDROCK]:'基岩', [BLOCK.COAL_BLOCK]:'煤块', [BLOCK.IRON_BLOCK]:'铁块', [BLOCK.GOLD_BLOCK]:'金块',
-            [BLOCK.DIAMOND_BLOCK]:'钻石块', [BLOCK.REDSTONE_BLOCK]:'红石块', [BLOCK.LAPIS_BLOCK]:'青金石块', [BLOCK.SNOW_BLOCK]:'雪块',
-            [BLOCK.PUMPKIN]:'南瓜', [BLOCK.MELON]:'西瓜', [BLOCK.BOOKSHELF]:'书架'
-        };
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+import { createNoise2D, createNoise3D } from 'https://cdn.jsdelivr.net/npm/simplex-noise@4.0.3/dist/esm/simplex-noise.js';
 
-        const PLACEABLE_BLOCKS = [
-            BLOCK.GRASS, BLOCK.DIRT, BLOCK.STONE, BLOCK.LOG, BLOCK.LEAVES, BLOCK.SAND, BLOCK.GLASS, BLOCK.BRICK, BLOCK.PLANK,
-            BLOCK.COAL_BLOCK, BLOCK.IRON_BLOCK, BLOCK.GOLD_BLOCK, BLOCK.DIAMOND_BLOCK, BLOCK.REDSTONE_BLOCK, BLOCK.LAPIS_BLOCK,
-            BLOCK.SNOW_BLOCK, BLOCK.PUMPKIN, BLOCK.MELON, BLOCK.BOOKSHELF
-        ];
+/* ============================================================
+ * 方块 / 物品注册表
+ * 这里集中定义所有方块与物品的 ID、属性、掉落物和纹理图集索引。
+ * 使用数字 ID 以便用 Uint8Array 紧凑存储区块。
+ * ============================================================ */
+const BLOCK = {
+  AIR: 0,
+  GRASS: 1,
+  DIRT: 2,
+  STONE: 3,
+  COBBLESTONE: 4,
+  SAND: 5,
+  WATER: 6,
+  LOG: 7,
+  LEAVES: 8,
+  GLASS: 9,
+  COAL_ORE: 10,
+  IRON_ORE: 11,
+  GOLD_ORE: 12,
+  DIAMOND_ORE: 13,
+  PLANKS: 14,
+  TORCH: 15,
+  CRAFTING_TABLE: 16,
+  FURNACE: 17,
+  CHEST: 18,
+  BEDROCK: 19,
+  GRAVEL: 20,
+  SNOW: 21,
+  ICE: 22,
+  REDSTONE_ORE: 23,
+};
 
-        const TRANSPARENT_BLOCKS = new Set([BLOCK.WATER, BLOCK.GLASS, BLOCK.LEAVES, BLOCK.AIR]);
-        const SOLID_BLOCKS = new Set([
-            BLOCK.GRASS, BLOCK.DIRT, BLOCK.STONE, BLOCK.LOG, BLOCK.LEAVES, BLOCK.SAND, BLOCK.BRICK, BLOCK.PLANK, BLOCK.BEDROCK,
-            BLOCK.COAL_BLOCK, BLOCK.IRON_BLOCK, BLOCK.GOLD_BLOCK, BLOCK.DIAMOND_BLOCK, BLOCK.REDSTONE_BLOCK, BLOCK.LAPIS_BLOCK,
-            BLOCK.SNOW_BLOCK, BLOCK.PUMPKIN, BLOCK.MELON, BLOCK.BOOKSHELF
-        ]);
+// 非方块物品 ID（从 100 开始）
+const ITEM = {
+  STICK: 100,
+  COAL: 101,
+  IRON_INGOT: 102,
+  GOLD_INGOT: 103,
+  DIAMOND: 104,
+  WOOD_PICKAXE: 105,
+  STONE_PICKAXE: 106,
+  IRON_PICKAXE: 107,
+  WOOD_SWORD: 108,
+  STONE_SWORD: 109,
+  IRON_SWORD: 110,
+  WOOD_AXE: 111,
+  STONE_AXE: 112,
+  IRON_AXE: 113,
+  WOOD_SHOVEL: 114,
+  STONE_SHOVEL: 115,
+  IRON_SHOVEL: 116,
+  CHARCOAL: 117,
+  RAW_PORKCHOP: 118,
+  RAW_BEEF: 119,
+  MUTTON: 120,
+  FEATHER: 121,
+  BONE: 122,
+  GUNPOWDER: 123,
+  STRING: 124,
+  APPLE: 125,
+  BREAD: 126,
+  WHEAT: 127,
+  ROTTEN_FLESH: 128,
+};
 
-        const TEX = {
-            GRASS_TOP:0, GRASS_SIDE:1, DIRT:2, STONE:3, LOG_SIDE:4, LOG_TOP:5, LEAVES:6, SAND:7, WATER:8, GLASS:9,
-            BRICK:10, PLANK:11, BEDROCK:12, COAL_BLOCK:13, IRON_BLOCK:14, GOLD_BLOCK:15, DIAMOND_BLOCK:16,
-            REDSTONE_BLOCK:17, LAPIS_BLOCK:18, SNOW_BLOCK:19, PUMPKIN:20, MELON:21, BOOKSHELF:22
-        };
+// 图集瓦片索引
+const TILE = {
+  GRASS_TOP: 0, GRASS_SIDE: 1, DIRT: 2, STONE: 3, COBBLESTONE: 4,
+  SAND: 5, WATER: 6, LOG_SIDE: 7, LOG_TOP: 8, LEAVES: 9,
+  GLASS: 10, COAL_ORE: 11, IRON_ORE: 12, GOLD_ORE: 13, DIAMOND_ORE: 14,
+  PLANKS: 15, TORCH: 16, CRAFT_TOP: 17, CRAFT_SIDE: 18, FURNACE_FRONT: 19,
+  FURNACE_SIDE: 20, FURNACE_TOP: 21, CHEST_FRONT: 22, CHEST_SIDE: 23, CHEST_TOP: 24,
+  BEDROCK: 25, GRAVEL: 26, SNOW: 27, ICE: 28, REDSTONE_ORE: 29,
+  STICK: 30, COAL: 31, IRON_INGOT: 32, GOLD_INGOT: 33, DIAMOND: 34,
+  WOOD_PICKAXE: 35, STONE_PICKAXE: 36, IRON_PICKAXE: 37, WOOD_SWORD: 38, STONE_SWORD: 39,
+  IRON_SWORD: 40, WOOD_AXE: 41, STONE_AXE: 42, IRON_AXE: 43, WOOD_SHOVEL: 44,
+  STONE_SHOVEL: 45, IRON_SHOVEL: 46, CHARCOAL: 47, RAW_PORKCHOP: 48, RAW_BEEF: 49,
+  MUTTON: 50, FEATHER: 51, BONE: 52, GUNPOWDER: 53, STRING: 54,
+  APPLE: 55, BREAD: 56, WHEAT: 57,
+};
 
-        const BLOCK_FACES = {
-            [BLOCK.GRASS]: { px:TEX.GRASS_SIDE, nx:TEX.GRASS_SIDE, py:TEX.GRASS_TOP, ny:TEX.DIRT, pz:TEX.GRASS_SIDE, nz:TEX.GRASS_SIDE },
-            [BLOCK.DIRT]: { px:TEX.DIRT, nx:TEX.DIRT, py:TEX.DIRT, ny:TEX.DIRT, pz:TEX.DIRT, nz:TEX.DIRT },
-            [BLOCK.STONE]: { px:TEX.STONE, nx:TEX.STONE, py:TEX.STONE, ny:TEX.STONE, pz:TEX.STONE, nz:TEX.STONE },
-            [BLOCK.LOG]: { px:TEX.LOG_SIDE, nx:TEX.LOG_SIDE, py:TEX.LOG_TOP, ny:TEX.LOG_TOP, pz:TEX.LOG_SIDE, nz:TEX.LOG_SIDE },
-            [BLOCK.LEAVES]: { px:TEX.LEAVES, nx:TEX.LEAVES, py:TEX.LEAVES, ny:TEX.LEAVES, pz:TEX.LEAVES, nz:TEX.LEAVES },
-            [BLOCK.SAND]: { px:TEX.SAND, nx:TEX.SAND, py:TEX.SAND, ny:TEX.SAND, pz:TEX.SAND, nz:TEX.SAND },
-            [BLOCK.WATER]: { px:TEX.WATER, nx:TEX.WATER, py:TEX.WATER, ny:TEX.WATER, pz:TEX.WATER, nz:TEX.WATER },
-            [BLOCK.GLASS]: { px:TEX.GLASS, nx:TEX.GLASS, py:TEX.GLASS, ny:TEX.GLASS, pz:TEX.GLASS, nz:TEX.GLASS },
-            [BLOCK.BRICK]: { px:TEX.BRICK, nx:TEX.BRICK, py:TEX.BRICK, ny:TEX.BRICK, pz:TEX.BRICK, nz:TEX.BRICK },
-            [BLOCK.PLANK]: { px:TEX.PLANK, nx:TEX.PLANK, py:TEX.PLANK, ny:TEX.PLANK, pz:TEX.PLANK, nz:TEX.PLANK },
-            [BLOCK.BEDROCK]: { px:TEX.BEDROCK, nx:TEX.BEDROCK, py:TEX.BEDROCK, ny:TEX.BEDROCK, pz:TEX.BEDROCK, nz:TEX.BEDROCK },
-            [BLOCK.COAL_BLOCK]: { px:TEX.COAL_BLOCK, nx:TEX.COAL_BLOCK, py:TEX.COAL_BLOCK, ny:TEX.COAL_BLOCK, pz:TEX.COAL_BLOCK, nz:TEX.COAL_BLOCK },
-            [BLOCK.IRON_BLOCK]: { px:TEX.IRON_BLOCK, nx:TEX.IRON_BLOCK, py:TEX.IRON_BLOCK, ny:TEX.IRON_BLOCK, pz:TEX.IRON_BLOCK, nz:TEX.IRON_BLOCK },
-            [BLOCK.GOLD_BLOCK]: { px:TEX.GOLD_BLOCK, nx:TEX.GOLD_BLOCK, py:TEX.GOLD_BLOCK, ny:TEX.GOLD_BLOCK, pz:TEX.GOLD_BLOCK, nz:TEX.GOLD_BLOCK },
-            [BLOCK.DIAMOND_BLOCK]: { px:TEX.DIAMOND_BLOCK, nx:TEX.DIAMOND_BLOCK, py:TEX.DIAMOND_BLOCK, ny:TEX.DIAMOND_BLOCK, pz:TEX.DIAMOND_BLOCK, nz:TEX.DIAMOND_BLOCK },
-            [BLOCK.REDSTONE_BLOCK]: { px:TEX.REDSTONE_BLOCK, nx:TEX.REDSTONE_BLOCK, py:TEX.REDSTONE_BLOCK, ny:TEX.REDSTONE_BLOCK, pz:TEX.REDSTONE_BLOCK, nz:TEX.REDSTONE_BLOCK },
-            [BLOCK.LAPIS_BLOCK]: { px:TEX.LAPIS_BLOCK, nx:TEX.LAPIS_BLOCK, py:TEX.LAPIS_BLOCK, ny:TEX.LAPIS_BLOCK, pz:TEX.LAPIS_BLOCK, nz:TEX.LAPIS_BLOCK },
-            [BLOCK.SNOW_BLOCK]: { px:TEX.SNOW_BLOCK, nx:TEX.SNOW_BLOCK, py:TEX.SNOW_BLOCK, ny:TEX.SNOW_BLOCK, pz:TEX.SNOW_BLOCK, nz:TEX.SNOW_BLOCK },
-            [BLOCK.PUMPKIN]: { px:TEX.PUMPKIN, nx:TEX.PUMPKIN, py:TEX.PUMPKIN, ny:TEX.PUMPKIN, pz:TEX.PUMPKIN, nz:TEX.PUMPKIN },
-            [BLOCK.MELON]: { px:TEX.MELON, nx:TEX.MELON, py:TEX.MELON, ny:TEX.MELON, pz:TEX.MELON, nz:TEX.MELON },
-            [BLOCK.BOOKSHELF]: { px:TEX.BOOKSHELF, nx:TEX.BOOKSHELF, py:TEX.PLANK, ny:TEX.PLANK, pz:TEX.BOOKSHELF, nz:TEX.BOOKSHELF },
-        };
+/**
+ * 方块定义表。
+ * tiles: [顶面, 底面, 侧面] 或 [全六面统一]
+ * drop: 破坏后掉落的物品 ID
+ * hardness: 破坏所需时间（秒），-1 表示不可破坏
+ */
+const BLOCK_DEFS = [
+  /* 0 空气 */ { id: BLOCK.AIR, name: '空气', solid: false, transparent: true, opaque: false, liquid: false, hardness: -1, drop: null, tiles: [TILE.DIRT, TILE.DIRT, TILE.DIRT], particle: 0x000000 },
+  /* 1 草方块 */ { id: BLOCK.GRASS, name: '草方块', solid: true, transparent: false, opaque: true, liquid: false, hardness: 0.6, drop: BLOCK.DIRT, tiles: [TILE.GRASS_TOP, TILE.DIRT, TILE.GRASS_SIDE], particle: 0x6a9a3b },
+  /* 2 泥土 */ { id: BLOCK.DIRT, name: '泥土', solid: true, transparent: false, opaque: true, liquid: false, hardness: 0.5, drop: BLOCK.DIRT, tiles: [TILE.DIRT, TILE.DIRT, TILE.DIRT], particle: 0x8a5f3c },
+  /* 3 石头 */ { id: BLOCK.STONE, name: '石头', solid: true, transparent: false, opaque: true, liquid: false, hardness: 1.5, drop: BLOCK.COBBLESTONE, tiles: [TILE.STONE, TILE.STONE, TILE.STONE], particle: 0x8a8a8a },
+  /* 4 圆石 */ { id: BLOCK.COBBLESTONE, name: '圆石', solid: true, transparent: false, opaque: true, liquid: false, hardness: 2.0, drop: BLOCK.COBBLESTONE, tiles: [TILE.COBBLESTONE, TILE.COBBLESTONE, TILE.COBBLESTONE], particle: 0x6f6f6f },
+  /* 5 沙子 */ { id: BLOCK.SAND, name: '沙子', solid: true, transparent: false, opaque: true, liquid: false, hardness: 0.5, drop: BLOCK.SAND, tiles: [TILE.SAND, TILE.SAND, TILE.SAND], particle: 0xe6d7a8 },
+  /* 6 水 */ { id: BLOCK.WATER, name: '水', solid: false, transparent: true, opaque: false, liquid: true, hardness: -1, drop: null, tiles: [TILE.WATER, TILE.WATER, TILE.WATER], particle: 0x3f76e4 },
+  /* 7 原木 */ { id: BLOCK.LOG, name: '橡木原木', solid: true, transparent: false, opaque: true, liquid: false, hardness: 2.0, drop: BLOCK.LOG, tiles: [TILE.LOG_TOP, TILE.LOG_TOP, TILE.LOG_SIDE], particle: 0x6b4a2a },
+  /* 8 树叶 */ { id: BLOCK.LEAVES, name: '橡树树叶', solid: true, transparent: true, opaque: false, liquid: false, hardness: 0.2, drop: BLOCK.LEAVES, tiles: [TILE.LEAVES, TILE.LEAVES, TILE.LEAVES], particle: 0x3e7a2e, cutout: true },
+  /* 9 玻璃 */ { id: BLOCK.GLASS, name: '玻璃', solid: true, transparent: true, opaque: false, liquid: false, hardness: 0.3, drop: BLOCK.GLASS, tiles: [TILE.GLASS, TILE.GLASS, TILE.GLASS], particle: 0xbfe8f2, cutout: true },
+  /* 10 煤矿石 */ { id: BLOCK.COAL_ORE, name: '煤矿石', solid: true, transparent: false, opaque: true, liquid: false, hardness: 3.0, drop: ITEM.COAL, tiles: [TILE.COAL_ORE, TILE.COAL_ORE, TILE.COAL_ORE], particle: 0x6f6f6f },
+  /* 11 铁矿石 */ { id: BLOCK.IRON_ORE, name: '铁矿石', solid: true, transparent: false, opaque: true, liquid: false, hardness: 3.0, drop: BLOCK.IRON_ORE, tiles: [TILE.IRON_ORE, TILE.IRON_ORE, TILE.IRON_ORE], particle: 0x9c7e6a },
+  /* 12 金矿石 */ { id: BLOCK.GOLD_ORE, name: '金矿石', solid: true, transparent: false, opaque: true, liquid: false, hardness: 3.0, drop: BLOCK.GOLD_ORE, tiles: [TILE.GOLD_ORE, TILE.GOLD_ORE, TILE.GOLD_ORE], particle: 0x9c8e4a },
+  /* 13 钻石矿石 */ { id: BLOCK.DIAMOND_ORE, name: '钻石矿石', solid: true, transparent: false, opaque: true, liquid: false, hardness: 3.0, drop: ITEM.DIAMOND, tiles: [TILE.DIAMOND_ORE, TILE.DIAMOND_ORE, TILE.DIAMOND_ORE], particle: 0x6ad4c4 },
+  /* 14 木板 */ { id: BLOCK.PLANKS, name: '橡木木板', solid: true, transparent: false, opaque: true, liquid: false, hardness: 2.0, drop: BLOCK.PLANKS, tiles: [TILE.PLANKS, TILE.PLANKS, TILE.PLANKS], particle: 0xb8945a },
+  /* 15 火把 */ { id: BLOCK.TORCH, name: '火把', solid: false, transparent: true, opaque: false, liquid: false, hardness: 0, drop: BLOCK.TORCH, tiles: [TILE.TORCH, TILE.TORCH, TILE.TORCH], particle: 0xe8c83a, torch: true },
+  /* 16 工作台 */ { id: BLOCK.CRAFTING_TABLE, name: '工作台', solid: true, transparent: false, opaque: true, liquid: false, hardness: 2.5, drop: BLOCK.CRAFTING_TABLE, tiles: [TILE.CRAFT_TOP, TILE.PLANKS, TILE.CRAFT_SIDE], particle: 0x8a6a3c },
+  /* 17 熔炉 */ { id: BLOCK.FURNACE, name: '熔炉', solid: true, transparent: false, opaque: true, liquid: false, hardness: 3.5, drop: BLOCK.FURNACE, tiles: [TILE.FURNACE_TOP, TILE.FURNACE_TOP, TILE.FURNACE_SIDE], particle: 0x5a5a5a },
+  /* 18 箱子 */ { id: BLOCK.CHEST, name: '箱子', solid: true, transparent: false, opaque: true, liquid: false, hardness: 2.5, drop: BLOCK.CHEST, tiles: [TILE.CHEST_TOP, TILE.CHEST_TOP, TILE.CHEST_SIDE], particle: 0x9a6a2a },
+  /* 19 基岩 */ { id: BLOCK.BEDROCK, name: '基岩', solid: true, transparent: false, opaque: true, liquid: false, hardness: -1, drop: null, tiles: [TILE.BEDROCK, TILE.BEDROCK, TILE.BEDROCK], particle: 0x2a2a2a },
+  /* 20 沙砾 */ { id: BLOCK.GRAVEL, name: '沙砾', solid: true, transparent: false, opaque: true, liquid: false, hardness: 0.6, drop: BLOCK.GRAVEL, tiles: [TILE.GRAVEL, TILE.GRAVEL, TILE.GRAVEL], particle: 0x7a7a7a },
+  /* 21 雪 */ { id: BLOCK.SNOW, name: '雪', solid: true, transparent: false, opaque: true, liquid: false, hardness: 0.2, drop: BLOCK.SNOW, tiles: [TILE.SNOW, TILE.SNOW, TILE.SNOW], particle: 0xecf0f1 },
+  /* 22 冰 */ { id: BLOCK.ICE, name: '冰', solid: true, transparent: true, opaque: false, liquid: false, hardness: 0.5, drop: BLOCK.ICE, tiles: [TILE.ICE, TILE.ICE, TILE.ICE], particle: 0x9ad6ee },
+  /* 23 红石矿石 */ { id: BLOCK.REDSTONE_ORE, name: '红石矿石', solid: true, transparent: false, opaque: true, liquid: false, hardness: 3.0, drop: BLOCK.REDSTONE_ORE, tiles: [TILE.REDSTONE_ORE, TILE.REDSTONE_ORE, TILE.REDSTONE_ORE], particle: 0x8a4a4a },
+];
 
-        // ==================== 工具函数 ====================
-        function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
-        function smoothstep(a, b, x) { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); }
-        function mulberry32(a) {
-            return function() {
-                a |= 0; a = (a + 0x6D2B79F5) | 0;
-                let t = Math.imul(a ^ (a >>> 15), 1 | a);
-                t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-                return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-            };
+// 物品定义表：用于背包显示与合成。方块物品直接引用方块定义。
+const ITEM_DEFS = {};
+function regItem(id, name, tile, maxStack = 64, meta = {}) {
+  ITEM_DEFS[id] = { id, name, tile, maxStack, ...meta };
+}
+// 方块物品（可在背包中持有）
+for (const def of BLOCK_DEFS) {
+  if (def.id !== BLOCK.AIR && def.id !== BLOCK.WATER) {
+    const tile = def.tiles[0];
+    ITEM_DEFS[def.id] = { id: def.id, name: def.name, tile, maxStack: 64, blockId: def.id };
+  }
+}
+// 非方块物品
+regItem(ITEM.STICK, '木棍', TILE.STICK);
+regItem(ITEM.COAL, '煤炭', TILE.COAL);
+regItem(ITEM.IRON_INGOT, '铁锭', TILE.IRON_INGOT);
+regItem(ITEM.GOLD_INGOT, '金锭', TILE.GOLD_INGOT);
+regItem(ITEM.DIAMOND, '钻石', TILE.DIAMOND);
+regItem(ITEM.CHARCOAL, '木炭', TILE.CHARCOAL);
+regItem(ITEM.RAW_PORKCHOP, '生猪排', TILE.RAW_PORKCHOP);
+regItem(ITEM.RAW_BEEF, '生牛肉', TILE.RAW_BEEF);
+regItem(ITEM.MUTTON, '生羊肉', TILE.MUTTON);
+regItem(ITEM.FEATHER, '羽毛', TILE.FEATHER);
+regItem(ITEM.BONE, '骨头', TILE.BONE);
+regItem(ITEM.GUNPOWDER, '火药', TILE.GUNPOWDER);
+regItem(ITEM.STRING, '线', TILE.STRING);
+regItem(ITEM.APPLE, '苹果', TILE.APPLE);
+regItem(ITEM.BREAD, '面包', TILE.BREAD);
+regItem(ITEM.WHEAT, '小麦', TILE.WHEAT);
+regItem(ITEM.ROTTEN_FLESH, '腐肉', TILE.APPLE);
+regItem(ITEM.WOOD_PICKAXE, '木镐', TILE.WOOD_PICKAXE, 1);
+regItem(ITEM.STONE_PICKAXE, '石镐', TILE.STONE_PICKAXE, 1);
+regItem(ITEM.IRON_PICKAXE, '铁镐', TILE.IRON_PICKAXE, 1);
+regItem(ITEM.WOOD_SWORD, '木剑', TILE.WOOD_SWORD, 1);
+regItem(ITEM.STONE_SWORD, '石剑', TILE.STONE_SWORD, 1);
+regItem(ITEM.IRON_SWORD, '铁剑', TILE.IRON_SWORD, 1);
+regItem(ITEM.WOOD_AXE, '木斧', TILE.WOOD_AXE, 1);
+regItem(ITEM.STONE_AXE, '石斧', TILE.STONE_AXE, 1);
+regItem(ITEM.IRON_AXE, '铁斧', TILE.IRON_AXE, 1);
+regItem(ITEM.WOOD_SHOVEL, '木锹', TILE.WOOD_SHOVEL, 1);
+regItem(ITEM.STONE_SHOVEL, '石锹', TILE.STONE_SHOVEL, 1);
+regItem(ITEM.IRON_SHOVEL, '铁锹', TILE.IRON_SHOVEL, 1);
+
+// 工具等级：用于决定能开采哪些矿石
+const TOOL_LEVEL = {
+  [ITEM.WOOD_PICKAXE]: 1, [ITEM.STONE_PICKAXE]: 2, [ITEM.IRON_PICKAXE]: 3,
+};
+
+// 快捷工具函数
+function isBlockId(id) { return id > 0 && id < 100; }
+function blockDef(id) { return BLOCK_DEFS[id] || BLOCK_DEFS[0]; }
+function itemDef(id) { return ITEM_DEFS[id] || { id, name: '未知', tile: 0, maxStack: 64 }; }
+
+/* ============================================================
+ * 程序化纹理图集
+ * 所有方块/物品贴图都在运行时用 Canvas 绘制，避免使用外部图片资源。
+ * 图集为 16x16 像素/格，放大后保持像素风。
+ * ============================================================ */
+function hash2(x, y, seed) {
+  let h = (x * 374761393 + y * 668265263 + seed * 1442695041) | 0;
+  h = (h ^ (h >>> 13)) | 0;
+  h = (h * 1274126177) | 0;
+  h = (h ^ (h >>> 16)) | 0;
+  return (h >>> 0) / 4294967295;
+}
+function rand01(x, y, seed = 0) { return hash2(x, y, seed); }
+
+class TextureAtlas {
+  constructor(tileSize = 16, cols = 16) {
+    this.tileSize = tileSize;
+    this.cols = cols;
+    this.rows = Math.ceil(Object.keys(TILE).length / cols);
+    this.canvas = document.createElement('canvas');
+    this.canvas.width = cols * tileSize;
+    this.canvas.height = this.rows * tileSize;
+    this.ctx = this.canvas.getContext('2d');
+    this.ctx.imageSmoothingEnabled = false;
+    this.iconCache = new Map();
+    this.drawAll();
+    this.texture = new THREE.CanvasTexture(this.canvas);
+    this.texture.magFilter = THREE.NearestFilter;
+    this.texture.minFilter = THREE.NearestFilter;
+    this.texture.generateMipmaps = false;
+    this.texture.colorSpace = THREE.SRGBColorSpace;
+  }
+
+  /** 在指定瓦片位置执行绘制回调 */
+  drawTile(index, fn) {
+    const s = this.tileSize;
+    const tx = (index % this.cols) * s;
+    const ty = Math.floor(index / this.cols) * s;
+    const ctx = this.ctx;
+    ctx.save();
+    ctx.translate(tx, ty);
+    fn(ctx, s);
+    ctx.restore();
+  }
+
+  /** 填充一个瓦片的每个像素，带确定性随机 */
+  fillTile(index, baseColor, variation = 18, seed = 0) {
+    this.drawTile(index, (ctx, s) => {
+      for (let y = 0; y < s; y++) {
+        for (let x = 0; x < s; x++) {
+          const r = baseColor[0] + (rand01(x, y, seed) - 0.5) * variation;
+          const g = baseColor[1] + (rand01(x + 51, y + 13, seed) - 0.5) * variation;
+          const b = baseColor[2] + (rand01(x + 87, y + 29, seed) - 0.5) * variation;
+          ctx.fillStyle = `rgb(${r|0},${g|0},${b|0})`;
+          ctx.fillRect(x, y, 1, 1);
         }
-        function hashString(str) {
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) {
-                const char = str.charCodeAt(i);
-                hash = ((hash << 5) - hash) + char;
-                hash |= 0;
-            }
-            return Math.abs(hash);
+      }
+    });
+  }
+
+  drawAll() {
+    const T = TILE;
+    // 基础方块
+    this.fillTile(T.DIRT, [134, 96, 67], 24, 1);
+    this.fillTile(T.STONE, [125, 125, 125], 22, 2);
+    this.fillTile(T.COBBLESTONE, [110, 110, 110], 14, 3);
+    this.fillTile(T.SAND, [219, 207, 163], 16, 4);
+    this.fillTile(T.GRAVEL, [105, 105, 105], 20, 5);
+    this.fillTile(T.BEDROCK, [40, 40, 40], 14, 6);
+    this.fillTile(T.SNOW, [238, 240, 244], 8, 7);
+    this.fillTile(T.ICE, [154, 214, 238], 12, 8);
+    this.fillTile(T.PLANKS, [185, 148, 90], 12, 9);
+
+    // 草方块
+    this.fillTile(T.GRASS_TOP, [106, 170, 68], 26, 10);
+    this.drawTile(T.GRASS_SIDE, (ctx, s) => {
+      for (let y = 0; y < s; y++) {
+        for (let x = 0; x < s; x++) {
+          let c;
+          if (y < 3) c = [106 + (rand01(x, y, 11) - 0.5) * 26, 170 + (rand01(x + 3, y + 7, 11) - 0.5) * 26, 68 + (rand01(x + 9, y + 2, 11) - 0.5) * 26];
+          else c = [134 + (rand01(x, y, 12) - 0.5) * 24, 96 + (rand01(x + 5, y + 1, 12) - 0.5) * 24, 67 + (rand01(x + 2, y + 8, 12) - 0.5) * 24];
+          ctx.fillStyle = `rgb(${c[0]|0},${c[1]|0},${c[2]|0})`;
+          ctx.fillRect(x, y, 1, 1);
         }
+      }
+    });
 
-        // ==================== 噪声函数 ====================
-        class PerlinNoise {
-            constructor(seed) {
-                this.seed = seed;
-                this.perm = new Uint8Array(512);
-                const p = new Uint8Array(256);
-                let s = seed;
-                for (let i = 0; i < 256; i++) { s = (s * 1103515245 + 12345) & 0x7fffffff; p[i] = (s >> 8) & 255; }
-                for (let i = 0; i < 512; i++) this.perm[i] = p[i & 255];
-            }
-            fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
-            lerp(a, b, t) { return a + t * (b - a); }
-            grad(hash, x, y) { const h = hash & 3; const u = h < 2 ? x : y; const v = h < 2 ? y : x; return ((h & 1) ? -u : u) + ((h & 2) ? -v : v); }
-            noise2D(x, y) {
-                const X = Math.floor(x) & 255, Y = Math.floor(y) & 255;
-                const xf = x - Math.floor(x), yf = y - Math.floor(y);
-                const u = this.fade(xf), v = this.fade(yf);
-                const A = this.perm[X] + Y, B = this.perm[X + 1] + Y;
-                const AA = this.perm[A] & 255, BA = this.perm[B] & 255, AB = this.perm[A + 1] & 255, BB = this.perm[B + 1] & 255;
-                return this.lerp(
-                    this.lerp(this.grad(this.perm[AA], xf, yf), this.grad(this.perm[BA], xf - 1, yf), u),
-                    this.lerp(this.grad(this.perm[AB], xf, yf - 1), this.grad(this.perm[BB], xf - 1, yf - 1), u), v
-                );
-            }
-            fbm(x, y, octaves, persistence) {
-                octaves = octaves || 4; persistence = persistence || 0.5;
-                let total = 0, amplitude = 1, frequency = 1, maxVal = 0;
-                for (let i = 0; i < octaves; i++) { total += this.noise2D(x * frequency, y * frequency) * amplitude; maxVal += amplitude; amplitude *= persistence; frequency *= 2; }
-                return total / maxVal;
-            }
+    // 水（半透明）
+    this.drawTile(T.WATER, (ctx, s) => {
+      for (let y = 0; y < s; y++) {
+        for (let x = 0; x < s; x++) {
+          const v = (rand01(x, y, 13) - 0.5) * 30;
+          ctx.fillStyle = `rgba(${63 + v|0},${118 + v|0},${228 + v|0},0.72)`;
+          ctx.fillRect(x, y, 1, 1);
         }
+      }
+    });
 
-        // ==================== 纹理图集 ====================
-        class TextureAtlas {
-            constructor() {
-                this.size = 256; this.texSize = 16; this.cols = this.size / this.texSize;
-                this.canvas = document.createElement('canvas'); this.canvas.width = this.size; this.canvas.height = this.size;
-                this.ctx = this.canvas.getContext('2d'); this.generateTextures();
-                this.texture = new THREE.CanvasTexture(this.canvas);
-                this.texture.magFilter = THREE.NearestFilter; this.texture.minFilter = THREE.NearestFilter;
-                this.texture.wrapS = THREE.ClampToEdgeWrapping; this.texture.wrapT = THREE.ClampToEdgeWrapping;
-            }
-            drawPixel(texIndex, px, py, color) {
-                const col = texIndex % this.cols, row = Math.floor(texIndex / this.cols);
-                this.ctx.fillStyle = color; this.ctx.fillRect(col * this.texSize + px, row * this.texSize + py, 1, 1);
-            }
-            generateTextures() {
-                this.generateGrassTop(TEX.GRASS_TOP); this.generateGrassSide(TEX.GRASS_SIDE); this.generateDirt(TEX.DIRT);
-                this.generateStone(TEX.STONE); this.generateLogSide(TEX.LOG_SIDE); this.generateLogTop(TEX.LOG_TOP);
-                this.generateLeaves(TEX.LEAVES); this.generateSand(TEX.SAND); this.generateWater(TEX.WATER);
-                this.generateGlass(TEX.GLASS); this.generateBrick(TEX.BRICK); this.generatePlank(TEX.PLANK);
-                this.generateBedrock(TEX.BEDROCK); this.generateSolidColor(TEX.COAL_BLOCK, 40,40,40);
-                this.generateSolidColor(TEX.IRON_BLOCK, 200,200,200); this.generateSolidColor(TEX.GOLD_BLOCK, 255,215,0);
-                this.generateSolidColor(TEX.DIAMOND_BLOCK, 0,200,200); this.generateSolidColor(TEX.REDSTONE_BLOCK, 180,0,0);
-                this.generateSolidColor(TEX.LAPIS_BLOCK, 30,50,150); this.generateSolidColor(TEX.SNOW_BLOCK, 240,248,255);
-                this.generatePumpkin(TEX.PUMPKIN); this.generateMelon(TEX.MELON); this.generateBookshelf(TEX.BOOKSHELF);
-            }
-            generateGrassTop(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const n=Math.random()*20; this.drawPixel(tex,x,y,`rgb(${60+n*0.5|0},${90+n|0},${35+n*0.3|0})`); } }
-            generateGrassSide(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { if(y<4){const n=Math.random()*25;this.drawPixel(tex,x,y,`rgb(${55+n|0},${85+n|0},${30+n*0.3|0})`);}else{const n=Math.random()*30;this.drawPixel(tex,x,y,`rgb(${130+n|0},${95+n*0.7|0},${60+n*0.4|0})`);} } }
-            generateDirt(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const n=Math.random()*35; this.drawPixel(tex,x,y,`rgb(${125+n|0},${90+n*0.8|0},${55+n*0.5|0})`); } }
-            generateStone(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const n=Math.random()*30; const v=120+n; this.drawPixel(tex,x,y,`rgb(${v|0},${v|0},${(v+5)|0})`); } }
-            generateLogSide(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const s=(x+y)%5, n=Math.random()*18; if(s<2)this.drawPixel(tex,x,y,`rgb(${70+n|0},${45+n*0.6|0},${25+n*0.3|0})`); else this.drawPixel(tex,x,y,`rgb(${110+n|0},${75+n*0.6|0},${40+n*0.3|0})`); } }
-            generateLogTop(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const d=Math.sqrt((x-7.5)**2+(y-7.5)**2), r=Math.floor(d/2.5), n=Math.random()*15; if(r%2===0)this.drawPixel(tex,x,y,`rgb(${130+n|0},${90+n*0.6|0},${45+n*0.3|0})`); else this.drawPixel(tex,x,y,`rgb(${95+n|0},${65+n*0.6|0},${35+n*0.3|0})`); } }
-            generateLeaves(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const n=Math.random()*30; if(Math.random()<0.15)this.drawPixel(tex,x,y,`rgb(${30+n|0},${70+n|0},${20+n*0.3|0})`); else this.drawPixel(tex,x,y,`rgb(${45+n|0},${95+n|0},${25+n*0.4|0})`); } }
-            generateSand(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const n=Math.random()*30; this.drawPixel(tex,x,y,`rgb(${210+n|0},${195+n|0},${150+n*0.7|0})`); } }
-            generateWater(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const n=Math.random()*20; this.drawPixel(tex,x,y,`rgba(${40+n|0},${90+n|0},${200+n|0},0.7)`); } }
-            generateGlass(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { if(x===0||x===15||y===0||y===15)this.drawPixel(tex,x,y,'rgba(220,230,240,0.8)'); else if(Math.random()<0.08)this.drawPixel(tex,x,y,'rgba(200,220,240,0.5)'); else this.drawPixel(tex,x,y,'rgba(180,200,220,0.25)'); } }
-            generateBrick(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const br=Math.floor(y/4), off=br%2===0?0:4, bx=(x+off)%8, mortar=(y%4===3)||bx===7, n=Math.random()*20; if(mortar)this.drawPixel(tex,x,y,`rgb(${180+n*0.3|0},${170+n*0.3|0},${165+n*0.3|0})`); else this.drawPixel(tex,x,y,`rgb(${140+n|0},${50+n*0.4|0},${35+n*0.3|0})`); } }
-            generatePlank(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const pr=Math.floor(y/4), off=pr%2===0?0:6, bx=(x+off)%8, gap=(y%4===3)||bx===7, n=Math.random()*22; if(gap)this.drawPixel(tex,x,y,`rgb(${100+n*0.4|0},${75+n*0.3|0},${45+n*0.2|0})`); else this.drawPixel(tex,x,y,`rgb(${175+n|0},${140+n*0.7|0},${90+n*0.4|0})`); } }
-            generateBedrock(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const n=Math.random()*40, v=50+n; this.drawPixel(tex,x,y,`rgb(${v|0},${v|0},${(v+8)|0})`); } }
-            generateSolidColor(tex, r,g,b) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const n=Math.random()*15; this.drawPixel(tex,x,y,`rgb(${Math.min(255,r+n)|0},${Math.min(255,g+n)|0},${Math.min(255,b+n)|0})`); } }
-            generatePumpkin(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const d=Math.sqrt((x-7.5)**2+(y-7.5)**2), n=Math.random()*20; if(d<6)this.drawPixel(tex,x,y,`rgb(${220+n*0.5|0},${140+n|0},${30+n*0.4|0})`); else this.drawPixel(tex,x,y,`rgb(${180+n|0},${100+n*0.7|0},${25+n*0.3|0})`); } }
-            generateMelon(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const s=(x+y)%6, n=Math.random()*20; if(s<2)this.drawPixel(tex,x,y,`rgb(${40+n|0},${120+n|0},${40+n*0.5|0})`); else this.drawPixel(tex,x,y,`rgb(${120+n|0},${170+n|0},${80+n*0.5|0})`); } }
-            generateBookshelf(tex) { for(let y=0;y<16;y++) for(let x=0;x<16;x++) { const row=Math.floor(y/3), col=Math.floor(x/4), isBook=(row%3!==2)&&(col%4!==3), n=Math.random()*20; if(isBook)this.drawPixel(tex,x,y,`rgb(${130+n|0},${90+n*0.8|0},${50+n*0.5|0})`); else this.drawPixel(tex,x,y,`rgb(${110+n*0.5|0},${70+n*0.4|0},${40+n*0.3|0})`); } }
+    // 原木
+    this.drawTile(T.LOG_SIDE, (ctx, s) => {
+      for (let y = 0; y < s; y++) {
+        for (let x = 0; x < s; x++) {
+          const stripe = (Math.floor(y / 4) % 2) * 12;
+          const c = [107 + stripe + (rand01(x, y, 14) - 0.5) * 18, 74 + stripe + (rand01(x + 6, y + 2, 14) - 0.5) * 18, 42 + stripe + (rand01(x + 1, y + 9, 14) - 0.5) * 14];
+          ctx.fillStyle = `rgb(${c[0]|0},${c[1]|0},${c[2]|0})`;
+          ctx.fillRect(x, y, 1, 1);
         }
-
-        // ==================== 世界数据 ====================
-        class World {
-            constructor(seed) {
-                this.seed = seed >>> 0;
-                this.chunks = new Map();
-                this.noise = new PerlinNoise(this.seed);
-                this.treeNoise = new PerlinNoise(this.seed ^ 0x12345678);
-            }
-            getChunkKey(cx, cz) { return cx + ',' + cz; }
-            getChunk(cx, cz) { return this.chunks.get(this.getChunkKey(cx, cz)) || null; }
-            getOrCreateChunk(cx, cz) { const key = this.getChunkKey(cx, cz); let chunk = this.chunks.get(key); if (!chunk) { chunk = this.generateChunk(cx, cz); this.chunks.set(key, chunk); } return chunk; }
-            generateChunk(cx, cz) {
-                // 每个区块使用独立种子随机数 → 同一世界种子下生成结果确定(联机双端一致)
-                const rng = mulberry32((this.seed ^ (cx * 374761393) ^ (cz * 668265263)) >>> 0);
-                const blocks = new Uint8Array(CHUNK_SIZE * CHUNK_SIZE * CHUNK_HEIGHT);
-                const heightMap = new Uint8Array(CHUNK_SIZE * CHUNK_SIZE);
-                const worldX = cx * CHUNK_SIZE, worldZ = cz * CHUNK_SIZE;
-                for (let lx=0; lx<CHUNK_SIZE; lx++) for (let lz=0; lz<CHUNK_SIZE; lz++) {
-                    const wx=worldX+lx, wz=worldZ+lz;
-                    const n1=this.noise.fbm(wx*0.025, wz*0.025, 4, 0.5), n2=this.noise.fbm(wx*0.08+100, wz*0.08+100, 3, 0.5);
-                    let height = Math.floor(20 + n1*40 + n2*8); if(height<3)height=3; if(height>CHUNK_HEIGHT-3)height=CHUNK_HEIGHT-3;
-                    heightMap[lx*CHUNK_SIZE+lz]=height;
-                }
-                for (let lx=0; lx<CHUNK_SIZE; lx++) for (let lz=0; lz<CHUNK_SIZE; lz++) {
-                    const height=heightMap[lx*CHUNK_SIZE+lz], wx=worldX+lx, wz=worldZ+lz, idx=(lx*CHUNK_SIZE+lz)*CHUNK_HEIGHT;
-                    blocks[idx]=BLOCK.BEDROCK;
-                    const treeThreshold=this.treeNoise.fbm(wx*0.03+500, wz*0.03+500, 3, 0.5);
-                    for(let y=1;y<=height;y++) {
-                        let blockType;
-                        if(y===height) blockType = height<=SEA_LEVEL+1 ? BLOCK.SAND : BLOCK.GRASS;
-                        else if(y>=height-3) blockType = height<=SEA_LEVEL+1 ? BLOCK.SAND : BLOCK.DIRT;
-                        else blockType = BLOCK.STONE;
-                        blocks[idx+y]=blockType;
-                    }
-                    if(height<SEA_LEVEL) for(let y=height+1;y<=SEA_LEVEL;y++) blocks[idx+y]=BLOCK.WATER;
-                    // 洞穴：3D 噪声雕刻(不破坏地表与基岩)
-                    for(let y=3;y<height-5;y++) {
-                        const c1=this.noise.noise2D(wx*0.05+y*0.15, wz*0.05+y*0.11);
-                        const c2=this.noise.noise2D(wx*0.10+y*0.08+100, wz*0.10+y*0.09-100);
-                        if(c1>0.62 && c2>0.5) blocks[idx+y]=BLOCK.AIR;
-                    }
-                    // 树木
-                    if(height>SEA_LEVEL+2 && height<CHUNK_HEIGHT-8 && treeThreshold>0.62 && blocks[idx+height]===BLOCK.GRASS) {
-                        const treeHeight=4+Math.floor(rng()*3);
-                        for(let ty=1;ty<=treeHeight;ty++) { const by=height+ty; if(by<CHUNK_HEIGHT) blocks[idx+by]=BLOCK.LOG; }
-                        const leafTop=height+treeHeight;
-                        for(let ly=-2;ly<=1;ly++) {
-                            const by=leafTop+ly; if(by<CHUNK_HEIGHT&&by>0) {
-                                const radius=ly>=-1?2:1;
-                                for(let lx2=-radius;lx2<=radius;lx2++) for(let lz2=-radius;lz2<=radius;lz2++) {
-                                    if(Math.abs(lx2)===radius&&Math.abs(lz2)===radius&&rng()<0.4) continue;
-                                    const nx=lx+lx2, nz=lz+lz2;
-                                    if(nx>=0&&nx<CHUNK_SIZE&&nz>=0&&nz<CHUNK_SIZE) {
-                                        const nIdx=(nx*CHUNK_SIZE+nz)*CHUNK_HEIGHT+by;
-                                        if(blocks[nIdx]===BLOCK.AIR||blocks[nIdx]===BLOCK.WATER) blocks[nIdx]=BLOCK.LEAVES;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                // 矿石矿脉：替换石头生成，随机小矿脉
-                const ORE_DEFS = [
-                    { id:BLOCK.COAL_BLOCK,    min:8,  max:40, count:10, size:4 },
-                    { id:BLOCK.IRON_BLOCK,    min:5,  max:32, count:8,  size:4 },
-                    { id:BLOCK.GOLD_BLOCK,    min:5,  max:24, count:5,  size:3 },
-                    { id:BLOCK.LAPIS_BLOCK,   min:6,  max:22, count:4,  size:3 },
-                    { id:BLOCK.REDSTONE_BLOCK,min:5,  max:16, count:4,  size:3 },
-                    { id:BLOCK.DIAMOND_BLOCK, min:5,  max:13, count:3,  size:2 },
-                ];
-                for (const ore of ORE_DEFS) {
-                    for (let i=0; i<ore.count; i++) {
-                        let ox=Math.floor(rng()*CHUNK_SIZE), oz=Math.floor(rng()*CHUNK_SIZE);
-                        let oy=ore.min+Math.floor(rng()*(ore.max-ore.min+1));
-                        for (let s=0; s<ore.size; s++) {
-                            if (ox>=0&&ox<CHUNK_SIZE&&oz>=0&&oz<CHUNK_SIZE&&oy>=1&&oy<CHUNK_HEIGHT) {
-                                const vi=(ox*CHUNK_SIZE+oz)*CHUNK_HEIGHT+oy;
-                                if (blocks[vi]===BLOCK.STONE) blocks[vi]=ore.id;
-                            }
-                            const d=Math.floor(rng()*6);
-                            if(d===0)ox++; else if(d===1)ox--; else if(d===2)oy++; else if(d===3)oy--; else if(d===4)oz++; else oz--;
-                        }
-                    }
-                }
-                return { cx, cz, blocks, heightMap, mesh:null, waterMesh:null, dirty:true };
-            }
-            getBlock(wx, wy, wz) {
-                if(wy<0||wy>=CHUNK_HEIGHT) return BLOCK.AIR;
-                const cx=Math.floor(wx/CHUNK_SIZE), cz=Math.floor(wz/CHUNK_SIZE);
-                const chunk=this.getChunk(cx, cz); if(!chunk) return BLOCK.AIR;
-                const lx=((wx%CHUNK_SIZE)+CHUNK_SIZE)%CHUNK_SIZE, lz=((wz%CHUNK_SIZE)+CHUNK_SIZE)%CHUNK_SIZE;
-                return chunk.blocks[(lx*CHUNK_SIZE+lz)*CHUNK_HEIGHT+wy];
-            }
-            setBlock(wx, wy, wz, blockId) {
-                if(wy<0||wy>=CHUNK_HEIGHT) return;
-                const cx=Math.floor(wx/CHUNK_SIZE), cz=Math.floor(wz/CHUNK_SIZE);
-                const chunk=this.getChunk(cx, cz); if(!chunk) return;
-                const lx=((wx%CHUNK_SIZE)+CHUNK_SIZE)%CHUNK_SIZE, lz=((wz%CHUNK_SIZE)+CHUNK_SIZE)%CHUNK_SIZE;
-                chunk.blocks[(lx*CHUNK_SIZE+lz)*CHUNK_HEIGHT+wy]=blockId; chunk.dirty=true;
-                if(lx===0)this.markDirty(cx-1,cz); if(lx===CHUNK_SIZE-1)this.markDirty(cx+1,cz);
-                if(lz===0)this.markDirty(cx,cz-1); if(lz===CHUNK_SIZE-1)this.markDirty(cx,cz+1);
-            }
-            markDirty(cx,cz){ const chunk=this.getChunk(cx,cz); if(chunk) chunk.dirty=true; }
-            isSolid(wx,wy,wz){ return SOLID_BLOCKS.has(this.getBlock(wx,wy,wz)); }
+      }
+    });
+    this.drawTile(T.LOG_TOP, (ctx, s) => {
+      for (let y = 0; y < s; y++) {
+        for (let x = 0; x < s; x++) {
+          const dx = x - 7.5, dy = y - 7.5;
+          const d = Math.sqrt(dx*dx + dy*dy);
+          const ring = (Math.floor(d) % 3) * 18;
+          const c = [150 + ring + (rand01(x, y, 15) - 0.5) * 16, 105 + ring + (rand01(x + 4, y + 8, 15) - 0.5) * 16, 60 + ring + (rand01(x + 8, y + 4, 15) - 0.5) * 12];
+          ctx.fillStyle = `rgb(${c[0]|0},${c[1]|0},${c[2]|0})`;
+          ctx.fillRect(x, y, 1, 1);
         }
+      }
+    });
 
-        // ==================== 区块网格构建 ====================
-        class ChunkMeshBuilder {
-            constructor(world, atlas){ this.world=world; this.atlas=atlas; }
-            buildMesh(chunk) {
-                const positions=[], normals=[], uvs=[], indices=[], waterPositions=[], waterNormals=[], waterUvs=[], waterIndices=[];
-                const blocks=chunk.blocks, startX=chunk.cx*CHUNK_SIZE, startZ=chunk.cz*CHUNK_SIZE;
-                for(let lx=0;lx<CHUNK_SIZE;lx++) for(let lz=0;lz<CHUNK_SIZE;lz++) for(let ly=0;ly<CHUNK_HEIGHT;ly++) {
-                    const blockId=blocks[(lx*CHUNK_SIZE+lz)*CHUNK_HEIGHT+ly]; if(blockId===BLOCK.AIR) continue;
-                    const wx=startX+lx, wy=ly, wz=startZ+lz, faces=BLOCK_FACES[blockId]; if(!faces) continue;
-                    const isWater=blockId===BLOCK.WATER, isGlass=blockId===BLOCK.GLASS, isLeaves=blockId===BLOCK.LEAVES, isTransparentBlock=isWater||isGlass||isLeaves;
-                    const faceDefs=[
-                        {dir:[1,0,0],tex:faces.px,nx:1,ny:0,nz:0,corners:[[1,0,1],[1,0,0],[1,1,0],[1,1,1]]},
-                        {dir:[-1,0,0],tex:faces.nx,nx:-1,ny:0,nz:0,corners:[[0,0,0],[0,0,1],[0,1,1],[0,1,0]]},
-                        {dir:[0,1,0],tex:faces.py,nx:0,ny:1,nz:0,corners:[[0,1,1],[1,1,1],[1,1,0],[0,1,0]]},
-                        {dir:[0,-1,0],tex:faces.ny,nx:0,ny:-1,nz:0,corners:[[0,0,0],[1,0,0],[1,0,1],[0,0,1]]},
-                        {dir:[0,0,1],tex:faces.pz,nx:0,ny:0,nz:1,corners:[[1,0,1],[0,0,1],[0,1,1],[1,1,1]]},
-                        {dir:[0,0,-1],tex:faces.nz,nx:0,ny:0,nz:-1,corners:[[0,0,0],[1,0,0],[1,1,0],[0,1,0]]}
-                    ];
-                    for(const face of faceDefs) {
-                        const neighborBlock=this.world.getBlock(wx+face.dir[0], wy+face.dir[1], wz+face.dir[2]);
-                        const neighborTransparent=TRANSPARENT_BLOCKS.has(neighborBlock);
-                        let shouldRender=false;
-                        if(isTransparentBlock){ if(neighborBlock===BLOCK.AIR) shouldRender=true; else if(neighborBlock!==blockId&&neighborTransparent) shouldRender=true; }
-                        else shouldRender=neighborBlock===BLOCK.AIR||neighborTransparent;
-                        if(!shouldRender) continue;
-                        const texIndex=face.tex, isWaterFace=isWater;
-                        const target=isWaterFace?waterPositions:positions, targetNorms=isWaterFace?waterNormals:normals, targetUVs=isWaterFace?waterUvs:uvs, targetIndices=isWaterFace?waterIndices:indices;
-                        const baseIndex=target.length/3;
-                        for(const corner of face.corners){ target.push(wx+corner[0], wy+corner[1], wz+corner[2]); targetNorms.push(face.nx,face.ny,face.nz); }
-                        const cornerUVs=this.getCornerUVs(texIndex);
-                        for(let i=0;i<4;i++) targetUVs.push(cornerUVs[i][0], cornerUVs[i][1]);
-                        targetIndices.push(baseIndex,baseIndex+1,baseIndex+2); targetIndices.push(baseIndex,baseIndex+2,baseIndex+3);
-                    }
-                }
-                return { solid:{positions,normals,uvs,indices}, water:{positions:waterPositions,normals:waterNormals,uvs:waterUvs,indices:waterIndices} };
-            }
-            getCornerUVs(texIndex) {
-                const col=texIndex%this.atlas.cols, row=Math.floor(texIndex/this.atlas.cols);
-                const u0=col/this.atlas.cols, v0=1-(row+1)/this.atlas.cols, u1=(col+1)/this.atlas.cols, v1=1-row/this.atlas.cols;
-                return [[u0,v0],[u1,v0],[u1,v1],[u0,v1]];
-            }
+    // 树叶（带透明空洞）
+    this.drawTile(T.LEAVES, (ctx, s) => {
+      for (let y = 0; y < s; y++) {
+        for (let x = 0; x < s; x++) {
+          if (rand01(x, y, 16) < 0.18) { ctx.clearRect(x, y, 1, 1); continue; }
+          const c = [62 + (rand01(x, y, 16) - 0.5) * 40, 122 + (rand01(x + 7, y + 3, 16) - 0.5) * 40, 46 + (rand01(x + 2, y + 6, 16) - 0.5) * 30];
+          ctx.fillStyle = `rgb(${c[0]|0},${c[1]|0},${c[2]|0})`;
+          ctx.fillRect(x, y, 1, 1);
         }
+      }
+    });
 
-        // ==================== 射线检测 ====================
-        function raycastVoxel(world, origin, direction, maxDist) {
-            let x=Math.floor(origin.x), y=Math.floor(origin.y), z=Math.floor(origin.z);
-            const stepX=direction.x>0?1:-1, stepY=direction.y>0?1:-1, stepZ=direction.z>0?1:-1;
-            const tDeltaX=Math.abs(1/(direction.x||0.0001)), tDeltaY=Math.abs(1/(direction.y||0.0001)), tDeltaZ=Math.abs(1/(direction.z||0.0001));
-            let tMaxX=direction.x>0?(x+1-origin.x)/direction.x:direction.x<0?(x-origin.x)/direction.x:Infinity;
-            let tMaxY=direction.y>0?(y+1-origin.y)/direction.y:direction.y<0?(y-origin.y)/direction.y:Infinity;
-            let tMaxZ=direction.z>0?(z+1-origin.z)/direction.z:direction.z<0?(z-origin.z)/direction.z:Infinity;
-            let face=[0,0,0], t=0;
-            for(let i=0;i<100;i++) {
-                const blockId=world.getBlock(x,y,z);
-                if(blockId!==BLOCK.AIR&&blockId!==BLOCK.WATER) return {x,y,z,blockId,face,distance:t};
-                if(tMaxX<tMaxY&&tMaxX<tMaxZ){ x+=stepX; t=tMaxX; tMaxX+=tDeltaX; face=[-stepX,0,0]; }
-                else if(tMaxY<tMaxZ){ y+=stepY; t=tMaxY; tMaxY+=tDeltaY; face=[0,-stepY,0]; }
-                else { z+=stepZ; t=tMaxZ; tMaxZ+=tDeltaZ; face=[0,0,-stepZ]; }
-                if(t>maxDist) break; if(y<0||y>=CHUNK_HEIGHT) break;
-            }
-            return null;
-        }
+    // 玻璃：透明底 + 白色边框
+    this.drawTile(T.GLASS, (ctx, s) => {
+      ctx.clearRect(0, 0, s, s);
+      ctx.fillStyle = 'rgba(255,255,255,0.35)';
+      ctx.fillRect(0, 0, s, 1); ctx.fillRect(0, s-1, s, 1); ctx.fillRect(0, 0, 1, s); ctx.fillRect(s-1, 0, 1, s);
+      ctx.fillStyle = 'rgba(255,255,255,0.15)';
+      ctx.fillRect(2, 2, s-4, s-4);
+    });
 
-        // ==================== 生物类 ====================
-        class Animal {
-            constructor(type, x, y, z, world) {
-                this.type=type; this.world=world;
-                this.position=new THREE.Vector3(x,y,z);
-                this.velocity=new THREE.Vector3(0,0,0);
-                this.group=new THREE.Group();
-                this.buildModel(type);
-                this.group.position.copy(this.position);
-                this.moveTimer=0; this.moveDirection=new THREE.Vector3((Math.random()-0.5)*2,0,(Math.random()-0.5)*2).normalize();
-            }
-            buildModel(type) {
-                const material=(color)=>new THREE.MeshLambertMaterial({color});
-                const bodyMat=material(type==='pig'?0xffb6c1:type==='cow'?0x8B4513:type==='sheep'?0xeeeeee:0xfff0e0);
-                const headMat=material(type==='pig'?0xffa07a:type==='cow'?0x654321:type==='sheep'?0xdddddd:0xffccaa);
-                const legMat=material(type==='cow'?0x5D3A1A:type==='sheep'?0xbbbbbb:0xcc8866);
-                const body=new THREE.Mesh(new THREE.BoxGeometry(0.9,0.7,0.6), bodyMat); body.position.y=0.6; this.group.add(body);
-                const head=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.5,0.5), headMat); head.position.set(0,1.0,0.25); this.group.add(head);
-                const legGeo=new THREE.BoxGeometry(0.2,0.5,0.2);
-                [[-0.3,0.25,0.2],[0.3,0.25,0.2],[-0.3,0.25,-0.2],[0.3,0.25,-0.2]].forEach(pos=>{ const leg=new THREE.Mesh(legGeo, legMat); leg.position.set(pos[0],pos[1],pos[2]); this.group.add(leg); });
-                if(type==='pig'){ const nose=new THREE.Mesh(new THREE.BoxGeometry(0.2,0.1,0.1), material(0xff8c69)); nose.position.set(0,0.9,0.5); this.group.add(nose); }
-                else if(type==='cow'){ const hornGeo=new THREE.BoxGeometry(0.1,0.3,0.1); const hornMat=material(0xcccccc); const h1=new THREE.Mesh(hornGeo,hornMat); h1.position.set(-0.2,1.25,0.1); h1.rotation.z=0.3; this.group.add(h1); const h2=new THREE.Mesh(hornGeo,hornMat); h2.position.set(0.2,1.25,0.1); h2.rotation.z=-0.3; this.group.add(h2); }
-                else if(type==='sheep'){ const wool=new THREE.Mesh(new THREE.BoxGeometry(0.9,0.5,0.6), material(0xf0f0f0)); wool.position.y=0.75; this.group.add(wool); }
-                else if(type==='chicken'){ const comb=new THREE.Mesh(new THREE.BoxGeometry(0.2,0.15,0.1), material(0xff0000)); comb.position.set(0,1.25,0.2); this.group.add(comb); const beak=new THREE.Mesh(new THREE.BoxGeometry(0.15,0.1,0.2), material(0xffaa00)); beak.position.set(0,0.85,0.5); this.group.add(beak); }
-                this.group.scale.set(0.8,0.8,0.8);
-            }
-            update(dt) {
-                this.moveTimer-=dt;
-                if(this.moveTimer<=0){ this.moveTimer=2+Math.random()*3; this.moveDirection=new THREE.Vector3((Math.random()-0.5)*2,0,(Math.random()-0.5)*2).normalize(); }
-                const speed=1.2; this.velocity.x=this.moveDirection.x*speed; this.velocity.z=this.moveDirection.z*speed; this.velocity.y-=20*dt;
-                const newX=this.position.x+this.velocity.x*dt; if(!this.checkCollision(newX,this.position.y,this.position.z)) this.position.x=newX; else this.velocity.x=0;
-                const newZ=this.position.z+this.velocity.z*dt; if(!this.checkCollision(this.position.x,this.position.y,newZ)) this.position.z=newZ; else this.velocity.z=0;
-                const newY=this.position.y+this.velocity.y*dt; if(!this.checkCollision(this.position.x,newY,this.position.z)) this.position.y=newY; else this.velocity.y=0;
-                if(this.world.isSolid(Math.floor(this.position.x), Math.floor(this.position.y-0.1), Math.floor(this.position.z))) {} else this.velocity.y-=20*dt;
-                this.group.position.copy(this.position); if(this.velocity.x!==0||this.velocity.z!==0) this.group.rotation.y=Math.atan2(this.velocity.x,this.velocity.z);
-            }
-            checkCollision(x,y,z){ const hw=0.4; const minX=Math.floor(x-hw),maxX=Math.floor(x+hw),minY=Math.floor(y),maxY=Math.floor(y+1.2),minZ=Math.floor(z-hw),maxZ=Math.floor(z+hw); for(let bx=minX;bx<=maxX;bx++)for(let by=minY;by<=maxY;by++)for(let bz=minZ;bz<=maxZ;bz++) if(this.world.isSolid(bx,by,bz)) return true; return false; }
-        }
+    // 矿石：石头上加斑点
+    this.drawOre(T.COAL_ORE, [30, 30, 30], 17);
+    this.drawOre(T.IRON_ORE, [216, 175, 147], 18);
+    this.drawOre(T.GOLD_ORE, [252, 238, 130], 19);
+    this.drawOre(T.DIAMOND_ORE, [94, 236, 216], 20);
+    this.drawOre(T.REDSTONE_ORE, [230, 60, 50], 21);
 
-        // ==================== 游戏主类（含联机/存档/昼夜/生命） ====================
-        class MinecraftMobile {
-            constructor(seed, roomCode, isOnline, saveData) {
-                this.isOnline = !!isOnline;
-                this.roomCode = roomCode;
-                this.worldSeed = seed >>> 0;
-                this.canvasContainer=document.getElementById('gameCanvas');
-                this.scene=new THREE.Scene(); this.scene.background=new THREE.Color(0x87CEEB);
-                this.scene.fog=new THREE.Fog(0x87CEEB, 24, RENDER_DISTANCE*16+8);
-                this.camera=new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 300);
-                this.renderer=new THREE.WebGLRenderer({antialias:false, powerPreference:'high-performance'});
-                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio,2)); this.renderer.setSize(window.innerWidth,window.innerHeight); this.renderer.shadowMap.enabled=false;
-                this.canvasContainer.appendChild(this.renderer.domElement);
+    // 工作台
+    this.drawTile(T.CRAFT_TOP, (ctx, s) => {
+      for (let y = 0; y < s; y++) for (let x = 0; x < s; x++) {
+        const c = [150 + (rand01(x, y, 22) - 0.5) * 16, 110 + (rand01(x+1, y+4, 22) - 0.5) * 16, 65 + (rand01(x+5, y+9, 22) - 0.5) * 12];
+        ctx.fillStyle = `rgb(${c[0]|0},${c[1]|0},${c[2]|0})`;
+        ctx.fillRect(x, y, 1, 1);
+      }
+      ctx.fillStyle = '#5a3d20';
+      ctx.fillRect(1, 1, 3, 3); ctx.fillRect(11, 1, 4, 3); ctx.fillRect(1, 11, 3, 4); ctx.fillRect(11, 11, 4, 4);
+    });
+    this.drawTile(T.CRAFT_SIDE, (ctx, s) => {
+      this.fillTile(T.CRAFT_SIDE, [150, 110, 65], 16, 23);
+      ctx.fillStyle = '#5a3d20';
+      ctx.fillRect(2, 2, 12, 2); ctx.fillRect(2, 12, 12, 2); ctx.fillRect(2, 2, 2, 12); ctx.fillRect(12, 2, 2, 12);
+      ctx.fillStyle = '#8a6a3c';
+      ctx.fillRect(5, 5, 2, 6); ctx.fillRect(9, 5, 2, 6);
+    });
 
-                // 光照（昼夜动态）
-                this.sunLight=new THREE.DirectionalLight(0xfff2cc, 1.0); this.sunLight.position.set(50,80,20); this.scene.add(this.sunLight); this.scene.add(this.sunLight.target);
-                this.moonLight=new THREE.DirectionalLight(0x8899cc, 0.0); this.moonLight.position.set(-50,-80,-20); this.scene.add(this.moonLight); this.scene.add(this.moonLight.target);
-                this.ambientLight=new THREE.AmbientLight(0xffffff, 0.5); this.scene.add(this.ambientLight);
+    // 熔炉
+    this.drawTile(T.FURNACE_TOP, (ctx, s) => this.fillTile(T.FURNACE_TOP, [110, 110, 110], 12, 24));
+    this.drawTile(T.FURNACE_SIDE, (ctx, s) => this.fillTile(T.FURNACE_SIDE, [105, 105, 105], 12, 25));
+    this.drawTile(T.FURNACE_FRONT, (ctx, s) => {
+      this.fillTile(T.FURNACE_FRONT, [105, 105, 105], 12, 26);
+      ctx.fillStyle = '#222';
+      ctx.fillRect(3, 5, 10, 8);
+      ctx.fillStyle = '#444';
+      ctx.fillRect(5, 7, 6, 4);
+      ctx.fillStyle = '#777';
+      ctx.fillRect(4, 4, 8, 1);
+    });
 
-                // 太阳 / 月亮 / 星星
-                this.sun=new THREE.Mesh(new THREE.SphereGeometry(6, 16, 16), new THREE.MeshBasicMaterial({color:0xfff4c0, fog:false}));
-                this.scene.add(this.sun);
-                this.moon=new THREE.Mesh(new THREE.SphereGeometry(4, 16, 16), new THREE.MeshBasicMaterial({color:0xdde6ff, fog:false}));
-                this.scene.add(this.moon);
-                const starPos=[];
-                for(let i=0;i<400;i++){
-                    const th=Math.random()*Math.PI*2, ph=Math.acos(Math.random()*2-1), r=220;
-                    starPos.push(r*Math.sin(ph)*Math.cos(th), r*Math.cos(ph), r*Math.sin(ph)*Math.sin(th));
-                }
-                const starGeo=new THREE.BufferGeometry();
-                starGeo.setAttribute('position',new THREE.Float32BufferAttribute(starPos,3));
-                this.stars=new THREE.Points(starGeo,new THREE.PointsMaterial({color:0xffffff,size:1.2,transparent:true,opacity:0,sizeAttenuation:false,fog:false}));
-                this.scene.add(this.stars);
+    // 箱子
+    this.drawTile(T.CHEST_TOP, (ctx, s) => this.fillTile(T.CHEST_TOP, [165, 120, 70], 14, 27));
+    this.drawTile(T.CHEST_SIDE, (ctx, s) => this.fillTile(T.CHEST_SIDE, [150, 108, 62], 14, 28));
+    this.drawTile(T.CHEST_FRONT, (ctx, s) => {
+      this.fillTile(T.CHEST_FRONT, [150, 108, 62], 14, 29);
+      ctx.fillStyle = '#5a3d20';
+      ctx.fillRect(2, 2, 12, 1); ctx.fillRect(2, 13, 12, 1); ctx.fillRect(2, 2, 1, 12); ctx.fillRect(13, 2, 1, 12);
+      ctx.fillRect(2, 6, 12, 1); ctx.fillRect(2, 11, 12, 1);
+      ctx.fillStyle = '#c8a24a';
+      ctx.fillRect(7, 7, 2, 3);
+    });
 
-                this.atlas=new TextureAtlas(); this.textureAtlas=this.atlas.texture;
-                this.world=new World(this.worldSeed); this.meshBuilder=new ChunkMeshBuilder(this.world,this.atlas);
-                this.solidMaterial=new THREE.MeshLambertMaterial({map:this.textureAtlas, side:THREE.DoubleSide});
-                this.waterMaterial=new THREE.MeshLambertMaterial({map:this.textureAtlas, transparent:true, opacity:0.65, side:THREE.DoubleSide, depthWrite:false});
+    // 火把（物品/方块图标）
+    this.drawTile(T.TORCH, (ctx, s) => {
+      ctx.clearRect(0, 0, s, s);
+      ctx.fillStyle = '#6b4a2a';
+      ctx.fillRect(7, 4, 2, 11);
+      ctx.fillStyle = '#e8c83a';
+      ctx.fillRect(5, 1, 6, 4);
+      ctx.fillStyle = '#f8e070';
+      ctx.fillRect(6, 0, 4, 2);
+    });
 
-                this.playerPosition=new THREE.Vector3(8,40,8); this.playerVelocity=new THREE.Vector3(0,0,0); this.playerYaw=0; this.playerPitch=0; this.isOnGround=false; this.isFlying=false;
-                this.selectedSlot=0; this.hotbarBlocks=PLACEABLE_BLOCKS.slice(0,9);
-                this.touchState={joystick:null, lookTouch:null}; this.moveInput={x:0,y:0}; this.lookDelta={x:0,y:0};
-                this.keys={}; this.flyUp=false; this.flyDown=false; this.inWater=false;
-                this.health=MAX_HEALTH; this.isDead=false; this.lastDamageTime=0; this.regenTimer=0; this.fallStartY=null;
-                this.dayTime=0.30; this.saveTimer=0; this.debugVisible=false; this.spawnPoint={x:8,z:8};
-                this.animalTimer=6;
-                this.particles=[];
+    // 物品图标
+    this.drawItem(T.STICK, (ctx) => { ctx.strokeStyle = '#8a6a3c'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(3,13); ctx.lineTo(13,3); ctx.stroke(); });
+    this.drawItem(T.COAL, (ctx) => { ctx.fillStyle = '#222'; ctx.beginPath(); ctx.arc(8,8,6,0,7); ctx.fill(); ctx.fillStyle = '#333'; ctx.fillRect(5,5,3,3); });
+    this.drawItem(T.IRON_INGOT, (ctx) => { ctx.fillStyle = '#d8d8d8'; ctx.beginPath(); ctx.moveTo(4,4); ctx.lineTo(12,4); ctx.lineTo(14,12); ctx.lineTo(10,13); ctx.lineTo(8,8); ctx.lineTo(6,13); ctx.lineTo(2,12); ctx.closePath(); ctx.fill(); });
+    this.drawItem(T.GOLD_INGOT, (ctx) => { ctx.fillStyle = '#fce86a'; ctx.beginPath(); ctx.moveTo(4,4); ctx.lineTo(12,4); ctx.lineTo(14,12); ctx.lineTo(10,13); ctx.lineTo(8,8); ctx.lineTo(6,13); ctx.lineTo(2,12); ctx.closePath(); ctx.fill(); });
+    this.drawItem(T.DIAMOND, (ctx) => { ctx.fillStyle = '#5ee8d8'; ctx.beginPath(); ctx.moveTo(8,1); ctx.lineTo(15,8); ctx.lineTo(8,15); ctx.lineTo(1,8); ctx.closePath(); ctx.fill(); ctx.fillStyle = '#bff8f0'; ctx.fillRect(5,5,3,3); });
+    this.drawItem(T.CHARCOAL, (ctx) => { ctx.fillStyle = '#3a3a3a'; ctx.beginPath(); ctx.arc(8,8,6,0,7); ctx.fill(); ctx.fillStyle = '#555'; ctx.fillRect(5,5,3,3); });
+    this.drawItem(T.RAW_PORKCHOP, (ctx) => { ctx.fillStyle = '#e8a0a0'; ctx.fillRect(3,4,10,8); ctx.fillStyle = '#f0c0c0'; ctx.fillRect(3,4,10,3); });
+    this.drawItem(T.RAW_BEEF, (ctx) => { ctx.fillStyle = '#c04040'; ctx.fillRect(3,4,10,8); ctx.fillStyle = '#e08080'; ctx.fillRect(3,4,10,2); });
+    this.drawItem(T.MUTTON, (ctx) => { ctx.fillStyle = '#e08080'; ctx.beginPath(); ctx.ellipse(8,8,5,4,0,0,7); ctx.fill(); });
+    this.drawItem(T.FEATHER, (ctx) => { ctx.fillStyle = '#f0f0f0'; ctx.beginPath(); ctx.moveTo(2,14); ctx.lineTo(14,2); ctx.lineTo(12,6); ctx.lineTo(14,14); ctx.closePath(); ctx.fill(); });
+    this.drawItem(T.BONE, (ctx) => { ctx.fillStyle = '#e8e0d0'; ctx.fillRect(2,7,12,2); ctx.fillRect(2,5,2,6); ctx.fillRect(12,5,2,6); });
+    this.drawItem(T.GUNPOWDER, (ctx) => { ctx.fillStyle = '#4a4a4a'; ctx.fillRect(4,4,8,8); ctx.fillStyle = '#2a2a2a'; ctx.fillRect(5,6,6,2); });
+    this.drawItem(T.STRING, (ctx) => { ctx.strokeStyle = '#d8d8d8'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(2,10); ctx.quadraticCurveTo(8,2,14,6); ctx.stroke(); });
+    this.drawItem(T.APPLE, (ctx) => { ctx.fillStyle = '#e03030'; ctx.beginPath(); ctx.arc(8,9,6,0,7); ctx.fill(); ctx.strokeStyle = '#5a3d20'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(8,3); ctx.lineTo(9,1); ctx.stroke(); });
+    this.drawItem(T.BREAD, (ctx) => { ctx.fillStyle = '#d8a85a'; ctx.fillRect(3,5,10,6); ctx.fillStyle = '#e8c878'; ctx.fillRect(4,6,8,2); });
+    this.drawItem(T.WHEAT, (ctx) => { ctx.fillStyle = '#d8b040'; for (let i=0;i<4;i++){ ctx.fillRect(4+i*2,2,1,10); } ctx.fillStyle = '#a08020'; ctx.fillRect(3,11,10,3); });
 
-                // 读取存档（在 UI 初始化前恢复快捷栏）
-                if (saveData && saveData.chunks) this.loadGame(saveData);
+    // 工具图标（简单像素画）
+    this.drawTool(T.WOOD_PICKAXE, '#8a6a3c', '#6b4a2a');
+    this.drawTool(T.STONE_PICKAXE, '#8a8a8a', '#555');
+    this.drawTool(T.IRON_PICKAXE, '#d8d8d8', '#aaa');
+    this.drawTool(T.WOOD_SWORD, '#8a6a3c', '#6b4a2a');
+    this.drawTool(T.STONE_SWORD, '#8a8a8a', '#555');
+    this.drawTool(T.IRON_SWORD, '#d8d8d8', '#aaa');
+    this.drawTool(T.WOOD_AXE, '#8a6a3c', '#6b4a2a');
+    this.drawTool(T.STONE_AXE, '#8a8a8a', '#555');
+    this.drawTool(T.IRON_AXE, '#d8d8d8', '#aaa');
+    this.drawTool(T.WOOD_SHOVEL, '#8a6a3c', '#6b4a2a');
+    this.drawTool(T.STONE_SHOVEL, '#8a8a8a', '#555');
+    this.drawTool(T.IRON_SHOVEL, '#d8d8d8', '#aaa');
+  }
 
-                this.createHighlightMesh(); this.createClouds();
-                this.initUI(); this.initTouchControls(); this.initKeyboardMouse(); this.initResizeHandler(); this.initFullscreenButton(); this.initBackpack();
-                this.initAudio();
-                this.ensureChunks();
-                if (!(saveData && saveData.chunks)) {
-                    const px=Math.floor(this.playerPosition.x/CHUNK_SIZE), pz=Math.floor(this.playerPosition.z/CHUNK_SIZE);
-                    const groundY=this.findGroundHeight(px*CHUNK_SIZE+8, pz*CHUNK_SIZE+8);
-                    this.playerPosition.y=groundY+0.5; this.isOnGround=true;
-                }
-                this.updateHearts(); this.updateSelectedName();
+  /** 矿石纹理 */
+  drawOre(tileIndex, oreColor, seed) {
+    this.drawTile(tileIndex, (ctx, s) => {
+      for (let y = 0; y < s; y++) for (let x = 0; x < s; x++) {
+        const g = [125 + (rand01(x, y, seed) - 0.5) * 22, 125 + (rand01(x+3, y+5, seed) - 0.5) * 22, 125 + (rand01(x+8, y+1, seed) - 0.5) * 22];
+        ctx.fillStyle = `rgb(${g[0]|0},${g[1]|0},${g[2]|0})`;
+        ctx.fillRect(x, y, 1, 1);
+      }
+      for (let i = 0; i < 8; i++) {
+        const px = (rand01(i, seed, seed) * s) | 0;
+        const py = (rand01(seed, i, seed) * s) | 0;
+        ctx.fillStyle = `rgb(${oreColor[0]},${oreColor[1]},${oreColor[2]})`;
+        ctx.fillRect(px, py, 2, 2);
+      }
+    });
+  }
 
-                this.animals=[]; this.spawnAnimals(8);
-                this.peer = null; this.connections = {}; this.remotePlayers = {}; this.connectionCount = 0;
-                if (this.isOnline) { this.initMultiplayer(); } else { this.updateOnlineStatus('🟢 单机模式'); }
+  drawItem(tileIndex, fn) {
+    this.drawTile(tileIndex, (ctx, s) => {
+      ctx.clearRect(0, 0, s, s);
+      fn(ctx, s);
+    });
+  }
 
-                window.addEventListener('pagehide', () => { if (!this.isOnline) this.saveGame(); });
+  drawTool(tileIndex, mainColor, darkColor) {
+    this.drawTile(tileIndex, (ctx, s) => {
+      ctx.clearRect(0, 0, s, s);
+      ctx.fillStyle = darkColor;
+      ctx.fillRect(7, 5, 2, 10);
+      ctx.fillStyle = mainColor;
+      const isPick = tileIndex >= TILE.WOOD_PICKAXE && tileIndex <= TILE.IRON_PICKAXE;
+      const isSword = tileIndex >= TILE.WOOD_SWORD && tileIndex <= TILE.IRON_SWORD;
+      const isAxe = tileIndex >= TILE.WOOD_AXE && tileIndex <= TILE.IRON_AXE;
+      const isShovel = tileIndex >= TILE.WOOD_SHOVEL && tileIndex <= TILE.IRON_SHOVEL;
+      if (isPick) { ctx.fillRect(3,2,10,2); ctx.fillRect(1,3,14,2); ctx.fillRect(3,4,10,2); }
+      else if (isSword) { ctx.fillRect(4,1,3,8); ctx.fillRect(5,2,1,6); ctx.fillRect(3,8,5,2); }
+      else if (isAxe) { ctx.fillRect(2,2,12,3); ctx.fillRect(4,5,8,2); ctx.fillRect(3,2,3,8); }
+      else if (isShovel) { ctx.fillRect(4,1,8,3); ctx.fillRect(6,3,4,3); }
+    });
+  }
 
-                this.lastTime=performance.now(); this.fpsCounter=0; this.fpsTime=0; this.fpsDisplay=0; this.raycastResult=null;
-                this.gameLoop();
-            }
+  /** 获取某瓦片的 UV 坐标（四分量 u0,v0,u1,v1） */
+  uv(index) {
+    const s = this.tileSize;
+    const cols = this.cols;
+    const rows = this.rows;
+    const tx = index % cols;
+    const ty = Math.floor(index / cols);
+    const u0 = tx / cols;
+    const v1 = 1 - ty / rows;          // 纹理坐标 v 向上
+    const u1 = (tx + 1) / cols;
+    const v0 = 1 - (ty + 1) / rows;
+    // 轻微内缩防止相邻瓦片采样渗色
+    const inset = 0.001;
+    return [u0 + inset, v0 + inset, u1 - inset, v1 - inset];
+  }
 
-            // ---------- 天空/昼夜 ----------
-            updateSky(dt) {
-                this.dayTime=(this.dayTime+dt/DAY_LENGTH)%1;
-                const sunAngle=(this.dayTime-0.25)*Math.PI*2;
-                const h=Math.sin(sunAngle); // -1 午夜 … 1 正午
-                const dayFactor=smoothstep(-0.25, 0.3, h);
-                const sunDir=new THREE.Vector3(Math.cos(sunAngle), h, 0.18).normalize();
-                this.sun.position.copy(sunDir).multiplyScalar(150);
-                this.moon.position.copy(sunDir).multiplyScalar(-150);
-                this.sunLight.position.copy(sunDir).multiplyScalar(90);
-                this.moonLight.position.copy(sunDir).multiplyScalar(-90);
-                // 天空颜色：夜晚 → 白昼，地平线附近偏橙
-                const sky=new THREE.Color(0x0a1028).lerp(new THREE.Color(0x87CEEB), dayFactor);
-                const horizon=Math.max(0, 1-Math.abs(h)*2.0);
-                sky.lerp(new THREE.Color(0xff7a3c), horizon*0.45*(1-dayFactor*0.25));
-                this.scene.background.copy(sky);
-                this.scene.fog.color.copy(sky);
-                this.sunLight.intensity=0.12+dayFactor*0.95;
-                this.sunLight.color.copy(new THREE.Color(0xfff2cc).lerp(new THREE.Color(0xff9a4d), horizon*0.7));
-                this.ambientLight.intensity=0.16+dayFactor*0.5;
-                this.ambientLight.color.copy(new THREE.Color(0x3a4a7a).lerp(new THREE.Color(0xffffff), dayFactor));
-                this.moonLight.intensity=(1-dayFactor)*0.3;
-                this.stars.material.opacity=(1-dayFactor)*0.9;
-                if (this.cloudMaterial) this.cloudMaterial.opacity=0.35+dayFactor*0.5;
-                const ind=document.getElementById('day-indicator');
-                if (ind) ind.textContent = dayFactor>0.6 ? '☀️' : (dayFactor<0.15 ? '🌙' : '🌅');
-            }
+  /** 生成物品图标 dataURL，供 UI 使用（带缓存） */
+  itemIconURL(tileIndex, size = 32) {
+    const key = `${tileIndex}_${size}`;
+    if (this.iconCache.has(key)) return this.iconCache.get(key);
+    const c = document.createElement('canvas');
+    c.width = size; c.height = size;
+    const ctx = c.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
+    const s = this.tileSize;
+    const tx = (tileIndex % this.cols) * s;
+    const ty = Math.floor(tileIndex / this.cols) * s;
+    ctx.drawImage(this.canvas, tx, ty, s, s, 0, 0, size, size);
+    const url = c.toDataURL();
+    this.iconCache.set(key, url);
+    return url;
+  }
+}
 
-            createHighlightMesh() {
-                const geo=new THREE.BoxGeometry(1.01,1.01,1.01); const edges=new THREE.EdgesGeometry(geo);
-                const mat=new THREE.LineBasicMaterial({color:0xffffff, linewidth:2, transparent:true, opacity:0.8});
-                this.highlightMesh=new THREE.LineSegments(edges,mat); this.highlightMesh.visible=false; this.scene.add(this.highlightMesh);
-            }
-            createClouds() {
-                const cloudGroup=new THREE.Group();
-                this.cloudMaterial=new THREE.MeshLambertMaterial({color:0xffffff,transparent:true,opacity:0.8,side:THREE.DoubleSide});
-                for(let i=0;i<12;i++) { const geo=new THREE.PlaneGeometry(8+Math.random()*12,3+Math.random()*4); const cloud=new THREE.Mesh(geo,this.cloudMaterial); cloud.position.set((Math.random()-0.5)*80,45+Math.random()*10,(Math.random()-0.5)*80); cloud.rotation.x=-Math.PI/2; cloud.rotation.z=Math.random()*Math.PI; cloudGroup.add(cloud); }
-                this.scene.add(cloudGroup); this.cloudGroup=cloudGroup;
-            }
-            ensureChunks() {
-                const px=Math.floor(this.playerPosition.x/CHUNK_SIZE), pz=Math.floor(this.playerPosition.z/CHUNK_SIZE);
-                for(let dx=-RENDER_DISTANCE;dx<=RENDER_DISTANCE;dx++) for(let dz=-RENDER_DISTANCE;dz<=RENDER_DISTANCE;dz++) this.world.getOrCreateChunk(px+dx,pz+dz);
-                for(let dx=-RENDER_DISTANCE;dx<=RENDER_DISTANCE;dx++) for(let dz=-RENDER_DISTANCE;dz<=RENDER_DISTANCE;dz++) this.buildChunkMesh(px+dx,pz+dz);
-            }
-            findGroundHeight(wx,wz){ for(let y=CHUNK_HEIGHT-1;y>=0;y--){ const b=this.world.getBlock(Math.floor(wx),y,Math.floor(wz)); if(SOLID_BLOCKS.has(b)) return y+1; } return SEA_LEVEL+1; }
-            buildChunkMesh(cx,cz) {
-                const chunk=this.world.getOrCreateChunk(cx,cz); const result=this.meshBuilder.buildMesh(chunk);
-                if(chunk.mesh){ this.scene.remove(chunk.mesh); chunk.mesh.geometry.dispose(); }
-                if(chunk.waterMesh){ this.scene.remove(chunk.waterMesh); chunk.waterMesh.geometry.dispose(); }
-                if(result.solid.positions.length>0){ const geo=new THREE.BufferGeometry(); geo.setAttribute('position',new THREE.Float32BufferAttribute(result.solid.positions,3)); geo.setAttribute('normal',new THREE.Float32BufferAttribute(result.solid.normals,3)); geo.setAttribute('uv',new THREE.Float32BufferAttribute(result.solid.uvs,2)); geo.setIndex(result.solid.indices); const mesh=new THREE.Mesh(geo,this.solidMaterial); this.scene.add(mesh); chunk.mesh=mesh; } else chunk.mesh=null;
-                if(result.water.positions.length>0){ const geo=new THREE.BufferGeometry(); geo.setAttribute('position',new THREE.Float32BufferAttribute(result.water.positions,3)); geo.setAttribute('normal',new THREE.Float32BufferAttribute(result.water.normals,3)); geo.setAttribute('uv',new THREE.Float32BufferAttribute(result.water.uvs,2)); geo.setIndex(result.water.indices); const mesh=new THREE.Mesh(geo,this.waterMaterial); mesh.renderOrder=1; this.scene.add(mesh); chunk.waterMesh=mesh; } else chunk.waterMesh=null;
-                chunk.dirty=false;
-            }
-            updateChunks() {
-                const px=Math.floor(this.playerPosition.x/CHUNK_SIZE), pz=Math.floor(this.playerPosition.z/CHUNK_SIZE);
-                for(const chunk of this.world.chunks.values()){ if(chunk.dirty){ const dist=Math.max(Math.abs(chunk.cx-px),Math.abs(chunk.cz-pz)); if(dist<=RENDER_DISTANCE+1) this.buildChunkMesh(chunk.cx,chunk.cz); } }
-                for(const chunk of this.world.chunks.values()){ const dist=Math.max(Math.abs(chunk.cx-px),Math.abs(chunk.cz-pz)); if(dist>RENDER_DISTANCE+1){ if(chunk.mesh){ this.scene.remove(chunk.mesh); chunk.mesh.geometry.dispose(); chunk.mesh=null; } if(chunk.waterMesh){ this.scene.remove(chunk.waterMesh); chunk.waterMesh.geometry.dispose(); chunk.waterMesh=null; } } else if(dist<=RENDER_DISTANCE&&!chunk.mesh&&!chunk.waterMesh&&!chunk.dirty) this.buildChunkMesh(chunk.cx,chunk.cz); }
-                for(let dx=-RENDER_DISTANCE;dx<=RENDER_DISTANCE;dx++) for(let dz=-RENDER_DISTANCE;dz<=RENDER_DISTANCE;dz++){ if(!this.world.getChunk(px+dx,pz+dz)){ this.world.getOrCreateChunk(px+dx,pz+dz); this.buildChunkMesh(px+dx,pz+dz); } }
-            }
+/* ============================================================
+ * 区块数据结构
+ * 每个区块保存 16x16x256 的方块 ID，使用 Uint8Array 紧凑存储。
+ * ============================================================ */
+const CHUNK_SIZE = 16;
+const WORLD_HEIGHT = 256;
+const SEA_LEVEL = 32;
 
-            // ---------- UI ----------
-            initUI() {
-                const hotbar=document.getElementById('hotbar'); hotbar.innerHTML=''; const canvas=document.createElement('canvas'); canvas.width=16; canvas.height=16; const ctx=canvas.getContext('2d'); const atlasCanvas=this.atlas.canvas;
-                this.hotbarBlocks.forEach((blockId,index)=>{
-                    const slot=document.createElement('div'); slot.className='hotbar-slot'+(index===this.selectedSlot?' active':''); slot.dataset.index=index;
-                    const texIndex=this.getBlockIconTexture(blockId); const col=texIndex%this.atlas.cols, row=Math.floor(texIndex/this.atlas.cols);
-                    ctx.clearRect(0,0,16,16); ctx.drawImage(atlasCanvas,col*16,row*16,16,16,0,0,16,16);
-                    const img=document.createElement('img'); img.src=canvas.toDataURL(); img.alt=BLOCK_NAMES[blockId]||'方块'; slot.appendChild(img);
-                    const num=document.createElement('span'); num.className='slot-number'; num.textContent=index+1; slot.appendChild(num);
-                    slot.addEventListener('click',(e)=>{e.preventDefault();e.stopPropagation();this.selectSlot(index);});
-                    slot.addEventListener('touchstart',(e)=>{e.preventDefault();e.stopPropagation();this.selectSlot(index);},{passive:false});
-                    hotbar.appendChild(slot);
-                });
-                const backpackSlot=document.createElement('div'); backpackSlot.className='hotbar-slot backpack-slot'; backpackSlot.textContent='...';
-                backpackSlot.addEventListener('click',(e)=>{e.preventDefault();e.stopPropagation();this.toggleBackpack();});
-                backpackSlot.addEventListener('touchstart',(e)=>{e.preventDefault();e.stopPropagation();this.toggleBackpack();},{passive:false});
-                hotbar.appendChild(backpackSlot);
-                this.updateSelectedName();
-            }
-            getBlockIconTexture(blockId) {
-                const faces=BLOCK_FACES[blockId]; if(!faces) return TEX.STONE;
-                if(blockId===BLOCK.GRASS)return TEX.GRASS_SIDE; if(blockId===BLOCK.LOG)return TEX.LOG_SIDE; if(blockId===BLOCK.PLANK)return TEX.PLANK;
-                if(blockId===BLOCK.BRICK)return TEX.BRICK; if(blockId===BLOCK.GLASS)return TEX.GLASS; if(blockId===BLOCK.LEAVES)return TEX.LEAVES;
-                if(blockId===BLOCK.SAND)return TEX.SAND; if(blockId===BLOCK.DIRT)return TEX.DIRT; if(blockId===BLOCK.STONE)return TEX.STONE;
-                if(blockId===BLOCK.COAL_BLOCK)return TEX.COAL_BLOCK; if(blockId===BLOCK.IRON_BLOCK)return TEX.IRON_BLOCK; if(blockId===BLOCK.GOLD_BLOCK)return TEX.GOLD_BLOCK;
-                if(blockId===BLOCK.DIAMOND_BLOCK)return TEX.DIAMOND_BLOCK; if(blockId===BLOCK.REDSTONE_BLOCK)return TEX.REDSTONE_BLOCK; if(blockId===BLOCK.LAPIS_BLOCK)return TEX.LAPIS_BLOCK;
-                if(blockId===BLOCK.SNOW_BLOCK)return TEX.SNOW_BLOCK; if(blockId===BLOCK.PUMPKIN)return TEX.PUMPKIN; if(blockId===BLOCK.MELON)return TEX.MELON; if(blockId===BLOCK.BOOKSHELF)return TEX.BOOKSHELF;
-                return faces.py||TEX.STONE;
-            }
-            selectSlot(index){ this.selectedSlot=index; document.querySelectorAll('.hotbar-slot:not(.backpack-slot)').forEach((slot,i)=>slot.classList.toggle('active',i===index)); this.updateSelectedName(); }
-            updateSelectedName(){ const el=document.getElementById('selected-name'); if(el) el.textContent=BLOCK_NAMES[this.hotbarBlocks[this.selectedSlot]]||''; }
-            toggleBackpack(){ const panel=document.getElementById('backpack-panel'); panel.classList.toggle('active'); if(panel.classList.contains('active')) this.fillBackpackGrid(); }
-            fillBackpackGrid() {
-                const grid=document.getElementById('backpack-grid'); grid.innerHTML=''; const canvas=document.createElement('canvas'); canvas.width=16; canvas.height=16; const ctx=canvas.getContext('2d'); const atlasCanvas=this.atlas.canvas;
-                PLACEABLE_BLOCKS.forEach(blockId=>{
-                    const item=document.createElement('div'); item.className='backpack-item';
-                    const texIndex=this.getBlockIconTexture(blockId); const col=texIndex%this.atlas.cols, row=Math.floor(texIndex/this.atlas.cols);
-                    ctx.clearRect(0,0,16,16); ctx.drawImage(atlasCanvas,col*16,row*16,16,16,0,0,16,16);
-                    const img=document.createElement('img'); img.src=canvas.toDataURL(); item.appendChild(img);
-                    const label=document.createElement('span'); label.textContent=BLOCK_NAMES[blockId]||'方块'; item.appendChild(label);
-                    item.addEventListener('click',(e)=>{ e.stopPropagation(); this.replaceHotbarSlot(blockId); });
-                    item.addEventListener('touchstart',(e)=>{ e.preventDefault(); e.stopPropagation(); this.replaceHotbarSlot(blockId); },{passive:false});
-                    grid.appendChild(item);
-                });
-            }
-            replaceHotbarSlot(blockId) { this.hotbarBlocks[this.selectedSlot]=blockId; this.initUI(); document.getElementById('backpack-panel').classList.remove('active'); }
-            initResizeHandler() {
-                window.addEventListener('resize',()=>{ this.camera.aspect=window.innerWidth/window.innerHeight; this.camera.updateProjectionMatrix(); this.renderer.setSize(window.innerWidth,window.innerHeight); });
-                window.addEventListener('orientationchange',()=>{ setTimeout(()=>{ this.camera.aspect=window.innerWidth/window.innerHeight; this.camera.updateProjectionMatrix(); this.renderer.setSize(window.innerWidth,window.innerHeight); },300); });
-            }
-            initFullscreenButton() {
-                const btn=document.getElementById('fullscreen-btn');
-                const toggle=()=>{
-                    if(!document.fullscreenElement&&!document.webkitFullscreenElement){ const el=document.documentElement; if(el.requestFullscreen)el.requestFullscreen().catch(()=>{}); else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen(); btn.textContent='✕'; }
-                    else { if(document.exitFullscreen)document.exitFullscreen().catch(()=>{}); else if(document.webkitExitFullscreen)document.webkitExitFullscreen(); btn.textContent='⛶'; }
-                };
-                btn.addEventListener('click',toggle); btn.addEventListener('touchstart',(e)=>{e.preventDefault();e.stopPropagation();toggle();},{passive:false});
-                document.addEventListener('fullscreenchange',()=>{btn.textContent=document.fullscreenElement?'✕':'⛶';});
-                document.addEventListener('webkitfullscreenchange',()=>{btn.textContent=document.webkitFullscreenElement?'✕':'⛶';});
-            }
-            initBackpack(){ document.getElementById('backpack-panel').addEventListener('click',(e)=>{ if(e.target===document.getElementById('backpack-panel')) document.getElementById('backpack-panel').classList.remove('active'); }); }
+class Chunk {
+  /**
+   * @param {number} cx 区块坐标 X（世界坐标除以 16 向下取整）
+   * @param {number} cz 区块坐标 Z
+   */
+  constructor(cx, cz) {
+    this.cx = cx;
+    this.cz = cz;
+    this.blocks = new Uint8Array(CHUNK_SIZE * WORLD_HEIGHT * CHUNK_SIZE);
+    this.dirty = true;          // 需要重新生成网格
+    this.meshOpaque = null;     // Three.js 不透明网格
+    this.meshTransparent = null; // Three.js 透明网格
+  }
 
-            // ---------- 触屏控制 ----------
-            initTouchControls() {
-                const joystickZone=document.getElementById('joystick-zone'); const joystickBase=document.getElementById('joystick-base'); const joystickKnob=document.getElementById('joystick-knob');
-                const jumpBtn=document.getElementById('jump-btn'); const placeBtn=document.getElementById('place-btn'); const breakBtn=document.getElementById('break-btn');
-                const flyBtn=document.getElementById('fly-btn'); const flyDownBtn=document.getElementById('fly-down-btn');
-                const canvas=this.renderer.domElement;
-                joystickZone.addEventListener('touchstart',(e)=>{ e.preventDefault(); e.stopPropagation(); if(this.touchState.joystick) return; const touch=e.changedTouches[0]; this.touchState.joystick={id:touch.identifier,startX:touch.clientX,startY:touch.clientY,currentX:touch.clientX,currentY:touch.clientY}; joystickBase.style.display='block'; joystickBase.style.left=(touch.clientX-55)+'px'; joystickBase.style.top=(touch.clientY-55)+'px'; joystickKnob.style.left='33px'; joystickKnob.style.top='33px'; },{passive:false});
-                joystickZone.addEventListener('touchmove',(e)=>{ e.preventDefault(); e.stopPropagation(); if(!this.touchState.joystick) return; const touch=Array.from(e.touches).find(t=>t.identifier===this.touchState.joystick.id); if(!touch) return; this.touchState.joystick.currentX=touch.clientX; this.touchState.joystick.currentY=touch.clientY; const dx=touch.clientX-this.touchState.joystick.startX, dy=touch.clientY-this.touchState.joystick.startY; const maxDist=45, dist=Math.sqrt(dx*dx+dy*dy), clamped=Math.min(dist,maxDist), angle=Math.atan2(dy,dx); joystickKnob.style.left=(33+Math.cos(angle)*clamped)+'px'; joystickKnob.style.top=(33+Math.sin(angle)*clamped)+'px'; this.moveInput.x=dx/maxDist; this.moveInput.y=-dy/maxDist; const mag=Math.sqrt(this.moveInput.x**2+this.moveInput.y**2); if(mag>1){this.moveInput.x/=mag;this.moveInput.y/=mag;} },{passive:false});
-                const endJoystick=(e)=>{ const touch=Array.from(e.changedTouches).find(t=>this.touchState.joystick && t.identifier===this.touchState.joystick.id); if(touch){ this.touchState.joystick=null; this.moveInput.x=0;this.moveInput.y=0; joystickBase.style.display='none'; } };
-                joystickZone.addEventListener('touchend',endJoystick,{passive:true}); joystickZone.addEventListener('touchcancel',endJoystick,{passive:true});
-                canvas.addEventListener('touchstart',(e)=>{ e.preventDefault(); for(const touch of e.changedTouches){ if(!this.touchState.lookTouch) this.touchState.lookTouch={id:touch.identifier,lastX:touch.clientX,lastY:touch.clientY}; } },{passive:false});
-                canvas.addEventListener('touchmove',(e)=>{ e.preventDefault(); const touch=Array.from(e.changedTouches).find(t=>this.touchState.lookTouch && t.identifier===this.touchState.lookTouch.id) || Array.from(e.touches).find(t=>this.touchState.lookTouch && t.identifier===this.touchState.lookTouch.id); if(touch){ const dx=touch.clientX-this.touchState.lookTouch.lastX, dy=touch.clientY-this.touchState.lookTouch.lastY; this.touchState.lookTouch.lastX=touch.clientX; this.touchState.lookTouch.lastY=touch.clientY; this.lookDelta.x+=dx*TOUCH_SENSITIVITY; this.lookDelta.y+=dy*TOUCH_SENSITIVITY; } },{passive:false});
-                const endLook=(e)=>{ const touch=Array.from(e.changedTouches).find(t=>this.touchState.lookTouch && t.identifier===this.touchState.lookTouch.id); if(touch) this.touchState.lookTouch=null; };
-                canvas.addEventListener('touchend',endLook,{passive:true}); canvas.addEventListener('touchcancel',endLook,{passive:true});
-                jumpBtn.addEventListener('touchstart',(e)=>{ e.preventDefault(); e.stopPropagation(); if(this.isFlying) this.flyUp=true; else if(this.isInWater()) this.flyUp=true; else this.tryJump(); },{passive:false});
-                jumpBtn.addEventListener('touchend',(e)=>{ e.preventDefault(); e.stopPropagation(); this.flyUp=false; },{passive:false});
-                placeBtn.addEventListener('touchstart',(e)=>{ e.preventDefault(); e.stopPropagation(); this.placeBlock(); },{passive:false});
-                breakBtn.addEventListener('touchstart',(e)=>{ e.preventDefault(); e.stopPropagation(); this.breakBlock(); },{passive:false});
-                flyBtn.addEventListener('touchstart',(e)=>{ e.preventDefault(); e.stopPropagation(); this.toggleFly(); },{passive:false});
-                flyDownBtn.addEventListener('touchstart',(e)=>{ e.preventDefault(); e.stopPropagation(); this.flyDown=true; },{passive:false});
-                flyDownBtn.addEventListener('touchend',(e)=>{ e.preventDefault(); e.stopPropagation(); this.flyDown=false; },{passive:false});
-                flyDownBtn.addEventListener('touchcancel',(e)=>{ this.flyDown=false; },{passive:false});
-                if(IS_TOUCH){
-                    let lastTapTime=0; canvas.addEventListener('click',(e)=>{ const now=performance.now(); if(now-lastTapTime<300)return; lastTapTime=now; if(e.clientX<window.innerWidth*0.45)return; this.placeBlock(); });
-                }
-                canvas.addEventListener('contextmenu',(e)=>e.preventDefault());
-            }
+  /** 本地坐标转一维下标 */
+  index(x, y, z) {
+    return (x * WORLD_HEIGHT + y) * CHUNK_SIZE + z;
+  }
 
-            // ---------- 键盘/鼠标控制（桌面端） ----------
-            initKeyboardMouse() {
-                const canvas=this.renderer.domElement;
-                document.addEventListener('keydown',(e)=>{
-                    if(e.target && (e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')) return;
-                    const c=e.code;
-                    if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(c)) e.preventDefault();
-                    if(e.repeat) return;
-                    this.keys[c]=true;
-                    if(c==='Space'){
-                        if(this.isFlying) this.flyUp=true;
-                        else if(this.isInWater()) this.flyUp=true;
-                        else this.tryJump();
-                    } else if(c==='ShiftLeft'||c==='ShiftRight'){ this.flyDown=true; }
-                    else if(c==='KeyE'){ this.toggleBackpack(); }
-                    else if(c==='KeyF'){ this.toggleFly(); }
-                    else if(c==='F3'){ this.toggleDebug(); }
-                    else if(c.startsWith('Digit')){ const n=parseInt(c.slice(5)); if(n>=1&&n<=9) this.selectSlot(n-1); }
-                });
-                document.addEventListener('keyup',(e)=>{
-                    const c=e.code; this.keys[c]=false;
-                    if(c==='Space') this.flyUp=false;
-                    if(c==='ShiftLeft'||c==='ShiftRight') this.flyDown=false;
-                });
-                if(IS_TOUCH) return;
-                canvas.addEventListener('mousedown',(e)=>{
-                    if(document.pointerLockElement!==canvas){
-                        if(canvas.requestPointerLock) canvas.requestPointerLock();
-                        else if(canvas.webkitRequestPointerLock) canvas.webkitRequestPointerLock();
-                        return;
-                    }
-                    e.preventDefault();
-                    if(e.button===0) this.breakBlock();
-                    else if(e.button===2) this.placeBlock();
-                });
-                document.addEventListener('mousemove',(e)=>{
-                    if(document.pointerLockElement===canvas){
-                        this.lookDelta.x+=e.movementX*MOUSE_SENSITIVITY;
-                        this.lookDelta.y+=e.movementY*MOUSE_SENSITIVITY;
-                    }
-                });
-                canvas.addEventListener('wheel',(e)=>{ e.preventDefault(); const dir=e.deltaY>0?1:-1; this.selectSlot((this.selectedSlot+dir+9)%9); },{passive:false});
-            }
-            toggleDebug(){ this.debugVisible=!this.debugVisible; const f=document.getElementById('fps-counter'), d=document.getElementById('debug-info'); if(f)f.style.display=this.debugVisible?'block':'none'; if(d)d.style.display=this.debugVisible?'block':'none'; }
+  /** 读取本地方块（不检查范围，调用方保证合法） */
+  getLocal(x, y, z) {
+    return this.blocks[this.index(x, y, z)];
+  }
 
-            // ---------- 生命系统 ----------
-            damage(amount){
-                if(this.isDead) return;
-                this.health=Math.max(0,this.health-amount);
-                this.lastDamageTime=performance.now();
-                this.updateHearts();
-                this.flashDamage();
-                this.playSound('hurt');
-                if(this.health<=0) this.die();
-            }
-            die(){
-                if(this.isDead) return;
-                this.isDead=true;
-                const ov=document.getElementById('death-overlay'); if(ov) ov.style.display='flex';
-                setTimeout(()=>this.respawn(), 2000);
-            }
-            respawn(){
-                this.isDead=false;
-                this.health=MAX_HEALTH;
-                this.updateHearts();
-                const ov=document.getElementById('death-overlay'); if(ov) ov.style.display='none';
-                const g=this.findGroundHeight(this.spawnPoint.x, this.spawnPoint.z);
-                this.playerPosition.set(this.spawnPoint.x+0.5, g+0.5, this.spawnPoint.z+0.5);
-                this.playerVelocity.set(0,0,0); this.fallStartY=null;
-            }
-            updateHearts(){
-                const el=document.getElementById('health-bar'); if(!el) return;
-                const full=Math.floor(this.health/2), half=this.health%2===1, empty=10-full-(half?1:0);
-                el.textContent='❤️'.repeat(full)+(half?'💔':'')+'🖤'.repeat(empty);
-            }
-            flashDamage(){
-                const el=document.getElementById('damage-flash'); if(!el) return;
-                el.style.transition='none'; el.style.opacity=0.9;
-                requestAnimationFrame(()=>{ el.style.transition='opacity 0.6s ease'; el.style.opacity=0; });
-            }
-            toggleFly(){
-                this.isFlying=!this.isFlying;
-                const fb=document.getElementById('fly-btn'); if(fb) fb.textContent=this.isFlying?'🦅 落地':'🕊️ 飞行';
-                const db=document.getElementById('fly-down-btn'); if(db) db.style.display=this.isFlying?'flex':'none';
-                if(!this.isFlying){ this.flyUp=false; this.flyDown=false; this.playerVelocity.y=0; }
-                this.playSound('place');
-            }
-            tryJump(){ if(this.isOnGround){ this.playerVelocity.y=JUMP_SPEED; this.isOnGround=false; this.playSound('jump'); } }
-            isInWater(){
-                const fx=Math.floor(this.playerPosition.x), fy=Math.floor(this.playerPosition.y+0.6), fz=Math.floor(this.playerPosition.z);
-                return this.world.getBlock(fx,fy,fz)===BLOCK.WATER || this.world.getBlock(fx,fy+1,fz)===BLOCK.WATER;
-            }
-            placeBlock(){
-                const target=this.getTargetBlock(); if(!target) return;
-                const placePos={x:target.x+target.face[0],y:target.y+target.face[1],z:target.z+target.face[2]};
-                if(placePos.y<0||placePos.y>=CHUNK_HEIGHT) return;
-                const existing=this.world.getBlock(placePos.x,placePos.y,placePos.z); if(existing!==BLOCK.AIR&&existing!==BLOCK.WATER) return;
-                const pBox=this.getPlayerAABB(); const bBox={minX:placePos.x,maxX:placePos.x+1,minY:placePos.y,maxY:placePos.y+1,minZ:placePos.z,maxZ:placePos.z+1};
-                if(this.aabbIntersect(pBox,bBox)) return;
-                const blockId=this.hotbarBlocks[this.selectedSlot];
-                this.world.setBlock(placePos.x,placePos.y,placePos.z,blockId);
-                this.playSound('place'); this.spawnBlockParticles(placePos.x+0.5,placePos.y+0.5,placePos.z+0.5,blockId);
-                if(this.isOnline) this.sendBlockUpdate(placePos.x,placePos.y,placePos.z,blockId);
-            }
-            breakBlock(){
-                const target=this.getTargetBlock(); if(!target) return; if(target.blockId===BLOCK.BEDROCK) return;
-                const blockId=target.blockId; this.world.setBlock(target.x,target.y,target.z,BLOCK.AIR);
-                this.playSound('break'); this.spawnBlockParticles(target.x+0.5,target.y+0.5,target.z+0.5,blockId);
-                if(this.isOnline) this.sendBlockUpdate(target.x,target.y,target.z,BLOCK.AIR);
-            }
-            sendBlockUpdate(x,y,z,blockId){
-                Object.values(this.connections).forEach(conn=>{ if(conn.open) conn.send({type:'block', x,y,z, blockId}); });
-            }
-            getTargetBlock(){
-                const dir=new THREE.Vector3(0,0,-1).applyEuler(new THREE.Euler(this.playerPitch,this.playerYaw,0,'YXZ'));
-                const eye=new THREE.Vector3(this.playerPosition.x,this.playerPosition.y+PLAYER_EYE_HEIGHT,this.playerPosition.z);
-                return raycastVoxel(this.world,eye,dir,MAX_PLACE_DISTANCE);
-            }
-            getPlayerAABB(){ const hw=PLAYER_WIDTH/2; return {minX:this.playerPosition.x-hw,maxX:this.playerPosition.x+hw,minY:this.playerPosition.y,maxY:this.playerPosition.y+PLAYER_HEIGHT,minZ:this.playerPosition.z-hw,maxZ:this.playerPosition.z+hw}; }
-            aabbIntersect(a,b){ return a.minX<b.maxX&&a.maxX>b.minX&&a.minY<b.maxY&&a.maxY>b.minY&&a.minZ<b.maxZ&&a.maxZ>b.minZ; }
-            checkCollision(pos){ const hw=PLAYER_WIDTH/2; const minX=Math.floor(pos.x-hw),maxX=Math.floor(pos.x+hw),minY=Math.floor(pos.y),maxY=Math.floor(pos.y+PLAYER_HEIGHT),minZ=Math.floor(pos.z-hw),maxZ=Math.floor(pos.z+hw); for(let x=minX;x<=maxX;x++)for(let y=minY;y<=maxY;y++)for(let z=minZ;z<=maxZ;z++) if(this.world.isSolid(x,y,z)) return true; return false; }
+  /** 写入本地方块并标记需要重建网格 */
+  setLocal(x, y, z, id) {
+    const i = this.index(x, y, z);
+    if (this.blocks[i] !== id) {
+      this.blocks[i] = id;
+      this.dirty = true;
+    }
+  }
 
-            updatePlayer(dt){
-                // 视角
-                if(this.lookDelta.x!==0||this.lookDelta.y!==0){
-                    this.playerYaw-=this.lookDelta.x;
-                    this.playerPitch-=this.lookDelta.y;
-                    this.playerPitch=Math.max(-Math.PI/2+0.01,Math.min(Math.PI/2-0.01,this.playerPitch));
-                    this.lookDelta.x=0; this.lookDelta.y=0;
-                }
-                // 输入：触屏 + 键盘合并
-                let ix=this.moveInput.x, iy=this.moveInput.y;
-                if(this.keys['KeyW']||this.keys['ArrowUp']) iy+=1;
-                if(this.keys['KeyS']||this.keys['ArrowDown']) iy-=1;
-                if(this.keys['KeyA']||this.keys['ArrowLeft']) ix-=1;
-                if(this.keys['KeyD']||this.keys['ArrowRight']) ix+=1;
-                ix=clamp(ix,-1,1); iy=clamp(iy,-1,1);
-                const wasInWater=this.inWater;
-                this.inWater=this.isInWater();
-                if(this.inWater&&!wasInWater) this.playSound('splash');
-                const forward=new THREE.Vector3(-Math.sin(this.playerYaw),0,-Math.cos(this.playerYaw));
-                const right=new THREE.Vector3(Math.cos(this.playerYaw),0,-Math.sin(this.playerYaw));
-                const moveVec=new THREE.Vector3().addScaledVector(forward,iy).addScaledVector(right,ix);
-                if(moveVec.length()>1)moveVec.normalize();
-                const speed=this.isFlying?FLY_SPEED:(this.inWater?WALK_SPEED*0.6:WALK_SPEED);
-                const accel=this.isOnGround?12:(this.inWater?6:(this.isFlying?14:5));
-                this.playerVelocity.x+=(moveVec.x*speed-this.playerVelocity.x)*Math.min(1,accel*dt);
-                this.playerVelocity.z+=(moveVec.z*speed-this.playerVelocity.z)*Math.min(1,accel*dt);
-                // 垂直速度
-                if(this.isFlying){
-                    let vy=0; if(this.flyUp)vy+=1; if(this.flyDown)vy-=1;
-                    this.playerVelocity.y=vy*FLY_SPEED;
-                    this.fallStartY=null;
-                } else if(this.inWater){
-                    this.playerVelocity.y+=GRAVITY*0.3*dt;
-                    if(this.playerVelocity.y<-5)this.playerVelocity.y=-5;
-                    if(this.flyUp)this.playerVelocity.y=Math.max(this.playerVelocity.y,4.5);
-                    this.fallStartY=null; // 入水重置坠落起点
-                } else {
-                    this.playerVelocity.y+=GRAVITY*dt;
-                    if(this.playerVelocity.y<-30)this.playerVelocity.y=-30;
-                    // 记录滞空时的最高点，作为摔落伤害起点（普通跳跃不会受伤）
-                    if(!this.isOnGround&&(this.fallStartY===null||this.playerPosition.y>this.fallStartY)) this.fallStartY=this.playerPosition.y;
-                }
-                // 水平移动
-                const newX=this.playerPosition.x+this.playerVelocity.x*dt; if(!this.checkCollision(new THREE.Vector3(newX,this.playerPosition.y,this.playerPosition.z))) this.playerPosition.x=newX; else this.playerVelocity.x=0;
-                const newZ=this.playerPosition.z+this.playerVelocity.z*dt; if(!this.checkCollision(new THREE.Vector3(this.playerPosition.x,this.playerPosition.y,newZ))) this.playerPosition.z=newZ; else this.playerVelocity.z=0;
-                // 垂直移动
-                const newY=this.playerPosition.y+this.playerVelocity.y*dt;
-                if(!this.checkCollision(new THREE.Vector3(this.playerPosition.x,newY,this.playerPosition.z))){
-                    this.playerPosition.y=newY; this.isOnGround=false;
-                } else {
-                    if(this.playerVelocity.y<0){
-                        this.isOnGround=true;
-                        if(this.fallStartY!==null&&!this.isFlying){
-                            const dist=this.fallStartY-this.playerPosition.y;
-                            if(dist>4) this.damage(Math.round((dist-3)*2));
-                            this.fallStartY=null;
-                        }
-                        if(this.playerVelocity.y<-8)this.playSound('land');
-                    }
-                    this.playerVelocity.y=0;
-                }
-                if(this.world.isSolid(Math.floor(this.playerPosition.x),Math.floor(this.playerPosition.y-0.01),Math.floor(this.playerPosition.z))) this.isOnGround=true;
-                if(this.isOnGround) this.fallStartY=null;
-                // 虚空
-                if(this.playerPosition.y<-24){ this.respawn(); }
-                // 生命回复（落地且 4 秒未受伤）
-                if(!this.isDead&&this.health<MAX_HEALTH&&performance.now()-this.lastDamageTime>4000&&this.isOnGround){
-                    this.regenTimer-=dt;
-                    if(this.regenTimer<=0){ this.regenTimer=1.5; this.health=Math.min(MAX_HEALTH,this.health+1); this.updateHearts(); }
-                }
-                if(this.isOnline) this.sendPositionUpdate();
-            }
-            sendPositionUpdate(){
-                if(!this.peer || !this.isOnline) return;
-                Object.values(this.connections).forEach(conn=>{ if(conn.open) conn.send({type:'pos', x:this.playerPosition.x, y:this.playerPosition.y, z:this.playerPosition.z, yaw:this.playerYaw, pitch:this.playerPitch}); });
-            }
-            updateCamera(){ this.camera.position.set(this.playerPosition.x,this.playerPosition.y+PLAYER_EYE_HEIGHT,this.playerPosition.z); this.camera.rotation.order='YXZ'; this.camera.rotation.y=this.playerYaw; this.camera.rotation.x=this.playerPitch; }
-            updateHighlight(){ const target=this.getTargetBlock(); if(target&&target.blockId!==BLOCK.AIR&&target.blockId!==BLOCK.WATER){ this.highlightMesh.position.set(target.x+0.5,target.y+0.5,target.z+0.5); this.highlightMesh.visible=true; this.raycastResult=target; } else { this.highlightMesh.visible=false; this.raycastResult=null; } }
-            updateHUD(){
-                const t=this.raycastResult;
-                const tn=document.getElementById('target-name');
-                if(tn) tn.textContent=(t&&t.blockId!==BLOCK.AIR&&t.blockId!==BLOCK.WATER)?BLOCK_NAMES[t.blockId]:'';
-                const uw=document.getElementById('underwater-overlay');
-                if(uw) uw.style.opacity=this.inWater?0.85:0;
-                if(this.debugVisible){
-                    const f=document.getElementById('fps-counter'); if(f) f.textContent='FPS: '+this.fpsDisplay;
-                    const d=document.getElementById('debug-info');
-                    if(d){
-                        const p=this.playerPosition;
-                        d.textContent='XYZ  '+p.x.toFixed(1)+' / '+p.y.toFixed(1)+' / '+p.z.toFixed(1)+'\n'+
-                            'CHUNK '+Math.floor(p.x/CHUNK_SIZE)+' , '+Math.floor(p.z/CHUNK_SIZE)+'\n'+
-                            'YAW '+((this.playerYaw*180/Math.PI+360)%360).toFixed(0)+'°  PITCH '+(this.playerPitch*180/Math.PI).toFixed(0)+'°\n'+
-                            'FPS '+this.fpsDisplay+'  生物 '+this.animals.length+'\n'+
-                            '区块 '+this.world.chunks.size+'  时间 '+(Math.floor(this.dayTime*24))+'时\n'+
-                            '飞行 '+(this.isFlying?'是':'否')+'  水中 '+(this.inWater?'是':'否')+'\n'+
-                            '生命 '+this.health+'/'+MAX_HEALTH;
-                    }
-                }
-            }
-            spawnBlockParticles(x,y,z,blockId){
-                const colors={[BLOCK.GRASS]:0x6B8E23,[BLOCK.DIRT]:0x8B6B3D,[BLOCK.STONE]:0x808080,[BLOCK.LOG]:0x8B5A2B,[BLOCK.LEAVES]:0x2E8B57,[BLOCK.SAND]:0xE8D8A0,[BLOCK.BRICK]:0x8B3A3A,[BLOCK.PLANK]:0xCD9B5A,[BLOCK.COAL_BLOCK]:0x2B2B2B,[BLOCK.IRON_BLOCK]:0xC0C0C0,[BLOCK.GOLD_BLOCK]:0xFFD700,[BLOCK.DIAMOND_BLOCK]:0x00C8C8,[BLOCK.REDSTONE_BLOCK]:0xB40000,[BLOCK.LAPIS_BLOCK]:0x1E3296,[BLOCK.SNOW_BLOCK]:0xF0F8FF,[BLOCK.PUMPKIN]:0xFF8C00,[BLOCK.MELON]:0x7CFC00,[BLOCK.BOOKSHELF]:0x8B6B3D};
-                const color=colors[blockId]||0xcccccc; const positions=[];
-                for(let i=0;i<15;i++) positions.push(x+(Math.random()-0.5)*0.6,y+(Math.random()-0.5)*0.6,z+(Math.random()-0.5)*0.6);
-                const geo=new THREE.BufferGeometry(); geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3)); const mat=new THREE.PointsMaterial({color,size:0.06,transparent:true,opacity:0.9,sizeAttenuation:true});
-                const points=new THREE.Points(geo,mat); points.userData={lifetime:0.5,age:0,velocities:positions.map(()=>({vx:(Math.random()-0.5)*2,vy:Math.random()*3,vz:(Math.random()-0.5)*2}))}; this.scene.add(points); this.particles.push(points);
-            }
-            updateParticles(dt){ for(let i=this.particles.length-1;i>=0;i--){ const p=this.particles[i]; p.userData.age+=dt; if(p.userData.age>=p.userData.lifetime){ this.scene.remove(p); p.geometry.dispose(); p.material.dispose(); this.particles.splice(i,1); continue; } const pos=p.geometry.attributes.position; const vels=p.userData.velocities; for(let j=0;j<pos.count;j++){ pos.array[j*3]+=vels[j].vx*dt; pos.array[j*3+1]+=vels[j].vy*dt; pos.array[j*3+2]+=vels[j].vz*dt; vels[j].vy-=9*dt; } pos.needsUpdate=true; p.material.opacity=0.9*(1-p.userData.age/p.userData.lifetime); } }
+  /** 获取区块世界坐标原点 */
+  get originX() { return this.cx * CHUNK_SIZE; }
+  get originZ() { return this.cz * CHUNK_SIZE; }
+}
 
-            // ---------- 音频（共享 AudioContext） ----------
-            initAudio(){ this.audioCtx=null; }
-            playSound(type){
-                try{
-                    if(!this.audioCtx) this.audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-                    if(this.audioCtx.state==='suspended') this.audioCtx.resume();
-                    const ctx=this.audioCtx;
-                    const osc=ctx.createOscillator(); const gain=ctx.createGain();
-                    osc.connect(gain);gain.connect(ctx.destination); const now=ctx.currentTime;
-                    if(type==='place'||type==='break'){
-                        osc.type='square'; osc.frequency.setValueAtTime(type==='place'?300:200,now); osc.frequency.exponentialRampToValueAtTime(100,now+0.08);
-                        gain.gain.setValueAtTime(0.15,now); gain.gain.exponentialRampToValueAtTime(0.001,now+0.1); osc.start(now);osc.stop(now+0.1);
-                    } else if(type==='jump'){
-                        osc.type='sine'; osc.frequency.setValueAtTime(200,now); osc.frequency.exponentialRampToValueAtTime(400,now+0.06);
-                        gain.gain.setValueAtTime(0.1,now); gain.gain.exponentialRampToValueAtTime(0.001,now+0.08); osc.start(now);osc.stop(now+0.08);
-                    } else if(type==='land'){
-                        osc.type='sine'; osc.frequency.setValueAtTime(150,now); osc.frequency.exponentialRampToValueAtTime(80,now+0.06);
-                        gain.gain.setValueAtTime(0.08,now); gain.gain.exponentialRampToValueAtTime(0.001,now+0.07); osc.start(now);osc.stop(now+0.07);
-                    } else if(type==='hurt'){
-                        osc.type='sawtooth'; osc.frequency.setValueAtTime(300,now); osc.frequency.exponentialRampToValueAtTime(60,now+0.2);
-                        gain.gain.setValueAtTime(0.2,now); gain.gain.exponentialRampToValueAtTime(0.001,now+0.22); osc.start(now);osc.stop(now+0.22);
-                    } else if(type==='splash'){
-                        osc.type='triangle'; osc.frequency.setValueAtTime(500,now); osc.frequency.exponentialRampToValueAtTime(120,now+0.15);
-                        gain.gain.setValueAtTime(0.12,now); gain.gain.exponentialRampToValueAtTime(0.001,now+0.16); osc.start(now);osc.stop(now+0.16);
-                    }
-                }catch(e){}
-            }
+/** 将全局坐标转为区块坐标 */
+function chunkCoord(x, z) {
+  return [Math.floor(x / CHUNK_SIZE), Math.floor(z / CHUNK_SIZE)];
+}
+/** 区块 key */
+function chunkKey(cx, cz) { return `${cx},${cz}`; }
 
-            // ---------- 生物 ----------
-            spawnAnimals(n){
-                n=n||8; const types=['pig','cow','sheep','chicken'];
-                for(let i=0;i<n;i++){
-                    const type=types[i%types.length];
-                    const angle=Math.random()*Math.PI*2; const dist=5+Math.random()*10;
-                    const wx=this.playerPosition.x+Math.cos(angle)*dist, wz=this.playerPosition.z+Math.sin(angle)*dist;
-                    const wy=this.findGroundHeight(wx,wz);
-                    if(wy>0){ const animal=new Animal(type,wx,wy+0.01,wz,this.world); this.scene.add(animal.group); this.animals.push(animal); }
-                }
-            }
-            updateAnimals(dt){
-                this.animalTimer-=dt;
-                if(this.animalTimer<=0){
-                    this.animalTimer=6;
-                    for(let i=this.animals.length-1;i>=0;i--){
-                        if(this.animals[i].position.distanceTo(this.playerPosition)>70){
-                            this.scene.remove(this.animals[i].group); this.animals.splice(i,1);
-                        }
-                    }
-                    if(this.animals.length<8) this.spawnAnimals(1);
-                }
-            }
+/* ============================================================
+ * 世界管理：区块加载/卸载、程序化地形生成、方块读写、存档编辑记录
+ * 地形生成使用 Simplex 噪声（2D 高度/温度/湿度 + 3D 洞穴/矿石）。
+ * ============================================================ */
+function mulberry32(seed) {
+  let a = seed >>> 0;
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
 
-            // ---------- 存档 ----------
-            encodeBlocks(arr){
-                let bin='';
-                for(let i=0;i<arr.length;i++) bin+=String.fromCharCode(arr[i]);
-                return btoa(bin);
-            }
-            decodeBlocks(b64){
-                const bin=atob(b64), out=new Uint8Array(bin.length);
-                for(let i=0;i<bin.length;i++) out[i]=bin.charCodeAt(i);
-                return out;
-            }
-            saveGame(){
-                if(this.isOnline) return;
-                try{
-                    const chunks={};
-                    const pcx=Math.floor(this.playerPosition.x/CHUNK_SIZE), pcz=Math.floor(this.playerPosition.z/CHUNK_SIZE);
-                    for(const [key,chunk] of this.world.chunks){
-                        const dist=Math.max(Math.abs(chunk.cx-pcx),Math.abs(chunk.cz-pcz));
-                        if(dist<=RENDER_DISTANCE+1) chunks[key]=this.encodeBlocks(chunk.blocks);
-                    }
-                    const data={v:1, seed:this.worldSeed,
-                        player:{x:this.playerPosition.x,y:this.playerPosition.y,z:this.playerPosition.z,yaw:this.playerYaw,pitch:this.playerPitch},
-                        health:this.health, dayTime:this.dayTime, hotbar:this.hotbarBlocks, selectedSlot:this.selectedSlot, chunks:chunks};
-                    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
-                }catch(e){ console.warn('存档失败', e); }
-            }
-            loadGame(data){
-                try{
-                    for(const key in data.chunks){
-                        const parts=key.split(',');
-                        const cx=parseInt(parts[0],10), cz=parseInt(parts[1],10);
-                        const chunk={cx:cx, cz:cz, blocks:this.decodeBlocks(data.chunks[key]), heightMap:null, mesh:null, waterMesh:null, dirty:true};
-                        this.world.chunks.set(key, chunk);
-                    }
-                    if(data.player){ this.playerPosition.set(data.player.x,data.player.y,data.player.z); this.playerYaw=data.player.yaw||0; this.playerPitch=data.player.pitch||0; }
-                    if(data.health!=null) this.health=data.health;
-                    if(data.dayTime!=null) this.dayTime=data.dayTime;
-                    if(data.hotbar&&data.hotbar.length===9) this.hotbarBlocks=data.hotbar;
-                    if(data.selectedSlot!=null) this.selectedSlot=data.selectedSlot;
-                }catch(e){ console.warn('读取存档失败', e); }
-            }
+/** 分形布朗运动：叠加多个频率的噪声，使地形更自然 */
+function fbm2(noise, x, z, octaves = 4, lacunarity = 2, gain = 0.5) {
+  let amp = 1, freq = 1, sum = 0, norm = 0;
+  for (let i = 0; i < octaves; i++) {
+    sum += amp * noise(x * freq, z * freq);
+    norm += amp;
+    amp *= gain;
+    freq *= lacunarity;
+  }
+  return sum / norm; // 大约 [-1,1]
+}
 
-            gameLoop(){
-                requestAnimationFrame(()=>this.gameLoop());
-                const now=performance.now(); const dt=Math.min(0.05,(now-this.lastTime)/1000); this.lastTime=now;
-                this.fpsCounter++; this.fpsTime+=dt;
-                if(this.fpsTime>=0.5){ this.fpsDisplay=Math.round(this.fpsCounter/this.fpsTime); this.fpsCounter=0; this.fpsTime=0; }
-                this.updateSky(dt);
-                this.updatePlayer(dt); this.updateCamera(); this.updateHighlight(); this.updateChunks(); this.updateParticles(dt);
-                for(const animal of this.animals) animal.update(dt);
-                this.updateAnimals(dt);
-                this.updateHUD();
-                if(this.cloudGroup){ this.cloudGroup.position.x+=dt*0.3; if(this.cloudGroup.position.x>60)this.cloudGroup.position.x=-60; }
-                this.saveTimer+=dt;
-                if(this.saveTimer>10 && !this.isOnline){ this.saveTimer=0; this.saveGame(); }
-                this.renderer.render(this.scene,this.camera);
-            }
-            // ==================== 联机方法 ====================
-            initMultiplayer() {
-                this.updateOnlineStatus('🌐 联机中...');
-                const peerId = 'mc-room-' + this.roomCode;
-                if (typeof Peer === 'undefined') {
-                    this.updateOnlineStatus('🔴 联机库加载中...');
-                    const script = document.createElement('script');
-                    script.src = 'https://cdn.jsdelivr.net/npm/peerjs@1.4.7/dist/peerjs.min.js';
-                    script.onload = () => this.startPeer(peerId);
-                    script.onerror = () => this.updateOnlineStatus('🔴 联机库加载失败，请检查网络');
-                    document.head.appendChild(script);
-                } else {
-                    this.startPeer(peerId);
-                }
-            }
-            startPeer(peerId) {
-                try {
-                    this.peer = new Peer(peerId);
-                    this.peer.on('open', () => { this.updateOnlineStatus('🌐 已创建房间 ' + this.roomCode); });
-                    this.peer.on('connection', (conn) => this.setupConnection(conn));
-                    this.peer.on('disconnected', () => this.updateOnlineStatus('🔴 连接断开'));
-                    this.peer.on('error', (err) => {
-                        if (err.type === 'unavailable-id') {
-                            this.updateOnlineStatus('🌐 正在加入房间...');
-                            this.peer = new Peer();
-                            this.peer.on('open', () => {
-                                const conn = this.peer.connect(peerId, { reliable: true });
-                                this.setupConnection(conn);
-                            });
-                            this.peer.on('error', (err2) => {
-                                console.error('Peer error', err2);
-                                this.updateOnlineStatus('🔴 联机失败: ' + err2.type);
-                            });
-                        } else {
-                            console.error('Peer error', err);
-                            this.updateOnlineStatus('🔴 联机错误: ' + err.type);
-                        }
-                    });
-                } catch(e) {
-                    console.error('Multiplayer init error', e);
-                    this.updateOnlineStatus('🔴 联机初始化错误');
-                }
-            }
-            setupConnection(conn) {
-                conn.on('open', () => {
-                    console.log('Connection established to', conn.peer);
-                    this.connections[conn.peer] = conn;
-                    this.connectionCount++;
-                    this.updateOnlineStatus('🌐 已连接 (' + this.connectionCount + '人)');
-                    conn.send({ type:'pos', x:this.playerPosition.x, y:this.playerPosition.y, z:this.playerPosition.z, yaw:this.playerYaw, pitch:this.playerPitch });
-                });
-                conn.on('data', (data) => {
-                    if (data.type === 'pos') {
-                        if (!this.remotePlayers[conn.peer]) this.createRemotePlayer(conn.peer);
-                        const p = this.remotePlayers[conn.peer];
-                        p.group.position.set(data.x, data.y, data.z);
-                        p.group.rotation.y = data.yaw || 0;
-                    } else if (data.type === 'block') {
-                        this.world.setBlock(data.x, data.y, data.z, data.blockId);
-                    }
-                });
-                conn.on('close', () => {
-                    console.log('Connection closed from', conn.peer);
-                    delete this.connections[conn.peer];
-                    if (this.remotePlayers[conn.peer]) {
-                        this.scene.remove(this.remotePlayers[conn.peer].group);
-                        delete this.remotePlayers[conn.peer];
-                    }
-                    this.connectionCount = Math.max(0, this.connectionCount - 1);
-                    this.updateOnlineStatus('🌐 已连接 (' + this.connectionCount + '人)');
-                });
-            }
-            createRemotePlayer(peerId) {
-                const group = new THREE.Group();
-                const bodyGeo = new THREE.BoxGeometry(0.6, 1.6, 0.4);
-                const headGeo = new THREE.BoxGeometry(0.4, 0.4, 0.4);
-                const bodyMat = new THREE.MeshLambertMaterial({ color: 0x3366cc });
-                const headMat = new THREE.MeshLambertMaterial({ color: 0xffaa88 });
-                const body = new THREE.Mesh(bodyGeo, bodyMat); body.position.y = 0.8;
-                const head = new THREE.Mesh(headGeo, headMat); head.position.y = 1.8;
-                group.add(body); group.add(head);
-                this.scene.add(group);
-                this.remotePlayers[peerId] = { group };
-            }
-            updateOnlineStatus(text) {
-                const el = document.getElementById('online-status');
-                if (el) el.textContent = text;
-            }
+class World {
+  /**
+   * @param {number} seed 世界种子
+   * @param {THREE.Scene} scene 用于挂载区块网格
+   * @param {TextureAtlas} atlas 纹理图集
+   */
+  constructor(seed, scene, atlas) {
+    this.seed = seed;
+    this.scene = scene;
+    this.atlas = atlas;
+    this.chunks = new Map();       // key -> Chunk
+    this.edits = new Map();        // "x,y,z" -> blockId，用于存档和重新生成
+    this.furnaces = new Map();     // "x,y,z" -> 熔炉状态
+    this.spawnPoint = null;
+    this.renderDistance = 4;
+
+    // 创建多个独立噪声实例，避免相互干扰
+    const rand = mulberry32(seed);
+    this.n2 = {
+      elevation: createNoise2D(mulberry32(seed + 1)),
+      mountain: createNoise2D(mulberry32(seed + 2)),
+      temp: createNoise2D(mulberry32(seed + 3)),
+      moist: createNoise2D(mulberry32(seed + 4)),
+      river: createNoise2D(mulberry32(seed + 5)),
+      detail: createNoise2D(mulberry32(seed + 6)),
+    };
+    this.n3 = {
+      cave: createNoise3D(mulberry32(seed + 7)),
+      ore: createNoise3D(mulberry32(seed + 8)),
+    };
+  }
+
+  /** 获取区块，不存在返回 null */
+  getChunk(cx, cz) {
+    return this.chunks.get(chunkKey(cx, cz)) || null;
+  }
+
+  /** 获取方块；越界或未加载区块视为空气 */
+  getBlock(x, y, z) {
+    if (y < 0 || y >= WORLD_HEIGHT) return BLOCK.AIR;
+    const [cx, cz] = chunkCoord(x, z);
+    const chunk = this.getChunk(cx, cz);
+    if (!chunk) return BLOCK.AIR;
+    const lx = x - chunk.originX;
+    const lz = z - chunk.originZ;
+    return chunk.getLocal(lx, y, lz);
+  }
+
+  /** 写入方块；只影响已加载区块，并记录到 edits 供存档 */
+  setBlock(x, y, z, id, recordEdit = true) {
+    if (y < 0 || y >= WORLD_HEIGHT) return false;
+    const [cx, cz] = chunkCoord(x, z);
+    const chunk = this.getChunk(cx, cz);
+    if (!chunk) return false;
+    const lx = x - chunk.originX;
+    const lz = z - chunk.originZ;
+    chunk.setLocal(lx, y, lz, id);
+    if (recordEdit) this.edits.set(`${x},${y},${z}`, id);
+    // 边界方块变化会影响相邻区块的暴露面
+    if (lx === 0) this.markChunkDirty(cx - 1, cz);
+    if (lx === CHUNK_SIZE - 1) this.markChunkDirty(cx + 1, cz);
+    if (lz === 0) this.markChunkDirty(cx, cz - 1);
+    if (lz === CHUNK_SIZE - 1) this.markChunkDirty(cx, cz + 1);
+    return true;
+  }
+
+  markChunkDirty(cx, cz) {
+    const c = this.getChunk(cx, cz);
+    if (c) c.dirty = true;
+  }
+
+  /** 根据存档编辑记录覆盖已生成区块 */
+  applyEditsToChunk(chunk) {
+    const ox = chunk.originX, oz = chunk.originZ;
+    for (const [key, id] of this.edits) {
+      const parts = key.split(',').map(Number);
+      const x = parts[0], y = parts[1], z = parts[2];
+      if (x >= ox && x < ox + CHUNK_SIZE && z >= oz && z < oz + CHUNK_SIZE && y >= 0 && y < WORLD_HEIGHT) {
+        chunk.setLocal(x - ox, y, z - oz, id);
+      }
+    }
+  }
+
+  /** 生成一个区块（若已存在则忽略） */
+  generateChunk(cx, cz) {
+    if (this.getChunk(cx, cz)) return this.getChunk(cx, cz);
+    const chunk = new Chunk(cx, cz);
+    this.chunks.set(chunkKey(cx, cz), chunk);
+    this.generateTerrain(chunk);
+    this.applyEditsToChunk(chunk);
+    // 新邻居出现后，相邻区块的边界暴露面可能变化，需要重建
+    this.markChunkDirty(cx - 1, cz);
+    this.markChunkDirty(cx + 1, cz);
+    this.markChunkDirty(cx, cz - 1);
+    this.markChunkDirty(cx, cz + 1);
+    return chunk;
+  }
+
+  /** 判断某坐标是否在区块内部（用于树边界检查） */
+  inChunkBounds(x, z, chunk) {
+    return x >= chunk.originX && x < chunk.originX + CHUNK_SIZE &&
+           z >= chunk.originZ && z < chunk.originZ + CHUNK_SIZE;
+  }
+
+  /** 核心地形生成算法（详细注释） */
+  generateTerrain(chunk) {
+    const ox = chunk.originX, oz = chunk.originZ;
+    // 1. 逐列计算地表高度
+    for (let lx = 0; lx < CHUNK_SIZE; lx++) {
+      for (let lz = 0; lz < CHUNK_SIZE; lz++) {
+        const wx = ox + lx, wz = oz + lz;
+
+        // 1.1 大陆性噪声决定平原/海洋/山脉
+        const e = fbm2(this.n2.elevation, wx * 0.0016, wz * 0.0016, 4);
+        // 1.2 山体噪声，只取正值增加山脉高度
+        const m = Math.max(0, fbm2(this.n2.mountain, wx * 0.0007 + 1000, wz * 0.0007 + 1000, 4));
+        // 1.3 温度/湿度决定生物群系
+        const temp = fbm2(this.n2.temp, wx * 0.0012, wz * 0.0012, 3);
+        const moist = fbm2(this.n2.moist, wx * 0.0012 + 500, wz * 0.0012 + 500, 3);
+
+        let height = 24 + e * 12 + m * 26;
+        if (temp < -0.35) height += 3;        // 雪原略高
+        if (temp > 0.35 && moist < -0.25) height -= 1; // 沙漠略低
+
+        // 1.4 河流：窄条噪声使地形下切到海平面以下
+        const river = fbm2(this.n2.river, wx * 0.004, wz * 0.004, 2);
+        if (Math.abs(river) < 0.06) height = Math.min(height, SEA_LEVEL - 4);
+
+        let surfaceY = Math.floor(Math.max(3, Math.min(WORLD_HEIGHT - 10, height)));
+        const isOcean = surfaceY < SEA_LEVEL;
+        const isBeach = !isOcean && Math.abs(surfaceY - SEA_LEVEL) <= 2;
+        const isDesert = temp > 0.35 && moist < -0.25 && !isOcean;
+        const isSnow = temp < -0.35 && !isOcean;
+        const isForest = moist > 0.1 && !isDesert && !isSnow && !isOcean;
+
+        // 1.5 逐层填充方块
+        for (let y = 0; y <= surfaceY; y++) {
+          let id;
+          if (y === 0) {
+            id = BLOCK.BEDROCK;
+          } else if (y < surfaceY - 3) {
+            id = BLOCK.STONE;
+          } else if (y < surfaceY) {
+            id = BLOCK.DIRT;
+          } else {
+            if (isOcean) id = BLOCK.SAND;
+            else if (isSnow) id = BLOCK.SNOW;
+            else if (isDesert) id = BLOCK.SAND;
+            else if (isBeach) id = BLOCK.SAND;
+            else id = BLOCK.GRASS;
+          }
+          chunk.setLocal(lx, y, lz, id);
         }
 
-        // ==================== 启动逻辑 ====================
-        function showError(msg) {
-            const el = document.getElementById('error-message');
-            if (el) {
-                el.textContent = msg;
-                el.style.display = 'block';
-                setTimeout(() => { el.style.display = 'none'; }, 4000);
-            }
+        // 1.6 洞穴：3D 噪声在石头层中挖空（保留地表附近完整）
+        for (let y = 4; y < surfaceY - 2; y++) {
+          const n = this.n3.cave(wx * 0.09, y * 0.09, wz * 0.09);
+          if (n > 0.63) {
+            chunk.setLocal(lx, y, lz, BLOCK.AIR);
+          }
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            const loadingScreen = document.getElementById('loading-screen');
-            const loadingBar = document.getElementById('loading-bar');
-            const loadingBarContainer = document.getElementById('loading-bar-container');
-            const loadingText = document.getElementById('loading-text');
-            const startSingleBtn = document.getElementById('start-single');
-            const startOnlineBtn = document.getElementById('start-online');
-            const resumeBtn = document.getElementById('resume-single');
-            const roomInput = document.getElementById('room-input');
-            const seedInput = document.getElementById('seed-input');
+        // 1.7 矿石分布：根据不同深度和噪声阈值生成矿脉
+        for (let y = 1; y <= surfaceY; y++) {
+          const b = chunk.getLocal(lx, y, lz);
+          if (b !== BLOCK.STONE) continue;
+          const n = this.n3.ore(wx * 0.12, y * 0.12, wz * 0.12);
+          if (n > 0.72 && y < 20) {
+            chunk.setLocal(lx, y, lz, BLOCK.DIAMOND_ORE);
+          } else if (n > 0.68 && y < 32) {
+            chunk.setLocal(lx, y, lz, BLOCK.GOLD_ORE);
+          } else if (n > 0.62 && y < 60) {
+            chunk.setLocal(lx, y, lz, BLOCK.IRON_ORE);
+          } else if (n > 0.56) {
+            chunk.setLocal(lx, y, lz, BLOCK.COAL_ORE);
+          }
+        }
 
-            // 检查是否存在存档 → 显示"继续上次世界"
-            let hasSave = false;
-            try { hasSave = !!localStorage.getItem(SAVE_KEY); } catch(e) {}
-            if (hasSave) resumeBtn.style.display = 'block';
+        // 1.8 海洋：在海平面以下填充水
+        if (surfaceY < SEA_LEVEL) {
+          for (let y = surfaceY + 1; y <= SEA_LEVEL; y++) {
+            chunk.setLocal(lx, y, lz, BLOCK.WATER);
+          }
+        }
 
-            function startGame(seed, roomCode, isOnline, saveData) {
-                try {
-                    loadingBarContainer.style.display = 'block';
-                    loadingText.textContent = saveData ? '正在读取存档...' : (isOnline ? '正在连接联机...' : '正在生成世界...');
-                    loadingScreen.querySelector('.menu-panel').style.display = 'none';
-                    let progress = 0;
-                    const interval = setInterval(() => {
-                        progress += 10;
-                        loadingBar.style.width = progress + '%';
-                        if (progress >= 100) {
-                            clearInterval(interval);
-                            loadingScreen.classList.add('hidden');
-                            setTimeout(() => document.getElementById('touch-hint').classList.add('hidden'), 4000);
-                        }
-                    }, 120);
-                    const game = new MinecraftMobile(seed, roomCode, isOnline, saveData);
-                    window.game = game;
-                } catch (err) {
-                    console.error('游戏初始化失败:', err);
-                    showError('游戏启动失败: ' + err.message);
-                    loadingBarContainer.style.display = 'none';
-                    loadingScreen.querySelector('.menu-panel').style.display = 'flex';
-                    loadingText.textContent = '';
-                }
+        // 1.9 树木：仅在地表为草/雪且位于区块内部时生成
+        if (!isOcean && !isDesert && !isBeach && surfaceY >= SEA_LEVEL) {
+          const density = isForest ? 0.045 : (isSnow ? 0.008 : 0.015);
+          if (hash2(wx, wz, this.seed) < density) {
+            this.tryPlaceTree(chunk, wx, surfaceY + 1, wz);
+          }
+        }
+      }
+    }
+  }
+
+  /** 尝试在 (x, surfaceY, z) 放置一棵橡树；若超出当前区块则放弃 */
+  tryPlaceTree(chunk, x, baseY, z) {
+    // 树叶范围会跨越 5x5，因此只允许种在区块内边距 2 的位置
+    if (!this.inChunkBounds(x, z, chunk) ||
+        !this.inChunkBounds(x - 2, z - 2, chunk) ||
+        !this.inChunkBounds(x + 2, z + 2, chunk)) return;
+
+    const trunkHeight = 4 + Math.floor(hash2(x, z, this.seed + 99) * 3); // 4~6
+    const lx = x - chunk.originX, lz = z - chunk.originZ;
+
+    // 树干
+    for (let i = 0; i < trunkHeight; i++) {
+      const y = baseY + i;
+      if (y < WORLD_HEIGHT) chunk.setLocal(lx, y, lz, BLOCK.LOG);
+    }
+
+    // 树冠：从树干顶部往下两层开始，半径 2
+    const topY = baseY + trunkHeight - 1;
+    for (let dy = -2; dy <= 1; dy++) {
+      const y = topY + dy;
+      if (y < 0 || y >= WORLD_HEIGHT) continue;
+      for (let dx = -2; dx <= 2; dx++) {
+        for (let dz = -2; dz <= 2; dz++) {
+          const dist = Math.max(Math.abs(dx), Math.abs(dz));
+          // 最上面一层半径 1，下面两层半径 2
+          if (dy === 1 && dist > 1) continue;
+          if (dx === 0 && dz === 0 && dy < 0) continue; // 树干位置
+          const px = lx + dx, pz = lz + dz;
+          if (px < 0 || px >= CHUNK_SIZE || pz < 0 || pz >= CHUNK_SIZE) continue;
+          const cur = chunk.getLocal(px, y, pz);
+          if (cur === BLOCK.AIR || cur === BLOCK.LEAVES) {
+            chunk.setLocal(px, y, pz, BLOCK.LEAVES);
+          }
+        }
+      }
+    }
+  }
+
+  /** 找到玩家出生点：在 (0,0) 附近最高的非空气方块上方 */
+  findSpawnPoint() {
+    for (let r = 0; r < 8; r++) {
+      for (let dx = -r; dx <= r; dx++) {
+        for (let dz = -r; dz <= r; dz++) {
+          if (Math.max(Math.abs(dx), Math.abs(dz)) !== r) continue;
+          const x = dx * 4, z = dz * 4;
+          for (let y = WORLD_HEIGHT - 1; y > 0; y--) {
+            const b = this.getBlock(x, y, z);
+            if (b !== BLOCK.AIR && b !== BLOCK.WATER && blockDef(b).solid) {
+              return { x: x + 0.5, y: y + 1.01, z: z + 0.5 };
             }
+          }
+        }
+      }
+    }
+    return { x: 0.5, y: 40, z: 0.5 };
+  }
 
-            startSingleBtn.addEventListener('click', () => {
-                let seed = Math.floor(Math.random() * 1000000);
-                const sv = seedInput.value.trim();
-                if (sv) seed = hashString(sv);
-                try { localStorage.removeItem(SAVE_KEY); } catch(e) {}
-                startGame(seed, null, false, null);
-            });
-            startSingleBtn.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                let seed = Math.floor(Math.random() * 1000000);
-                const sv = seedInput.value.trim();
-                if (sv) seed = hashString(sv);
-                try { localStorage.removeItem(SAVE_KEY); } catch(e) {}
-                startGame(seed, null, false, null);
-            });
+  /** 卸载远处区块（释放内存） */
+  unloadFarChunks(centerCx, centerCz, keepRadius) {
+    const toRemove = [];
+    for (const [key, chunk] of this.chunks) {
+      const dist = Math.max(Math.abs(chunk.cx - centerCx), Math.abs(chunk.cz - centerCz));
+      if (dist > keepRadius + 2) toRemove.push(key);
+    }
+    for (const key of toRemove) {
+      const chunk = this.chunks.get(key);
+      if (chunk.meshOpaque) { this.scene.remove(chunk.meshOpaque); chunk.meshOpaque.geometry.dispose(); chunk.meshOpaque.material = null; }
+      if (chunk.meshTransparent) { this.scene.remove(chunk.meshTransparent); chunk.meshTransparent.geometry.dispose(); chunk.meshTransparent.material = null; }
+      // 卸载后相邻区块边界应重新暴露
+      this.markChunkDirty(chunk.cx - 1, chunk.cz);
+      this.markChunkDirty(chunk.cx + 1, chunk.cz);
+      this.markChunkDirty(chunk.cx, chunk.cz - 1);
+      this.markChunkDirty(chunk.cx, chunk.cz + 1);
+      this.chunks.delete(key);
+    }
+  }
+}
 
-            resumeBtn.addEventListener('click', () => {
-                let save = null;
-                try { save = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch(e) {}
-                if (save && save.seed != null) startGame(save.seed, null, false, save);
-                else { showError('没有可用的存档'); resumeBtn.style.display = 'none'; }
-            });
-            resumeBtn.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                let save = null;
-                try { save = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch(e) {}
-                if (save && save.seed != null) startGame(save.seed, null, false, save);
-                else { showError('没有可用的存档'); resumeBtn.style.display = 'none'; }
-            });
+/* ============================================================
+ * 区块网格生成器
+ * 只生成暴露在空气/透明方块外的面，并将一个区块合并为少量 BufferGeometry。
+ * 不透明方块和透明方块分开，避免渲染排序问题。
+ * ============================================================ */
+function isTransparentBlock(id) {
+  if (id === BLOCK.AIR) return true;
+  const def = blockDef(id);
+  return def.transparent === true;
+}
+function isOpaqueBlock(id) {
+  const def = blockDef(id);
+  return def.opaque === true;
+}
+function isSolidBlock(id) {
+  const def = blockDef(id);
+  return def.solid === true;
+}
 
-            startOnlineBtn.addEventListener('click', () => {
-                const roomCode = roomInput.value.trim();
-                if (!roomCode) { alert('请输入房间号'); return; }
-                const seed = hashString(roomCode);
-                startGame(seed, roomCode, true, null);
-            });
-            startOnlineBtn.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                const roomCode = roomInput.value.trim();
-                if (!roomCode) { alert('请输入房间号'); return; }
-                const seed = hashString(roomCode);
-                startGame(seed, roomCode, true, null);
-            });
+/** 六个面的方向与四个角点（右手坐标系，双面渲染所以绕序不敏感） */
+const FACE_DIRS = [
+  { name: 'px', dir: [1,0,0], corners: [[1,0,1],[1,0,0],[1,1,0],[1,1,1]] },
+  { name: 'nx', dir: [-1,0,0], corners: [[0,0,0],[0,0,1],[0,1,1],[0,1,0]] },
+  { name: 'py', dir: [0,1,0], corners: [[0,1,1],[1,1,1],[1,1,0],[0,1,0]] },
+  { name: 'ny', dir: [0,-1,0], corners: [[0,0,0],[1,0,0],[1,0,1],[0,0,1]] },
+  { name: 'pz', dir: [0,0,1], corners: [[0,0,1],[1,0,1],[1,1,1],[0,1,1]] },
+  { name: 'nz', dir: [0,0,-1], corners: [[1,0,0],[0,0,0],[0,1,0],[1,1,0]] },
+];
 
-            // 长按显示调试面板
-            let pressTimer = null;
-            document.addEventListener('touchstart', () => {
-                pressTimer = setTimeout(() => { if (window.game) window.game.toggleDebug(); }, 2000);
-            }, { passive: true });
-            document.addEventListener('touchend', () => {
-                if (pressTimer) clearTimeout(pressTimer);
-                pressTimer = null;
-            }, { passive: true });
-        });
-    })();
-    </script>
-</body>
-</html>
+class MeshBuilder {
+  constructor(world, atlas) {
+    this.world = world;
+    this.atlas = atlas;
+    this.positions = [];
+    this.normals = [];
+    this.uvs = [];
+    this.indices = [];
+  }
+
+  reset() {
+    this.positions.length = 0;
+    this.normals.length = 0;
+    this.uvs.length = 0;
+    this.indices.length = 0;
+  }
+
+  /** 当前顶点数量 */
+  get vertexCount() { return this.positions.length / 3; }
+
+  /** 添加一个单位立方体面 */
+  addFace(x, y, z, face, tileIndex) {
+    const [u0, v0, u1, v1] = this.atlas.uv(tileIndex);
+    const [nx, ny, nz] = face.dir;
+    const base = this.vertexCount;
+    const corners = face.corners;
+    const uvCorners = [[u0, v0], [u1, v0], [u1, v1], [u0, v1]];
+    for (let i = 0; i < 4; i++) {
+      const [cx, cy, cz] = corners[i];
+      this.positions.push(x + cx, y + cy, z + cz);
+      this.normals.push(nx, ny, nz);
+      this.uvs.push(uvCorners[i][0], uvCorners[i][1]);
+    }
+    this.indices.push(base, base + 1, base + 2, base, base + 2, base + 3);
+  }
+
+  /** 添加一个自定义 AABB 盒子（用于火把等非完整方块） */
+  addBox(minX, minY, minZ, maxX, maxY, maxZ, tileIndex) {
+    const x = minX, y = minY, z = minZ, w = maxX - minX, h = maxY - minY, d = maxZ - minZ;
+    const faces = [
+      { dir: [1,0,0], corners: [[x+w,y,z+d],[x+w,y,z],[x+w,y+h,z],[x+w,y+h,z+d]] },
+      { dir: [-1,0,0], corners: [[x,y,z],[x,y,z+d],[x,y+h,z+d],[x,y+h,z]] },
+      { dir: [0,1,0], corners: [[x,y+h,z+d],[x+w,y+h,z+d],[x+w,y+h,z],[x,y+h,z]] },
+      { dir: [0,-1,0], corners: [[x,y,z],[x+w,y,z],[x+w,y,z+d],[x,y,z+d]] },
+      { dir: [0,0,1], corners: [[x,y,z+d],[x+w,y,z+d],[x+w,y+h,z+d],[x,y+h,z+d]] },
+      { dir: [0,0,-1], corners: [[x+w,y,z],[x,y,z],[x,y+h,z],[x+w,y+h,z]] },
+    ];
+    for (const f of faces) this.addFace(0, 0, 0, f, tileIndex);
+  }
+
+  /** 判断某面是否需要渲染 */
+  shouldRenderFace(x, y, z, dx, dy, dz, id) {
+    const nb = this.world.getBlock(x + dx, y + dy, z + dz);
+    if (id === BLOCK.WATER) return nb !== BLOCK.WATER;
+    if (id === BLOCK.LEAVES || id === BLOCK.GLASS || id === BLOCK.ICE) {
+      // 透明方块：只在与空气/水或不同类型方块相邻时渲染
+      return nb === BLOCK.AIR || nb === BLOCK.WATER || !isTransparentBlock(nb) || nb !== id;
+    }
+    if (id === BLOCK.TORCH) return true;
+    // 不透明方块：邻居不是不透明方块就渲染
+    return !isOpaqueBlock(nb);
+  }
+
+  /** 获取某个方向的贴图瓦片 */
+  tileFor(blockId, faceNa
